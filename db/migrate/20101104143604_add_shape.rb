@@ -45,6 +45,5 @@ class AddShape < ActiveRecord::Migration
 		t.column :x2, :int
 		t.column :y2, :int
 	end
-
   end
 end
