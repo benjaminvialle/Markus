@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100816213841) do
+ActiveRecord::Schema.define(:version => 20101104143604) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -243,6 +243,13 @@ ActiveRecord::Schema.define(:version => 20100816213841) do
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
 
+  create_table "point", :force => true do |t|
+    t.integer "shape_id"
+    t.integer "order"
+    t.integer "x"
+    t.integer "y"
+  end
+
   create_table "results", :force => true do |t|
     t.integer  "submission_id"
     t.string   "marking_state"
@@ -298,6 +305,10 @@ ActiveRecord::Schema.define(:version => 20100816213841) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "shape", :force => true do |t|
+    t.integer "annotation_id"
+  end
 
   create_table "submission_collectors", :force => true do |t|
     t.integer "child_pid"
