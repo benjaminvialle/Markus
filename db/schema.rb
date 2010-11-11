@@ -363,6 +363,8 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
     t.integer  "submission_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "status"
+    t.integer  "user_id"
   end
 
   add_index "test_results", ["filename"], :name => "index_test_results_on_filename"
