@@ -13,5 +13,5 @@ class Annotation < ActiveRecord::Base
   validates_numericality_of :submission_file_id, :only_integer => true, :greater_than => 0
   validates_numericality_of :annotation_number, :only_integer => true, :greater_than => 0
   
-  validates_format_of       :type,               :with => /ImageAnnotation|TextAnnotation/
+  validates_format_of       :type,               :with => /AreaAnnotation|Shape|TextAnnotation/
 end
