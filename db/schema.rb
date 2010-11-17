@@ -245,6 +245,13 @@ ActiveRecord::Schema.define(:version => 20101114123924) do
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
 
+  create_table "point", :force => true do |t|
+    t.integer "shape_id"
+    t.integer "order"
+    t.integer "x"
+    t.integer "y"
+  end
+
   create_table "points", :force => true do |t|
     t.integer "shape_id"
     t.integer "order"
@@ -305,6 +312,12 @@ ActiveRecord::Schema.define(:version => 20101114123924) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
+
+  create_table "shape", :force => true do |t|
+    t.integer "annotation_id"
+    t.string  "color"
+    t.integer "thickness"
+  end
 
   create_table "submission_collectors", :force => true do |t|
     t.integer "child_pid"
