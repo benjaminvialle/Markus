@@ -198,6 +198,18 @@ Section.blueprint do
   name {Sham.section_name}
 end
 
+ShapeAnnotation.blueprint do
+  color {'#E67E30'}
+  thickness {2}
+  submission_file
+  annotation_text {AnnotationText.make(
+    :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
+    )}
+  annotation_text_id {1}
+  submission_file_id {submission_file.id}
+  annotation_number {rand(1000)}
+end
+
 Student.blueprint do
   user_name {Sham.student_user_name}
   first_name {Sham.first_name}
