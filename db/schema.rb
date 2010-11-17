@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101113165920) do
+ActiveRecord::Schema.define(:version => 20101114123924) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -40,6 +40,8 @@ ActiveRecord::Schema.define(:version => 20101113165920) do
     t.integer "y2"
     t.string  "type"
     t.integer "annotation_number"
+    t.integer "thickness"
+    t.string  "color"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
@@ -245,6 +247,13 @@ ActiveRecord::Schema.define(:version => 20101113165920) do
   end
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
+
+  create_table "points", :force => true do |t|
+    t.integer "shape_id"
+    t.integer "order"
+    t.integer "x"
+    t.integer "y"
+  end
 
   create_table "results", :force => true do |t|
     t.integer  "submission_id"

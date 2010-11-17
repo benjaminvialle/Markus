@@ -145,7 +145,7 @@ Grouping.blueprint do
   criteria_coverage_count {0}
 end
 
-ImageAnnotation.blueprint do
+AreaAnnotation.blueprint do
   x1 {0}
   x2 {10}
   y1 {0}
