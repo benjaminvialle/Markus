@@ -1,5 +1,8 @@
 <ul id="annotation_categories">
   <!-- First, output the list of annotation categories -->
+  <% if @annotation_categories.empty? %>
+    <li></li>
+  <% end %>
   <% @annotation_categories.each do |annotation_category| %>
   <li class="annotation_category" id="annotation_category_<%=annotation_category.id%>" onclick="return false;" onMouseDown="return false;">
 

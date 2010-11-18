@@ -41,7 +41,7 @@ class AnnotationsController < ApplicationController
           :annotation_number => submission.annotations.count + 1
         })
       when 'image'
-        @annotation = ImageAnnotation.create({
+        @annotation = AreaAnnotation.create({
           :annotation_text_id => @text.id,
           :submission_file_id => params[:submission_file_id],
           :x1 => Integer(params[:x1]), :x2 => Integer(params[:x2]),

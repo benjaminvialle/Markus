@@ -1,4 +1,4 @@
-class ImageAnnotation < Annotation
+class AreaAnnotation < Annotation
 
 
   #(x1, y1) is the top left corner and (x2, y2) is the bottom right corner
