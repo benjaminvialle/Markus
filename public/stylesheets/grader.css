@@ -504,4 +504,10 @@ ul#annotation_summary_list {
   padding: 10px;
 }
 
-
+#image_annotation_toolbar {
+  float: right;
+}
+  
+#image_annotation_toolbar select {
+  width: 50px;
+}	

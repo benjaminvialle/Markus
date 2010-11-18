@@ -3,6 +3,25 @@
     <ul id="code_and_annotations_tabs" class="subsection_tabs">
        <li class="tab"><a href="#code_holder"><%= I18n.t("marker.source_code") %></a></li>
        <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
+       <li id="image_annotation_toolbar">
+          <img src="/images/icons/pencil.png" alt="annotation" onclick="enable_shape_annotation();" />
+          <img src="/images/icons/shape_square_add.png" alt="annotation" onclick="enable_area_annotation();" />
+          <img src="/images/icons/comment_delete.png" alt="annotation" onclick="enable_annotation_eraser();" />
+          <img id="save_shape_annotations_button" src="/images/icons/disk.png" alt="annotation" onclick="save_shape_annotations()" />
+
+          <select>
+	    <option style="background-color: #ffffff;" value="ffffff" >&nbsp;</option>
+	    <option style="background-color: #ff0000;" value="ff0000">&nbsp;</option>
+	    <option style="background-color: #00ff00;" value="00ff00">&nbsp;</option>
+	    <option style="background-color: #0000ff;" value="0000ff">&nbsp;</option>
+	    <option style="background-color: #ff00ff;" value="ff00ff">&nbsp;</option>
+          </select>
+          <select>
+	    <% for i in 1..10 do%>
+              <option value="<%= i%>"><%= i%>px</option>
+            <% end %>
+          </select>
+       </li>
     </ul>  
     <div id="code_holder" class="tabbedArea">
       <div id="annotation_menu">
