@@ -85,7 +85,6 @@
     <p>
       <textarea id="new_annotation_content"></textarea>
     </p>
-    <p>
       <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
       <select id="new_annotation_category">
         <option value=""><%=t('annotations.one_time_only')%></option>
@@ -93,7 +92,6 @@
         <option value="<%=h(annotation_category.id)%>"><%=h(annotation_category.annotation_category_name)%></option>
         <% end %>
       </select>
-      </p>
       <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
         <button onclick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
         <button onclick="modal.close();"><%= I18n.t("cancel") %></button>
