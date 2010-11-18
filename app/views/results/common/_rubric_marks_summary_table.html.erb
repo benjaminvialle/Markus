@@ -7,7 +7,17 @@
     <th>=&nbsp;<%=t("summary_table.grade")%></th>
   </tr>
 </thead>
-<% @mark_criteria.each do |criterion| -%>
+<tbody>
+  <% # W3C COmplicance %>
+  <% if @mark_criteria.empty? %>
+    <tr>
+      <td></td>   
+      <td></td>   
+      <td></td>   
+      <td></td>   
+    </tr>
+  <% end %>
+  <% @mark_criteria.each do |criterion| -%>
 <%
    mark = marks_map[criterion.id]
    if mark.nil? or mark.mark.nil?
@@ -26,4 +36,5 @@
 </tr>
 
 <% end -%>
+</tbody>
 </table>  <!-- Summary Criteria Pane List -->

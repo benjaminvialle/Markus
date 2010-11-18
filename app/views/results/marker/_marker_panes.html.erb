@@ -28,6 +28,7 @@
       <p><%= I18n.t("marker.across_all_submission_files") %></p>
 
       <ul id="annotation_summary_list">
+        <li></li>
       </ul>
 
 
@@ -56,7 +57,11 @@
             <%# also need to render the mark per criteria (if exist) %>
             <% @mark_criteria.each do |mark_criterion| -%>
             <%= render :partial => "results/marker/marker_#{@assignment.marking_scheme_type}_criterion_li", :locals => {:mark_criterion => mark_criterion, :result => result, :mark => marks_map[mark_criterion.id]} %>
-            <% end -%>
+          <% end -%>
+          <% # W3C COmpliance condition %>
+          <% if @mark_criteria.empty? %>
+            <li></li>
+          <%end -%>
           </ul> <!-- Criterion Pane List -->
        </div> <!-- Criterion Pane -->
 

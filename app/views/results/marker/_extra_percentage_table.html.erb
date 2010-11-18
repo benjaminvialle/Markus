@@ -6,6 +6,14 @@
     </tr>
   </thead>
   <tbody id="extra_percentage_list" >
+    <% #W3C COmpliance %>
+    <% if extra_marks_percentage.empty? %>
+      <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    <% end %>
      <% extra_marks_percentage.each do |extra_percentage| -%>
        <%= render :partial => "results/marker/extra_percentage", :locals => {:extra_percentage => extra_percentage, :result_id=>result_id} %>
      <% end -%>
