@@ -33,7 +33,7 @@ var AnnotationTextDisplayer = Class.create({
     //string to display.  Each text will be contained in a <p> tag
     var final_string = '';
     collection.each(function(annotation_text) {
-      final_string += "<p>" + annotation_text.getContent() + "</p>";
+      final_string += "<p>" + annotation_text.getContent() + "BISOUH"+ "</p>";
     });
     
     //Update the Display node (a div, in this case) to be in the right
