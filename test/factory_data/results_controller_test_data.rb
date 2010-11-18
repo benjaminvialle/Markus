@@ -40,7 +40,7 @@ def make_submission(assignment, result_released, ta, group_name)
     :annotation_number => submission.annotations.count + 1
   })
 
-  image_annotation = ImageAnnotation.make({
+  image_annotation = AreaAnnotation.make({
     :annotation_text => AnnotationText.make(:annotation_category => annotation_category),
     :submission_file => SubmissionFile.make(:submission => submission),
     :annotation_number => submission.annotations.count + 1

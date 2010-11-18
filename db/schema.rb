@@ -10,6 +10,7 @@
 # It's strongly recommended to check this file into your version control system.
 
 
+
 ActiveRecord::Schema.define(:version => 20101104143604) do
 
 
@@ -42,6 +43,8 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
     t.integer "y2"
     t.string  "type"
     t.integer "annotation_number"
+    t.integer "thickness"
+    t.string  "color"
   end
 
   add_index "annotations", ["submission_file_id"], :name => "index_annotations_on_assignmentfile_id"
@@ -84,6 +87,9 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
     t.integer  "flexible_criterions_count"
     t.integer  "groupings_count"
     t.integer  "tokens_per_day",                   :default => 0,        :null => false
+    t.boolean  "allow_remarks",                    :default => true,     :null => false
+    t.datetime "remark_due_date"
+    t.text     "remark_message"
   end
 
   add_index "assignments", ["short_identifier"], :name => "index_assignments_on_name", :unique => true
@@ -252,6 +258,16 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
     t.integer "y"
   end
 
+<<<<<<< HEAD
+=======
+  create_table "points", :force => true do |t|
+    t.integer "shape_id"
+    t.integer "order"
+    t.integer "x"
+    t.integer "y"
+  end
+
+>>>>>>> 84659366ee66a126937159f30dd3a8b379f9e61d
   create_table "results", :force => true do |t|
     t.integer  "submission_id"
     t.string   "marking_state"
@@ -261,8 +277,6 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
     t.boolean  "released_to_students", :default => false, :null => false
     t.float    "total_mark",           :default => 0.0
   end
-
-  add_index "results", ["submission_id"], :name => "results_u1", :unique => true
 
   create_table "rubric_criteria", :force => true do |t|
     t.string   "rubric_criterion_name",                :null => false
@@ -310,6 +324,11 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
 
   create_table "shape", :force => true do |t|
     t.integer "annotation_id"
+<<<<<<< HEAD
+=======
+    t.string  "color"
+    t.integer "thickness"
+>>>>>>> 84659366ee66a126937159f30dd3a8b379f9e61d
   end
 
   create_table "submission_collectors", :force => true do |t|
@@ -344,6 +363,8 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
     t.boolean  "submission_version_used"
     t.integer  "revision_number",         :null => false
     t.datetime "revision_timestamp",      :null => false
+    t.integer  "remark_result_id"
+    t.text     "remark_request"
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"
