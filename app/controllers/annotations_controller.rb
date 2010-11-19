@@ -1,6 +1,6 @@
 class AnnotationsController < ApplicationController
-  
-  before_filter      :authorize_for_ta_and_admin
+
+  before_filter      :authorize_for_ta_and_admin, :except => :view_image_annotations
 
   # Not possible to do with image annotations.
   def add_existing_annotation
@@ -69,7 +69,7 @@ class AnnotationsController < ApplicationController
     end
 
   end
- 
+
   def update_annotation
     return unless request.post?
     @content = params[:annotation_text][:content]
@@ -91,6 +91,41 @@ class AnnotationsController < ApplicationController
     result.save;
     render :update do |page|
     end
+  end
+
+  #Retrieves the annotations associated to an image
+  def view_image_annotations
+    return unless request.get?
+    # Checks that the annotations are available for the students
+    #debugger
+    @assignment = Assignment.find(params[:assignment_id])
+    @grouping = current_user.accepted_grouping_for(@assignment.id)
+
+    if @grouping.nil?
+      redirect_to :controller => 'assignments', :action => 'student_interface', :id => params[:id]
+      return
+    end
+    if !@grouping.has_submission?
+      render 'results/student/no_submission'
+      return
+    end
+    @submission = @grouping.current_submission_used
+    if !@submission.has_result?
+      render 'results/student/no_result'
+      return
+    end
+    @result = @submission.result
+    if !@result.released_to_students
+      render 'results/student/no_result'
+      return
+    end
+
+    # Retrieve annotations
+    @submission_file = SubmissionFile.find(params[:submission_file_id],
+                            :include => [:annotations => {:points, :annotation_text}])
+    @annotations = @submission_file.annotations
+
+   render 'annotations/svg_annotation'
   end
 
 end
