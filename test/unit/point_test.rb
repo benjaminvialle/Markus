@@ -9,5 +9,6 @@ class PointTest < ActiveSupport::TestCase
   should validate_numericality_of :order
   should validate_numericality_of :x
   should validate_numericality_of :y
+  should belong_to(:shape_annotation)
 
 end

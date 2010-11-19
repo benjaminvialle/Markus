@@ -6,4 +6,6 @@ class ShapeAnnotation < Annotation
   #TODO add internationalization
   validates_format_of :color, :with => /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, :message => "Only an hexadecimal color is accepted."
 
+  has_many :point
+
 end
