@@ -4,10 +4,18 @@
        <li class="tab"><a href="#code_holder"><%= I18n.t("marker.source_code") %></a></li>
        <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
        <li id="image_annotation_toolbar">
-          <img src="/images/icons/pencil.png" alt="annotation" onclick="enable_shape_annotation();" />
-          <img src="/images/icons/shape_square_add.png" alt="annotation" onclick="enable_area_annotation();" />
-          <img src="/images/icons/comment_delete.png" alt="annotation" onclick="enable_annotation_eraser();" />
-          <img id="save_shape_annotations_button" src="/images/icons/disk.png" alt="annotation" onclick="save_shape_annotations()" />
+           <img id="shape_annotation_button"
+               src="/images/icons/pencil.png" alt="annotation"
+	       onclick="enable_shape_annotation();" />
+	   <img id="area_annotation_button"
+	       src="/images/icons/shape_square_add.png" alt="annotation"
+	       onclick="enable_area_annotation();" />
+	   <img id="delete_annotation_button"
+	       src="/images/icons/comment_delete.png" alt="annotation"
+	       onclick="enable_annotation_eraser();" />
+	   <img id="save_shape_annotations_button" style="display: none;"
+	       src="/images/icons/disk.png" alt="annotation"
+	       onclick="save_shape_annotations();" />
 
           <select>
 	    <option style="background-color: #ffffff;" value="ffffff" >&nbsp;</option>
@@ -27,32 +35,33 @@
       <div id="annotation_menu">
         <button id="new_annotation_button" onclick="make_new_annotation(); return false;"><%= I18n.t("marker.new_annot")%></button>
         <%= render :partial => "annotations/annotation_categories", :locals => {:annotation_categories => annotation_categories}%>
-         <div class="clear"></div>  
+         <div class="clear"></div>
       </div> <!-- End of annotation_menu -->
 
       <div class="clear"></div>
       <div id="codeviewer">
 
-      </div> <!-- codeviewer --> 
-      
+      </div> <!-- codeviewer -->
+
     </div> <!-- End of Code holder -->
-  
-    <div id="annotations_summary" class="tabbedArea">    
+
+    <div id="annotations_summary" class="tabbedArea">
 
       <h3><%= I18n.t("marker.overall_comments") %></h3>
 
        <%= render :partial => 'results/marker/overall_comment', :locals => {:result => result} %>
-       
+
       <h3><%= I18n.t("marker.current_annotations") %></h3>
       <p><%= I18n.t("marker.across_all_submission_files") %></p>
-    
+
       <ul id="annotation_summary_list">
+        <li></li>
       </ul>
-      
+
 
     </div> <!-- Annotations Summary -->
   </div> <!-- Code Pane -->
-  
+
   <!-- Divider  -->
   <div id="pane_divider">
   </div>
@@ -63,7 +72,7 @@
       <li class="tab"><a href="#mark_viewer"><%= I18n.t("marker.marks.marks") %></a></li>
       <li class="tab"><a href="#summary_viewer"><%= I18n.t("marker.marks.summary") %></a></li>
       <li class="tab"><a href="#submission_rule_viewer"><%= I18n.t("marker.marks.submission_rule") %></a></li>
-    </ul>  
+    </ul>
     <div id="mark_viewer" class="tabbedArea">
       <div class="mark_tools">
          <%= button_to_remote(I18n.t("marker.marks.expand_all"), :url => {:controller => 'results', :action => 'expand_criteria', :aid => @assignment.id}) %>
@@ -75,36 +84,37 @@
             <%# also need to render the mark per criteria (if exist) %>
             <% @mark_criteria.each do |mark_criterion| -%>
             <%= render :partial => "results/marker/marker_#{@assignment.marking_scheme_type}_criterion_li", :locals => {:mark_criterion => mark_criterion, :result => result, :mark => marks_map[mark_criterion.id]} %>
-            <% end -%>
+          <% end -%>
+          <% # W3C COmpliance condition %>
+          <% if @mark_criteria.empty? %>
+            <li></li>
+          <%end -%>
           </ul> <!-- Criterion Pane List -->
        </div> <!-- Criterion Pane -->
-       
+
     </div>  <!-- Criterion Viewer -->
-  
+
   <div id="summary_viewer" class="marks_summary_pane tabbedArea">
     <%= render :partial => "results/marker/marker_summary", :locals => {:mark_criteria => mark_criteria, :marks_map => marks_map, :assignment => assignment, :result => result, :extra_marks_points => extra_marks_points, :extra_marks_percentage => extra_marks_percentage}%>
   </div>
-   
+
   <div id="submission_rule_viewer" class="tabbedArea">
     <%= render :partial => assignment.submission_rule.grader_tab_partial, :locals => {:grouping => result.submission.grouping} %>
   </div>
-  
+
   <!-- Annotation pane-->
   <div id="annotation_holder">
   </div>
-  
+
   <div id="create_annotation_dialog" style="display:none;">
     <input type="hidden" id="x1" value=""></input>
     <input type="hidden" id="x2" value=""></input>
     <input type="hidden" id="y1" value=""></input>
     <input type="hidden" id="y2" value=""></input>
-    <p>
       <h2><%= I18n.t("marker.annotation.new_annotation") %></h2>
-    </p>
     <p>
-      <textarea id="new_annotation_content"></textarea>
+      <textarea id="new_annotation_content" rows="3" cols="42"></textarea>
     </p>
-    <p>
       <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
       <select id="new_annotation_category">
         <option value=""><%=t('annotations.one_time_only')%></option>
@@ -112,7 +122,6 @@
         <option value="<%=h(annotation_category.id)%>"><%=h(annotation_category.annotation_category_name)%></option>
         <% end %>
       </select>
-      </p>
       <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
         <button onclick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
         <button onclick="modal.close();"><%= I18n.t("cancel") %></button>

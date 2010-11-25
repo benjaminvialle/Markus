@@ -83,7 +83,7 @@ class SubmissionFile < ActiveRecord::Base
     return unless self.is_supported_image? || self.is_pdf?
     all_annotations = []
     self.annotations.each do |annot|
-      if annot.is_a?(ImageAnnotation)
+      if annot.is_a?(AreaAnnotation)
         extracted_coords = annot.extract_coords
         return nil if extracted_coords.nil?
         all_annotations.push(extracted_coords)
