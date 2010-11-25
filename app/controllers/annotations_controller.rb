@@ -121,11 +121,13 @@ class AnnotationsController < ApplicationController
     end
 
     # Retrieve annotations
-    @submission_file = SubmissionFile.find(params[:submission_file_id],
-                            :include => [:annotations => {:points, :annotation_text}])
+    @submission_file = SubmissionFile.find(params[:submission_file_id])
+    #@annotations = Annotation.find(:all,
+    #                        :include => [:submission_file])
     @annotations = @submission_file.annotations
+    @annotations.collect { |a| a.annotation_text }.flatten
 
-   render 'annotations/svg_annotation'
+    render 'annotations/svg_annotation'
   end
 
 end

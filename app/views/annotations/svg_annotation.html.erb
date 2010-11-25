@@ -1,0 +1,32 @@
+<?xml version="1.0" standalone="no"?>
+
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  version="1.1" onload="init(evt)">
+  <script xlink:href="/public/javascripts/annotation_svg.js" />
+  <g id="shapes">
+<% @annotations.each do |annotation| %>
+  <g id="shape_<%= annotation.id%>">
+<%# if annotation.type == "shape": %>
+<%# else if annotation.type == "area": %>
+    <rect x="<%= annotation.x1%>" y="<%= annotation.y1%>"
+      width="<%= (annotation.y2 - annotation.y1)%>"
+      height="<%= (annotation.x2 - annotation.x1)%>" />
+<%# end %>
+  </g>
+<% end %>
+  </g>
+  <g id="annotations">
+<% @annotations.each do |annotation| %>
+  <g id="annotation_<%= annotation.id%>">
+  <text><%= annotation.annotation_text.content %></text>
+  </g>
+<% end %>
+  </g>
+
+</svg>
+
