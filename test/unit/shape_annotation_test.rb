@@ -6,7 +6,7 @@ class ShapeAnnotationTest < ActiveSupport::TestCase
   should validate_presence_of :thickness
   should validate_presence_of :color
   should validate_numericality_of :thickness
-  should have_many(:point)
+  should have_many(:points)
 
   context "valid Color" do
     setup do
