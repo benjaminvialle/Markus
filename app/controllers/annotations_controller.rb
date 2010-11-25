@@ -1,6 +1,7 @@
 class AnnotationsController < ApplicationController
-  
-  before_filter      :authorize_for_ta_and_admin
+
+  before_filter      :authorize_for_ta_and_admin, :except => :view_image_annotations
+  layout "empty_svg.svg",   :only => [:view_image_annotations]
 
   # Not possible to do with image annotations.
   def add_existing_annotation
@@ -69,7 +70,7 @@ class AnnotationsController < ApplicationController
     end
 
   end
- 
+
   def update_annotation
     return unless request.post?
     @content = params[:annotation_text][:content]
@@ -91,6 +92,17 @@ class AnnotationsController < ApplicationController
     result.save;
     render :update do |page|
     end
+  end
+
+  #Retrieves the annotations associated to an image
+  def view_image_annotations
+    return unless request.get?
+    # Retrieve annotations
+    @submission_file = SubmissionFile.find(params[:submission_file_id])
+    @annotations = @submission_file.annotations
+    @annotations.collect { |a| a.annotation_text }.flatten
+
+    render 'annotations/svg_annotations/annotations.svg.erb'
   end
 
 end
