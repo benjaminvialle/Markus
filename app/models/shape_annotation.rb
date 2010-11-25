@@ -1,6 +1,5 @@
 class ShapeAnnotation < Annotation
 
-
   validates_presence_of :thickness, :color
   validates_numericality_of :thickness
   #TODO add internationalization
