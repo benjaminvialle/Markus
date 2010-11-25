@@ -5,10 +5,18 @@
        <li class="tab"><a href="#annotations_summary"><%= I18n.t("marker.annot_summary") %></a></li>
     </ul>
        <li id="image_annotation_toolbar">
-          <img src="/images/icons/pencil.png" alt="annotation" onclick="enable_shape_annotation();" />
-          <img src="/images/icons/shape_square_add.png" alt="annotation" onclick="enable_area_annotation();" />
-          <img src="/images/icons/comment_delete.png" alt="annotation" onclick="enable_annotation_eraser();" />
-          <img id="save_shape_annotations_button" src="/images/icons/disk.png" alt="annotation" onclick="save_shape_annotations()" />
+           <img id="shape_annotation_button"
+               src="/images/icons/pencil.png" alt="annotation"
+      onclick="enable_shape_annotation();" />
+  <img id="area_annotation_button"
+      src="/images/icons/shape_square_add.png" alt="annotation"
+      onclick="enable_area_annotation();" />
+  <img id="delete_annotation_button"
+      src="/images/icons/comment_delete.png" alt="annotation"
+      onclick="enable_annotation_eraser();" />
+  <img id="save_shape_annotations_button" style="display: none;"
+      src="/images/icons/disk.png" alt="annotation"
+      onclick="save_shape_annotations();" />
 
           <select>
    <option style="background-color: #ffffff;" value="ffffff" >&nbsp;</option>
@@ -23,6 +31,7 @@
             <% end %>
           </select>
        </li>
+    </ul>
     </ul>
     <div id="code_holder" class="tabbedArea">
       <div id="annotation_menu">
