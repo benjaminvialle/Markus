@@ -8,4 +8,11 @@ class ShapeAnnotation < Annotation
 
   has_many :points
 
+  # Return an array containing all points related to a shape
+  def points
+    points = Point.find_by_shape_id(self.id)
+  end
+
+
+
 end
