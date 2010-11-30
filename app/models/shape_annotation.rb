@@ -9,9 +9,6 @@ class ShapeAnnotation < Annotation
 
   # Return an array containing all points related to a shape
   def points
-    points = Point.find_by_shape_id(self.id)
+    points = Point.find_all_by_shape_annotation_id(self.id)
   end
-
-
-
 end
