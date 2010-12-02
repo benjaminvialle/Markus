@@ -118,6 +118,7 @@ namespace :markus do
 
 
 	annotationtext=AnnotationText.create
+annotationtext.content="Assignment goals pretty much met, but some things would need improvement. Other things are absolutely fantastic! Seriously, this is just some random text."
 	annotationtext.save
 
 	annotation=ShapeAnnotation.create
@@ -137,28 +138,9 @@ namespace :markus do
         curr_assignment_num = 1
         num_of_points = rand(6) + 10
         curr_point_num = 1
-          while (curr_point_num <= num_of_points) do
 
-            puts "Start Generating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
-	    point_order = curr_point_num+curr_shape_num
-	    point_x=rand(100)
-	    point_y=rand(100)
-
-            point=Point.create(:order => point_order,:coord_x => point_x,:coord_y => point_y)
-
-
-		if !point.save
-		puts "Point is not saved"
-		end
-
-	    puts "Finish creating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
-
-	    curr_assignment_num += 1
-	    curr_point_num += 1
-
-          end
-
-          puts "Start Generating ShapeAnnotation # "+ curr_shape_num.to_s
+	    
+	              puts "Start Generating ShapeAnnotation # "+ curr_shape_num.to_s
 	shapeAnnotation = ShapeAnnotation.create
           shapeAnnotation.color = '#FF0000'
 	shapeAnnotation.annotation_number=annotation.annotation_number
@@ -172,9 +154,41 @@ namespace :markus do
 		puts "shapeAnnotation is not saved"
 		end
 
+
+
+
+
+
           puts "Finish creating ShapeAnnotation # "+ curr_shape_num.to_s
-        curr_shape_num += 1
+
+        
+	              while (curr_point_num <= num_of_points) do
+
+            puts "Start Generating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
+	
+            point=Point.create
+		point.order=point_order = curr_point_num+curr_shape_num
+		point.coord_x=point_x=rand(100)
+		point.coord_y=point_y=rand(100)
+		point.shape_annotation_id=shapeAnnotation.id
+
+
+
+		if !point.save
+		puts "Point is not saved"
+		end
+
+	    puts "Finish creating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
+
+	    curr_assignment_num += 1
+	    curr_point_num += 1
+
+          end
+
+
+		curr_shape_num += 1
       end
+
      end
   end
 end
