@@ -120,10 +120,13 @@ namespace :markus do
 	annotationtext=AnnotationText.create
 	annotationtext.save
 
-	annotation=Annotation.create
+	annotation=ShapeAnnotation.create
 	annotation.annotation_text_id=annotationtext.id
 	annotation.submission_file_id=submissionfile.id
-	
+	annotation.type='ShapeAnnotation'
+	annotation.thickness=rand(10)
+	annotation.color='#FF0000'
+	annotation.annotation_number=rand(10)
 	annotation.save
 
 
