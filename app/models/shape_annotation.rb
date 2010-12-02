@@ -1,6 +1,5 @@
 class ShapeAnnotation < Annotation
 
-
   validates_presence_of :thickness, :color
   validates_numericality_of :thickness
   #TODO add internationalization
@@ -8,4 +7,8 @@ class ShapeAnnotation < Annotation
 
   has_many :points
 
+  # Return an array containing all points related to a shape
+  def points
+    points = Point.find_all_by_shape_annotation_id(self.id)
+  end
 end

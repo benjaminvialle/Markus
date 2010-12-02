@@ -253,6 +253,13 @@ Period.blueprint do
   hours {rand(24)}
 end
 
+Point.blueprint do
+  shape_annotation_id {ShapeAnnotation.make.id}
+  coord_x {rand(100)}
+  coord_y {rand(100)}
+  order {rand(5)}
+end
+
 Ta.blueprint do
   user_name {Sham.ta_user_name}
   first_name {Sham.first_name}
