@@ -145,7 +145,11 @@ namespace :markus do
 	    point_y=rand(100)
 
             point=Point.create(:order => point_order,:coord_x => point_x,:coord_y => point_y)
-            point.save
+
+
+		if !point.save
+		puts "Point is not saved"
+		end
 
 	    puts "Finish creating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
 
@@ -155,11 +159,19 @@ namespace :markus do
           end
 
           puts "Start Generating ShapeAnnotation # "+ curr_shape_num.to_s
+	shapeAnnotation = ShapeAnnotation.create
+          shapeAnnotation.color = '#FF0000'
+	shapeAnnotation.annotation_number=annotation.annotation_number
+	shapeAnnotation.annotation_text_id=annotationtext.id
 
-          color = #FFFF0000
-          thickness = rand(5)
-          shapeAnnotation = ShapeAnnotation.create(:color => color,:thickness => thickness)
-          shapeAnnotation.save
+          shapeAnnotation.thickness = rand(5)
+	shapeAnnotation.submission_file_id=submissionfile.id
+
+
+		if !shapeAnnotation.save
+		puts "shapeAnnotation is not saved"
+		end
+
           puts "Finish creating ShapeAnnotation # "+ curr_shape_num.to_s
         curr_shape_num += 1
       end
