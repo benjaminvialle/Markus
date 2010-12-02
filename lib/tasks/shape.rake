@@ -13,26 +13,11 @@ namespace :markus do
           while (curr_point_num <= num_of_points) do
 
             puts "Start Generating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
-
-
-
-
- while (Assignment.find_by_short_identifier( assignment_short_identifier)) do
-          curr_assignment_num_for_name += 1
-          assignment_short_identifier = "A" + curr_assignment_num_for_name.to_s
-        end
-
-        puts assignment_short_identifier
-        assignment = Assignment.create
-
-
-
-	    point_shape_id = curr_shape_num
 	    point_order = curr_point_num+curr_shape_num
 	    point_x=rand(100)
 	    point_y=rand(100)
 
-            point=Point.create(:shape_id => point_shape_id,:order => point_order,:x => point_x,:y => point_y)
+            point=Point.create(:order => point_order,:coord_x => point_x,:coord_y => point_y)
             point.save
 
 	    puts "Finish creating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
