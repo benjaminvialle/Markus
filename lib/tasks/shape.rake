@@ -108,6 +108,7 @@ namespace :markus do
 
 	date_of_submission = Time.random(:year_range=>1)
 	submission = Submission.create_by_timestamp(grouping, date_of_submission)
+
 	submission.save
 
 	submissionfile=SubmissionFile.create
@@ -118,6 +119,12 @@ namespace :markus do
 
 	annotationtext=AnnotationText.create
 	annotationtext.save
+
+	annotation=Annotation.create
+	annotation.annotation_text_id=annotationtext.id
+	annotation.submission_file_id=submissionfile.id
+	
+	annotation.save
 
 
 
