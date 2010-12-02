@@ -97,10 +97,12 @@ class AnnotationsController < ApplicationController
   #Retrieves the annotations associated to an image
   def view_image_annotations
     return unless request.get?
-    # Retrieve annotations
     @submission_file = SubmissionFile.find(params[:submission_file_id])
+    #TODO Check if the user is allowed to retrieve the file
+    #Retrieving Shapes and Areas annotations
     @annotations = @submission_file.annotations
-    @annotations.collect { |a| a.annotation_text }.flatten
+    @points = @annotations.first.points
+
 
     render 'annotations/svg_annotations/annotations.svg.erb'
   end
