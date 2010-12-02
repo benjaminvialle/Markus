@@ -16,7 +16,6 @@ class Time
     end
     date
   end
-
 end 
 
 
@@ -118,7 +117,7 @@ namespace :markus do
 
 
 	annotationtext=AnnotationText.create
-annotationtext.content="Assignment goals pretty much met, but some things would need improvement. Other things are absolutely fantastic! Seriously, this is just some random text."
+	annotationtext.content="Assignment goals pretty much met, but some things would need improvement. Other things are absolutely fantastic! Seriously, this is 		just some random text."
 	annotationtext.save
 
 	annotation=ShapeAnnotation.create
@@ -132,64 +131,52 @@ annotationtext.content="Assignment goals pretty much met, but some things would 
 
 
 
-      num_of_shapes = rand(3) + 3
-      curr_shape_num=1
-      while(curr_shape_num <= num_of_shapes) do
-        curr_assignment_num = 1
-        num_of_points = rand(6) + 10
-        curr_point_num = 1
+	num_of_shapes = rand(3) + 3
+	curr_shape_num=1
+	while(curr_shape_num <= num_of_shapes) do
+		
+	        puts "Start Generating ShapeAnnotation # "+ curr_shape_num.to_s
+			shapeAnnotation = ShapeAnnotation.create
+			shapeAnnotation.color = '#FF0000'
+			shapeAnnotation.annotation_number=annotation.annotation_number
+			shapeAnnotation.annotation_text_id=annotationtext.id
+			shapeAnnotation.thickness = rand(5)
+			shapeAnnotation.submission_file_id=submissionfile.id
 
-	    
-	              puts "Start Generating ShapeAnnotation # "+ curr_shape_num.to_s
-	shapeAnnotation = ShapeAnnotation.create
-          shapeAnnotation.color = '#FF0000'
-	shapeAnnotation.annotation_number=annotation.annotation_number
-	shapeAnnotation.annotation_text_id=annotationtext.id
+			if !shapeAnnotation.save
+				puts "shapeAnnotation is not saved"
+			end
 
-          shapeAnnotation.thickness = rand(5)
-	shapeAnnotation.submission_file_id=submissionfile.id
+		puts "Finish creating ShapeAnnotation # "+ curr_shape_num.to_s
 
+		num_of_points = rand(6) + 10
+		curr_point_num = 1
+		curr_assignment_num = 1
+		
+		while (curr_point_num <= num_of_points) do
 
-		if !shapeAnnotation.save
-		puts "shapeAnnotation is not saved"
-		end
+			puts "Start Generating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
 
+			point=Point.create
+			point.order=point_order = curr_point_num+curr_shape_num
+			point.coord_x=point_x=rand(100)
+			point.coord_y=point_y=rand(100)
+			point.shape_annotation_id=shapeAnnotation.id
 
+			if !point.save
+			puts "Point is not saved"
+			end
 
+	    		puts "Finish creating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
 
+			curr_assignment_num += 1
+			curr_point_num += 1
 
-
-          puts "Finish creating ShapeAnnotation # "+ curr_shape_num.to_s
-
-        
-	              while (curr_point_num <= num_of_points) do
-
-            puts "Start Generating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
-	
-            point=Point.create
-		point.order=point_order = curr_point_num+curr_shape_num
-		point.coord_x=point_x=rand(100)
-		point.coord_y=point_y=rand(100)
-		point.shape_annotation_id=shapeAnnotation.id
-
-
-
-		if !point.save
-		puts "Point is not saved"
-		end
-
-	    puts "Finish creating Point # " + curr_assignment_num.to_s + " of Shape # "+ curr_shape_num.to_s
-
-	    curr_assignment_num += 1
-	    curr_point_num += 1
-
-          end
-
-
+          	end
 		curr_shape_num += 1
       end
-
-     end
-  end
 end
-end      
+end
+end
+end
+
