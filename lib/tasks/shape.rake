@@ -59,7 +59,7 @@ namespace :markus do
 	grouping.group_id=group.id
 	grouping.save
 
-	date_of_submission = Time.random(:year_range=>1)
+	date_of_submission = Time.local(Time.now.year-1,1,1)
 	submission = Submission.create_by_timestamp(grouping, date_of_submission)
 	submission.save
 
