@@ -538,7 +538,23 @@ class Grouping < ActiveRecord::Base
     end
     return result.map{|a| a.criterion}.uniq
   end
-  
+# Define who can see the submission.
+
+  def ensure_can_see?(user)
+	allow_to_see = true
+		if user.student?
+			if self.membership_status(user).nil?
+				allow_to_see = false
+			end
+		else
+			if !(user.admin?)
+				if !(ta_memberships.find_all_by_user_id.include?(user.id))
+					allow_to_see = false
+				end
+			end
+		end
+	allow_to_see
+end	
   private
   
   # Once a grouping is valid, grant (write) repository permissions for students
@@ -642,4 +658,7 @@ class Grouping < ActiveRecord::Base
       end
     end
   end
-end # end class Grouping
+
+end 
+# end class Grouping
+  

@@ -98,13 +98,16 @@ class AnnotationsController < ApplicationController
   def view_image_annotations
     return unless request.get?
     @submission_file = SubmissionFile.find(params[:submission_file_id])
-    #TODO Check if the user is allowed to retrieve the file
-    #Retrieving Shapes and Areas annotations
-    @annotations = @submission_file.annotations
-    @points = @annotations.first.points
+    submission = Submission.find_by_id(@submission_file.submission_id)
+    grouping = Grouping.find_by_id(submission.grouping_id)
 
-
-    render 'annotations/svg_annotations/annotations.svg.erb'
+    if grouping.ensure_can_see?(current_user)
+      @annotations = @submission_file.annotations
+      @points = @annotations.first.points
+      render 'annotations/svg_annotations/annotations.svg.erb'
+    else
+      render :file => "#{RAILS_ROOT}/public/404.html",
+         :status => 404
+    end
   end
-
 end
