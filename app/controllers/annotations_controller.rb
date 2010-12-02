@@ -97,12 +97,19 @@ class AnnotationsController < ApplicationController
   #Retrieves the annotations associated to an image
   def view_image_annotations
     return unless request.get?
-    # Retrieve annotations
+    # Retrieve annotations 
     @submission_file = SubmissionFile.find(params[:submission_file_id])
-    @annotations = @submission_file.annotations
-    @annotations.collect { |a| a.annotation_text }.flatten
-
-    render 'annotations/svg_annotations/annotations.svg.erb'
+    submission = Submission.find_by_id(@submission_file.submission_id)
+    grouping = Grouping.find_by_id(submission.grouping_id)
+    
+    if grouping.ensure_can_see?(current_user)
+    	 @annotations = @submission_file.annotations
+    	 @annotations.collect { |a| a.annotation_text }.flatten
+    	 render 'annotations/svg_annotations/annotations.svg.erb'
+    else
+	 render :file => "#{RAILS_ROOT}/public/404.html",  
+         :status => 404
+    end
+        
   end
-
 end
