@@ -248,13 +248,6 @@ ActiveRecord::Schema.define(:version => 20101114123924) do
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
 
-  create_table "point", :force => true do |t|
-    t.integer "shape_id"
-    t.integer "order"
-    t.integer "x"
-    t.integer "y"
-  end
-
   create_table "points", :force => true do |t|
     t.integer "shape_annotation_id"
     t.integer "order"
