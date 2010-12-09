@@ -261,10 +261,10 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
 <<<<<<< HEAD
 =======
   create_table "points", :force => true do |t|
-    t.integer "shape_id"
+    t.integer "shape_annotation_id"
     t.integer "order"
-    t.integer "x"
-    t.integer "y"
+    t.integer "coord_x"
+    t.integer "coord_y"
   end
 
 >>>>>>> 84659366ee66a126937159f30dd3a8b379f9e61d
