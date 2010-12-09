@@ -103,7 +103,7 @@ class AnnotationsController < ApplicationController
 
     if grouping.ensure_can_see?(current_user)
       @annotations = @submission_file.annotations
-      @points = @annotations.first.points
+      #@points = @annotations.first.points
       render 'annotations/svg_annotations/annotations.svg.erb'
     else
       render :file => "#{RAILS_ROOT}/public/404.html",
