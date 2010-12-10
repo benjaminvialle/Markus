@@ -245,7 +245,77 @@ class GroupingTest < ActiveSupport::TestCase
         assert_equal @submission5, @grouping.current_submission_used
       end
     end
-  end # end grouping context
+
+    context "containing a user" do
+      setup do 
+        clear_fixtures
+        @grouping = Grouping.make
+        @submission = Submission.make(:grouping => @grouping)
+        @student = Student.make
+        @membership = StudentMembership.make(:grouping => @grouping,:user => @student)
+      end
+      should " allow him to see the file" do
+        assert @grouping.ensure_can_see?(@student)
+      end
+    end
+    
+    context "rejecting a membership" do
+      setup do 
+        clear_fixtures
+        @grouping = Grouping.make
+        @submission = Submission.make(:grouping => @grouping)
+        @student = Student.make
+        @membership = StudentMembership.make(:grouping => @grouping,:user => @student, :membership_status => StudentMembership::STATUSES[:rejected])
+      end
+      should "not allow it's members to see the submission file" do
+        assert  !@grouping.ensure_can_see?(@student)
+      end
+    end
+
+    context "submitting a file" do
+      setup do
+        clear_fixtures
+        @grouping = Grouping.make
+	@submission = Submission.make(:grouping => @grouping)
+        @membership = StudentMembership.make(:grouping => @grouping)
+	@admin = Admin.make
+      end
+      should "allow the admin to see the submission file" do
+        assert @grouping.ensure_can_see?(@admin)
+      end
+    end
+
+    context "matching with a grader" do
+      setup do 
+        clear_fixtures
+        @grouping = Grouping.make
+        @submission = Submission.make(:grouping => @grouping)
+        @membership = StudentMembership.make(:grouping => @grouping)
+	@ta = Ta.make
+	@tamembership = TaMembership.make(:grouping => @grouping,:user => @ta,:membership_status => 'accepted')
+      end
+      should " allow it's grader to see the submission file" do
+        assert @grouping.ensure_can_see?(@ta)
+      end
+    end
+
+    context "rejecting a grader" do
+      setup do 
+        clear_fixtures
+        @grouping = Grouping.make
+        @submission = Submission.make(:grouping => @grouping)
+        @membership = StudentMembership.make(:grouping => @grouping)
+	@ta = Ta.make
+	@tamembership = TaMembership.make(:grouping => @grouping,:user => @ta,:membership_status => 'rejected')
+      end
+      should " not allow this grader to see the submission file" do
+        assert !@grouping.ensure_can_see?(@ta)
+      end
+    end
+
+
+  end
+  # end grouping context
 
   def test_should_not_save_without_group
     grouping = Grouping.new
@@ -546,4 +616,5 @@ Blanche Nef,ta2'''
   # TODO: create test for create_grouping_repository_factory
   #
   #########################################################"
-end
+  end
+
