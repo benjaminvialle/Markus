@@ -16,23 +16,29 @@
 <% if annotation.type == "ShapeAnnotation" %>
     <%
      paths = []
-     index = 0
-     annotation.shape.points.each do |point|
+     currentPath = ""
+     annotation.points.each do |point|
        # Split the shape in several paths, this is due to the fact that svg
        # uses the shape outlined by the path rather than the path itself to
        # detect mouseover events
-       if path[index] > 10
-         # Duplicate the last point
-         paths[index] = "L" + point.coord_x + "," + point.coord_y
-         index++
-         paths[index] = "M" + point.coord_x + "," + point.coord_y
-       elsif
-         paths[index] = "L" + point.coord_x + "," + point.coord_y
+       if currentPath == ""
+         # First point of the shape
+         currentPath = "M" + point.coord_x.to_s  + "," + point.coord_y.to_s
+       elsif currentPath.split.length >= 9
+         # Duplicate the last point of the path
+         currentPath += " L" + point.coord_x.to_s  + "," + point.coord_y.to_s
+         paths.push(currentPath)
+         currentPath = "M" + point.coord_x.to_s  + "," + point.coord_y.to_s
+       else
+         # Normal point within a path
+         currentPath += " L" + point.coord_x.to_s + "," + point.coord_y.to_s
        end
      end
+
+     paths.push(currentPath)
     %>
     <% paths.each do |path| %>
-      <path d="<%= path %>" />
+      <path style="stroke: #FF0000; fill: none;" d="<%= path %>" />
     <% end %>
 <% elsif annotation.type == "AreaAnnotation" %>
     <rect x="<%= annotation.x1%>" y="<%= annotation.y1%>"
