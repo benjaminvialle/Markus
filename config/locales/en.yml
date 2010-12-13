@@ -1032,6 +1032,8 @@ en:
         tokens_no_more_available: "<span class=\"prop_label\">Tokens available:</span >No more tokens available "
         tokens_available: "<span class=\"prop_label\">Tokens available:</span> %{tokens}"
 
+      error_svg: "Could not print the SVG."
+
 #Missing Activerecord Translations for english
     datetime:
       distance_in_words:
