@@ -1,33 +1,15 @@
 var shapeAnnotation = {
-    tracker: function(e) {
-        if(shape.lastCoords == null ||
-            Math.max(Math.abs(e.pageX - shape.lastCoords.x),
-            Math.abs(e.pageY - shape.lastCoords.y)) > 5) {
+    trackMove: function(e) {
+        if(shapeAnnotation.lastCoords == null ||
+            Math.max(Math.abs(e.pageX - shapeAnnotation.lastCoords.x),
+            Math.abs(e.pageY - shapeAnnotation.lastCoords.y)) > 5) {
             var now = new Date().getTime();
-            if(now - shape.lastTime > 50) {    
-                shape.addPoint(e.pageX, e.pageY);
-                shape.lastCoords = {x: e.pageX, y:e.pageY};
-                shape.lastTime = now;
+            if(now - shapeAnnotation.lastTime > 50) {    
+                shapeAnnotation.addPoint(e.pageX, e.pageY);
+                shapeAnnotation.lastCoords = {x: e.pageX, y:e.pageY};
+                shapeAnnotation.lastTime = now;
             }
         }
-    },
-    init: function() {
-        this.shapeCounter = 0;
-        document.addEventListener("mousedown", function(e) {
-            // Disable the drag'n'drop feature for images in
-            // firefox. As the annotated image *is* the background,
-            // this was quite annoying
-            if(e.preventDefault)
-                e.preventDefault();
-            shape.newCurve();
-            document.addEventListener("mousemove", shape.tracker, false);
-        }, false);
-
-        document.addEventListener("mouseup", function(e) {
-            document.removeEventListener("mousemove", shape.tracker, false);
-            shape.finalizeCurve();
-        }, false);
-
     },
 
     addPoint: function(x, y) {
@@ -40,10 +22,10 @@ var shapeAnnotation = {
         }
 
         path.setAttribute("d", points);
-        shape.points++;
+        shapeAnnotation.points++;
     },
     
-    newCurve: function() {
+    create: function() {
         var newGroup = document.createElementNS("http://www.w3.org/2000/svg", "g"),
             newPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
@@ -55,8 +37,7 @@ var shapeAnnotation = {
 
     },
 
-    finalizeCurve: function() {
-        console.debug("Finalize");
+    finalize: function() {
         // Moves the old shape
         var oldGroup = document.getElementById("shape_current"),
             oldPath = oldGroup.firstChild,
@@ -93,8 +74,8 @@ var shapeAnnotation = {
 
         }
 
-        oldGroup.setAttribute("id", "new_shape_" + shape.counter);
-        shape.counter++;        
+        oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
+        shapeAnnotation.counter++;        
     },
 
     counter: 0,
@@ -110,7 +91,7 @@ var areaAnnotation = {
 };
 
 var Handler = {
-    mode: "view",
+    mode: "shape",
     init: function() {
         document.addEventListener("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
@@ -119,16 +100,20 @@ var Handler = {
             if(e.preventDefault)
                 e.preventDefault();
             if(Handler.mode == "shape") {
-                shapeAnnotation.newCurve();
+                shapeAnnotation.create();
             } else if(Handler.mode = "area") {
-                areaAnnotation.newCurve();
+                areaAnnotation.create();
             }
             document.addEventListener("mousemove", Handler.trackMove, false);
         }, false);
 
         document.addEventListener("mouseup", function(e) {
-            document.removeEventListener("mousemove", shape.tracker, false);
-            shape.finalizeCurve();
+            document.removeEventListener("mousemove", Handler.trackMove, false);
+            if(Handler.mode == "shape") {
+                shapeAnnotation.finalize();
+            } else if(Handler.mode = "area") {
+                areaAnnotation.finalize();
+            }
         }, false);
     },
 
@@ -146,9 +131,21 @@ var Handler = {
             this.mode = "view";
         
         }
+    },
+
+    trackMove: function(e) {
+        if(Handler.mode == "shape") {
+            shapeAnnotation.trackMove(e);
+        } else if(Handler.mode == "area") {
+            areaAnnotation.trackMove(e);
+        }
+    },
+
+    save: function(e) {
+        // Save the shapes drawn
     }
 
 };
 
-document.addEventListener("DOMContentLoaded", shape.init, false)
+document.addEventListener("DOMContentLoaded", Handler.init, false);
 
