@@ -63,7 +63,7 @@ var shapeAnnotation = {
                     }
 
                     currentPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    currentPath.setAttribute("style", "stroke: #FF0000; fill: none;");
+                    //currentPath.setAttribute("style", "stroke: #FF0000; fill: none;");
                     currentPath.setAttribute("d", "M" + point.x + "," + point.y);
                     oldGroup.appendChild(currentPath);
                 } else {
