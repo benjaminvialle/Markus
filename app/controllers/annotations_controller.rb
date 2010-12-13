@@ -110,4 +110,33 @@ class AnnotationsController < ApplicationController
          :status => 404
     end
   end
+
+  def write_annotations
+    return unless request.post?
+    annotationtext = TextAnnotation.new
+    annotationtext.save 
+    liste_annotations.each do |obj|
+      if obj.type = "shape"
+        shapeAnnotation = ShapeAnnotation.new
+	shapeAnnotation.annotation_text_id = annotationtext.id
+	shapeAnnotation.save
+	  points.each do |member|
+	    point = Point.new
+	    point.coord_x = member.x
+	    point.coord_y = member.y
+	    point.shape_annotation_id=shapeAnnotation.id
+	    point.save
+	  end
+      else       
+        areaAnnotation = AeraAnnotation.new
+	areaAnnotation.annotation_text_id = annotationtext.id
+	  edges.each do |member|
+	    areaAnnotation.y1 = member.top
+	    areaAnnotation.x1 = member.left
+	    areaAnnotation.y2 = member.bottom
+	    areaAnnotation.x2 = member.right
+	    areaAnnotation.save
+	  end
+      end
+    end
 end
