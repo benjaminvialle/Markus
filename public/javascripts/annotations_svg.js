@@ -90,8 +90,12 @@ var areaAnnotation = {
 
 };
 
+var annotation_text_displayer = {
+
+}
+
 var Handler = {
-    mode: "shape",
+    mode: "view",
     init: function() {
         document.addEventListener("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
@@ -101,7 +105,7 @@ var Handler = {
                 e.preventDefault();
             if(Handler.mode == "shape") {
                 shapeAnnotation.create();
-            } else if(Handler.mode = "area") {
+            } else if(Handler.mode == "area") {
                 areaAnnotation.create();
             }
             document.addEventListener("mousemove", Handler.trackMove, false);
@@ -111,10 +115,13 @@ var Handler = {
             document.removeEventListener("mousemove", Handler.trackMove, false);
             if(Handler.mode == "shape") {
                 shapeAnnotation.finalize();
-            } else if(Handler.mode = "area") {
+            } else if(Handler.mode == "area") {
                 areaAnnotation.finalize();
             }
         }, false);
+        
+        annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
+            
     },
 
     setMode: function(mode) {
@@ -138,6 +145,9 @@ var Handler = {
             shapeAnnotation.trackMove(e);
         } else if(Handler.mode == "area") {
             areaAnnotation.trackMove(e);
+        } else if(Handler.mode == 'view') {
+            // Call The Annotation Text Displayer
+            console.debug(annotation_text_displayer);
         }
     },
 

@@ -4,7 +4,7 @@ This class is in charge of displaying collections of Annotation Texts.  It puts 
 in a G with a class called "annotation_text_display" and is in charge of displaying
 that G at given coordinates, and hiding that G.
 
-Multiple texts are displayed at once, and each one is contained with a <p> tag.
+Multiple texts are displayed at once.
 
 Rules:
 - This class requires/assumes the Prototype javascript library
@@ -18,7 +18,12 @@ var AnnotationTextDisplayer = Class.create({
 
   initialize: function(parent_node) {
     //Create the G that we will display in
-    this.display_node = new Element('g', {'class': 'annotation_text_display', 'onmousemove': 'hide_image_annotations()'});
+    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    //this.display_node.setAttribute('class', 'annotation_text_display');
+    this.display_node.setAttribute('width', '300');
+    this.display_node.setAttribute('height', '100');
+    this.display_node.setAttribute('style', 'fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)');
+
     $(parent_node).appendChild(this.display_node);
     this.hide();
   },
@@ -68,14 +73,13 @@ var AnnotationTextDisplayer = Class.create({
   
   //Hide the displayer
   hide: function() {
-    console.debug(this.display_node);
-    this.display_node.setAttribute('style','display:none');
+    this.display_node.style.display ='none';
   },
   
   
   //Show the displayer
   show: function() {
-    this.display_node.setAttribute('style','display:block');
+    this.display_node.style.display ='block';
   },
 
   //Returns whether or not the Displayer is showing
