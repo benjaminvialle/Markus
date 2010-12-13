@@ -1,0 +1,14 @@
+/*** Style du SVG ***/
+
+/* page */
+svg {
+  background-color: white;
+  }
+/* Path */ 
+path {  
+  stroke: #333333;
+  stroke-width: 2px; 
+  fill: none;
+}
+  
+  
