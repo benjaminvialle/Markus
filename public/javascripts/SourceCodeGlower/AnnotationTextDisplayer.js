@@ -18,12 +18,9 @@ var AnnotationTextDisplayer = Class.create({
 
   initialize: function(parent_node) {
     //Create the G that we will display in
-    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    //this.display_node.setAttribute('class', 'annotation_text_display');
-    this.display_node.setAttribute('width', '300');
-    this.display_node.setAttribute('height', '100');
-    this.display_node.setAttribute('style', 'fill:rgb(0,0,255);stroke-width:1;stroke:rgb(0,0,0)');
-
+    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    this.display_node.setAttribute('class', 'annotation_text_display');
+    
     $(parent_node).appendChild(this.display_node);
     this.hide();
   },

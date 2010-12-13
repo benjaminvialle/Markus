@@ -18,7 +18,7 @@
               :show_in_browser => true) -%>" />
 
   <g id="shapes">
-<% @annotations.each do |annotation| %>
+  <% @annotations.each do |annotation| %>
   <g id="shape_<%= annotation.id%>">
 <% if annotation.type == "ShapeAnnotation" %>
     <%
@@ -45,7 +45,7 @@
      paths.push(currentPath)
     %>
     <% paths.each do |path| %>
-      <path style="stroke: #FF0000; fill: none;" d="<%= path %>" />
+      <path style="stroke: <%= annotation.color %>; stroke-width: <%= annotation.thickness%>px" d="<%= path %>" />
     <% end %>
 <% elsif annotation.type == "AreaAnnotation" %>
     <rect x="<%= annotation.x1%>" y="<%= annotation.y1%>"

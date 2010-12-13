@@ -11,4 +11,8 @@ path {
   fill: none;
 }
   
-  
+/* Select box */
+.area_annotation {
+    stroke: #FF0000;
+    fill: rgba(33, 33, 33, 0.3);
+}
