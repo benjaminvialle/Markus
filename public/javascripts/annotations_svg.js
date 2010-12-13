@@ -25,19 +25,20 @@ var shapeAnnotation = {
         shapeAnnotation.points++;
     },
     
-    create: function() {
+    create: function(e) {
         var newGroup = document.createElementNS("http://www.w3.org/2000/svg", "g"),
             newPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
         newGroup.setAttribute("id", "shape_current");
         newPath.setAttribute("d", "");
-        newPath.setAttribute("style", "stroke: #FF0000; fill: none;");
         newGroup.appendChild(newPath);
         document.getElementById("shapes").appendChild(newGroup);
 
+        shapeAnnotation.addPoint(e.pageX, e.pageY);
+
     },
 
-    finalize: function() {
+    finalize: function(e) {
         // Moves the old shape
         var oldGroup = document.getElementById("shape_current"),
             oldPath = oldGroup.firstChild,
@@ -87,6 +88,35 @@ var shapeAnnotation = {
 
 
 var areaAnnotation = {
+    startCoords: {"x": 0, "y": 0},
+    create: function(e) {
+        var selectBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        
+        this.startCoords = {"x": e.pageX, "y": e.pageY};
+        selectBox.setAttribute("id", "select_box");
+        selectBox.setAttribute("class", "area_annotation");
+        selectBox.setAttribute("x", e.pageX);
+        selectBox.setAttribute("y", e.pageY);
+        selectBox.setAttribute("width", "0");
+        selectBox.setAttribute("height", "0");
+
+        document.getElementById("annotations").appendChild(selectBox);
+    },
+
+    finalize: function(e) {
+        var selectBox = document.getElementById("select_box");
+
+        selectBox.setAttribute("id", "test");
+    },
+
+    trackMove: function(e) {
+        var selectBox = document.getElementById("select_box");
+
+        selectBox.setAttribute("x", Math.min(e.pageX, areaAnnotation.startCoords.x));
+        selectBox.setAttribute("y", Math.min(e.pageY, areaAnnotation.startCoords.y));
+        selectBox.setAttribute("width", Math.abs(e.pageX - areaAnnotation.startCoords.x));
+        selectBox.setAttribute("height", Math.abs(e.pageY - areaAnnotation.startCoords.y));
+    }
 
 };
 
@@ -100,9 +130,9 @@ var Handler = {
             if(e.preventDefault)
                 e.preventDefault();
             if(Handler.mode == "shape") {
-                shapeAnnotation.create();
+                shapeAnnotation.create(e);
             } else if(Handler.mode = "area") {
-                areaAnnotation.create();
+                areaAnnotation.create(e);
             }
             document.addEventListener("mousemove", Handler.trackMove, false);
         }, false);
@@ -110,9 +140,9 @@ var Handler = {
         document.addEventListener("mouseup", function(e) {
             document.removeEventListener("mousemove", Handler.trackMove, false);
             if(Handler.mode == "shape") {
-                shapeAnnotation.finalize();
+                shapeAnnotation.finalize(e);
             } else if(Handler.mode = "area") {
-                areaAnnotation.finalize();
+                areaAnnotation.finalize(e);
             }
         }, false);
     },
