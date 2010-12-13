@@ -59,12 +59,8 @@ var AnnotationTextDisplayer = Class.create({
   
   updateDisplayNode: function(text, x, y) {
     var display_node = $(this.getDisplayNode());
-    display_node.update(text);
-    //display_node.setStyle({
-    //  left: (x + TEXT_DISPLAY_X_OFFSET) + 'px',
-    //  top: (y + TEXT_DISPLAY_Y_OFFSET) + 'px'
-    //});
-    display_node.setAttribute("transform","translate(" + (x + TEXT_DISPLAY_X_OFFSET) + "," + (y + TEXT_DISPLAY_Y_OFFSET) + ")");
+    display_node.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
+    display_node.setAttribute("y", y + TEXT_DISPLAY_Y_OFFSET);
   },
   
   
