@@ -10,29 +10,7 @@
               :select_file_id => @submission_file.id,
 	      :show_in_browser => true) -%>" />
 
-  <g id="toolbar">	      
-    <image x="0" y="0" 
-      style="z-index: 0;"
-      width="16" height="16"
-      xlink:href = "/images/icons/pencil.png"
-    />
-    <image x="20" y="0" 
-      width="16" height="16"
-      xlink:href = "/images/icons/shape_square_add.png" 
-      style="z-index: 0;"
-    />
-    <image x="40" y="0" z-index = "0"
-      width="16" height="16"
-      xlink:href = "/images/icons/comment_delete.png" 
-      style="z-index: 0;"
-    />
-    <image x="60" y="0"
-      width="16" height="16"
-      style="z-index: 0;"
-      xlink:href = "/images/icons/disk.png" 
-      />
-  </g>
-
+ 
   <g id="shapes">
 <% @annotations.each do |annotation| %>
   <g id="shape_<%= annotation.id%>">
@@ -77,6 +55,30 @@
   <text><%= annotation.annotation_text.content %></text>
   </g>
 <% end %>
+</g>
+
+  <g id="toolbar">	      
+    <image x="0" y="0" 
+      style="z-index: 0;"
+      width="16" height="16"
+      xlink:href = "/images/icons/pencil.png"
+    />
+    <image x="20" y="0" 
+      width="16" height="16"
+      xlink:href = "/images/icons/shape_square_add.png" 
+      style="z-index: 0;"
+    />
+    <image x="40" y="0" z-index = "0"
+      width="16" height="16"
+      xlink:href = "/images/icons/comment_delete.png" 
+      style="z-index: 0;"
+    />
+    <image x="60" y="0"
+      width="16" height="16"
+      style="z-index: 0;"
+      xlink:href = "/images/icons/disk.png" 
+      />
   </g>
+
  </svg>
 
