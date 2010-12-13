@@ -1,28 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
-  version="1.1" >
+  version="1.1">
   <script xlink:href="/javascripts/annotations_svg.js" />
+  <image x="0" y="0"
+    width="200" height="150"
+      style="z-index: 0;"
+  xlink:href="<%= url_for(:action => 'download',
+                          :controller => 'results',
+              :select_file_id => @submission_file.id,
+              :show_in_browser => true) -%>" />
+
   <g id="shapes">
 <% @annotations.each do |annotation| %>
   <g id="shape_<%= annotation.id%>">
 <% if annotation.type == "ShapeAnnotation" %>
     <%
      paths = []
-     index = 0
-     annotation.shape.points.each do |point|
+     currentPath = ""
+     annotation.points.each do |point|
        # Split the shape in several paths, this is due to the fact that svg
        # uses the shape outlined by the path rather than the path itself to
        # detect mouseover events
-       if path[index] > 10
-         index++
-         paths[index] = "M" + point.coord_x + "," + point.coord_y
-       elsif
-         paths[index] = "L" + point.coord_x + "," + point.coord_y
+       if currentPath == ""
+         # First point of the shape
+         currentPath = "M" + point.coord_x.to_s  + "," + point.coord_y.to_s
+       elsif currentPath.split.length >= 9
+         # Duplicate the last point of the path
+         currentPath += " L" + point.coord_x.to_s  + "," + point.coord_y.to_s
+         paths.push(currentPath)
+         currentPath = "M" + point.coord_x.to_s  + "," + point.coord_y.to_s
+       else
+         # Normal point within a path
+         currentPath += " L" + point.coord_x.to_s + "," + point.coord_y.to_s
        end
      end
+
+     paths.push(currentPath)
     %>
     <% paths.each do |path| %>
-      <path d="<%= path %>" />
+      <path style="stroke: #FF0000; fill: none;" d="<%= path %>" />
     <% end %>
 <% elsif annotation.type == "AreaAnnotation" %>
     <rect x="<%= annotation.x1%>" y="<%= annotation.y1%>"
@@ -39,12 +55,5 @@
   </g>
 <% end %>
   </g>
-  <image x="0" y="0" width="100" height="200"
-      style="z-index: 0;"
-  xlink:href="<%= url_for(:action => 'download',
-                          :controller => 'results',
-              :select_file_id => @submission_file.id,
-              :show_in_browser => true) -%>" />
-
 </svg>
 
