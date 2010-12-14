@@ -49,9 +49,10 @@
       <path style="stroke: <%= annotation.color %>; stroke-width: <%= annotation.thickness%>px" d="<%= path %>" />
     <% end %>
 <% elsif annotation.type == "AreaAnnotation" %>
-    <rect x="<%= annotation.x1%>" y="<%= annotation.y1%>"
-      width="<%= (annotation.y2 - annotation.y1)%>"
-      height="<%= (annotation.x2 - annotation.x1)%>" />
+     <rect id="area_<%= annotation.id%>"x="<%= annotation.x1%>" y="<%= annotation.y1%>"
+     width="<%= (annotation.y2 - annotation.y1)%>"
+     height="<%= (annotation.x2 - annotation.x1)%>" 
+     />
 <% end %>
   </g>
 <% end %>

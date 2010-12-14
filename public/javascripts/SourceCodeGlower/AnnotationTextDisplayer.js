@@ -18,7 +18,7 @@ var AnnotationTextDisplayer = Class.create({
 
   initialize: function(parent_node) {
     //Create the G that we will display in
-    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     this.display_node.setAttribute('class', 'annotation_text_display');
     
     $(parent_node).appendChild(this.display_node);
@@ -59,8 +59,12 @@ var AnnotationTextDisplayer = Class.create({
   
   updateDisplayNode: function(text, x, y) {
     var display_node = $(this.getDisplayNode());
+    console.debug(text);
     display_node.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
     display_node.setAttribute("y", y + TEXT_DISPLAY_Y_OFFSET);
+    // Adapt size
+    display_node.setAttribute("width", 100);
+    display_node.setAttribute("height", 100);
   },
   
   
@@ -77,7 +81,7 @@ var AnnotationTextDisplayer = Class.create({
 
   //Returns whether or not the Displayer is showing
   getShowing: function() {
-    return this.getDisplayNode().visible;
+    return this.getDisplayNode().style.display == 'block';
   },
   
   

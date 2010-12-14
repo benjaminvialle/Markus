@@ -202,7 +202,7 @@ var Handler = {
      
                     annotation_text_displayer.displayCollection( [annot_1,annot_2], e.pageX, e.pageY);
                 }else{
-                    rect_annot.hideShowing();
+                   annotation_text_displayer.hideShowing();
                 }
                 
             }

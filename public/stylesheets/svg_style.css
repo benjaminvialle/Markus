@@ -16,3 +16,9 @@ path {
     stroke: #FF0000;
     fill: rgba(33, 33, 33, 0.3);
 }
+
+/* Annotation Text Displayer */
+.annotation_text_display {
+    stroke: #FF0000;
+    fill: #F0F8FF;
+}
