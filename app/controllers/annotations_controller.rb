@@ -68,7 +68,6 @@ class AnnotationsController < ApplicationController
         annot.save
       end
     end
-
   end
 
   def update_annotation
@@ -97,12 +96,46 @@ class AnnotationsController < ApplicationController
   #Retrieves the annotations associated to an image
   def view_image_annotations
     return unless request.get?
-    # Retrieve annotations
     @submission_file = SubmissionFile.find(params[:submission_file_id])
-    @annotations = @submission_file.annotations
-    @annotations.collect { |a| a.annotation_text }.flatten
+    submission = Submission.find_by_id(@submission_file.submission_id)
+    grouping = Grouping.find_by_id(submission.grouping_id)
 
-    render 'annotations/svg_annotations/annotations.svg.erb'
+    if grouping.ensure_can_see?(current_user)
+      @annotations = @submission_file.annotations
+      #@points = @annotations.first.points
+      render 'annotations/svg_annotations/annotations.svg.erb'
+    else
+      render :file => "#{RAILS_ROOT}/public/404.html",
+         :status => 404
+    end
   end
 
+#  def write_annotations
+#    return unless request.post?
+#    annotationtext = TextAnnotation.new
+#    annotationtext.save 
+#    liste_annotations.each do |obj|
+#      if obj.type = "shape"
+#        shapeAnnotation = ShapeAnnotation.new
+#	shapeAnnotation.annotation_text_id = annotationtext.id
+#	shapeAnnotation.save
+#	  points.each do |member|
+#	    point = Point.new
+#	    point.coord_x = member.x
+#	    point.coord_y = member.y
+#	    point.shape_annotation_id=shapeAnnotation.id
+#	    point.save
+#	  end
+#      else       
+#        areaAnnotation = AeraAnnotation.new
+#	areaAnnotation.annotation_text_id = annotationtext.id
+#	  edges.each do |member|
+#	    areaAnnotation.y1 = member.top
+#	    areaAnnotation.x1 = member.left
+#	    areaAnnotation.y2 = member.bottom
+#	    areaAnnotation.x2 = member.right
+#	    areaAnnotation.save
+#	  end
+#      end
+#    end
 end

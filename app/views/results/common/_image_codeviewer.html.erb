@@ -5,8 +5,9 @@
     <% @annots.each do |annot| %>
       <div id="annotation_holder_<%=annot.annotation_text.id%>" class="annotation_holder"></div>
     <%end%>
-    <img id="image_preview" src="<%= url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true) -%>" alt="<%=I18n.t("common.cant_display_image")%>"/>
-
+    <!-- TODO : Remove this line -->
+    <!-- <img id="image_preview" src="<%= url_for(:action => 'download', :controller => 'results', :select_file_id => submission_file_id, :show_in_browser => true) -%>" alt="<%=I18n.t("common.cant_display_image")%>"/> -->
+    <!-- End of removed line -->
   <%# Keep track of all annotations associated with file.
   %>
   <input id="annotation_grid"type="hidden" value="<%=h(@file.get_annotation_grid.to_json)%>"></input>
@@ -23,5 +24,5 @@
     <% end %>
   //]]>
   </script>
-    <%= render :partial => "annotations/svg_annotations/svg.html.erb", :locals => {:submission_file_id => submission_file_id}%>
+  <%= render :partial => "annotations/svg_annotations/svg.html.erb", :locals => {:submission_file_id => submission_file_id}%>
 </div>
