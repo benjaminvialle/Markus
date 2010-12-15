@@ -1,4 +1,4 @@
-class AddShapeAnnotationToAnnotationTable < ActiveRecord::Migration
+class AddShapeToAnnotation < ActiveRecord::Migration
   def self.up
     add_column :annotations, :thickness, :int
     add_column :annotations, :color, :string
