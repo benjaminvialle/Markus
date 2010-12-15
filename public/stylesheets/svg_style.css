@@ -28,6 +28,11 @@ path {
 	cursor: pointer;
 }
 
+/* Save button is hidden by default */
+#button_save {
+	display: none;
+}
+
 /* Annotation Text Displayer */
 #annotation_rect_display {
     stroke: #FF0000;
