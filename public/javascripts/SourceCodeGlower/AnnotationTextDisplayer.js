@@ -4,7 +4,7 @@ This class is in charge of displaying collections of Annotation Texts.  It puts 
 in a G with a class called "annotation_text_display" and is in charge of displaying
 that G at given coordinates, and hiding that G.
 
-Multiple texts are displayed at once, and each one is contained with a <p> tag.
+Multiple texts are displayed at once.
 
 Rules:
 - This class requires/assumes the Prototype javascript library
@@ -18,7 +18,9 @@ var AnnotationTextDisplayer = Class.create({
 
   initialize: function(parent_node) {
     //Create the G that we will display in
-    this.display_node = new Element('g', {'class': 'annotation_text_display', 'onmousemove': 'hide_image_annotations()'});
+    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    this.display_node.setAttribute('class', 'annotation_text_display');
+    
     $(parent_node).appendChild(this.display_node);
     this.hide();
   },
@@ -57,30 +59,29 @@ var AnnotationTextDisplayer = Class.create({
   
   updateDisplayNode: function(text, x, y) {
     var display_node = $(this.getDisplayNode());
-    display_node.update(text);
-    //display_node.setStyle({
-    //  left: (x + TEXT_DISPLAY_X_OFFSET) + 'px',
-    //  top: (y + TEXT_DISPLAY_Y_OFFSET) + 'px'
-    //});
-    display_node.setAttribute("transform","translate(" + (x + TEXT_DISPLAY_X_OFFSET) + "," + (y + TEXT_DISPLAY_Y_OFFSET) + ")");
+    console.debug(text);
+    display_node.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
+    display_node.setAttribute("y", y + TEXT_DISPLAY_Y_OFFSET);
+    // Adapt size
+    display_node.setAttribute("width", 100);
+    display_node.setAttribute("height", 100);
   },
   
   
   //Hide the displayer
   hide: function() {
-    console.debug(this.display_node);
-    this.display_node.setAttribute('style','display:none');
+    this.display_node.style.display ='none';
   },
   
   
   //Show the displayer
   show: function() {
-    this.display_node.setAttribute('style','display:block');
+    this.display_node.style.display ='block';
   },
 
   //Returns whether or not the Displayer is showing
   getShowing: function() {
-    return this.getDisplayNode().visible;
+    return this.getDisplayNode().style.display == 'block';
   },
   
   

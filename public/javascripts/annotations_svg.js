@@ -119,6 +119,10 @@ var areaAnnotation = {
 
 };
 
+var annotation_text_displayer = {
+
+}
+
 var Handler = {
     mode: "view",
     init: function() {
@@ -130,7 +134,7 @@ var Handler = {
                 e.preventDefault();
             if(Handler.mode == "shape") {
                 shapeAnnotation.create(e);
-            } else if(Handler.mode = "area") {
+            } else if(Handler.mode == "area") {
                 areaAnnotation.create(e);
             }
             document.addEventListener("mousemove", Handler.trackMove, false);
@@ -140,7 +144,7 @@ var Handler = {
             document.removeEventListener("mousemove", Handler.trackMove, false);
             if(Handler.mode == "shape") {
                 shapeAnnotation.finalize(e);
-            } else if(Handler.mode = "area") {
+            } else if(Handler.mode == "area") {
                 areaAnnotation.finalize(e);
             }
         }, false);
@@ -150,6 +154,11 @@ var Handler = {
 					Handler.setMode(item);			
 				}, false);
 		});
+        
+        document.addEventListener("mousemove", Handler.mouseMove, false);
+        
+        annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
+            
     },
 
     setMode: function(mode) {
@@ -180,6 +189,33 @@ var Handler = {
         }
     },
 
+    mouseMove: function(e) {
+    	if(Handler.mode == "view") {
+    	    // For all annotations drawn by the user
+            var svg_annotations = $("annotations").getElementsByTagName("rect");
+            for (var i = 0; i < svg_annotations.length; i++) {
+                var rect_annot = svg_annotations.item(i); 
+                // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
+                if (e.pageX > rect_annot.getAttribute('x') &&
+					(e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
+                    e.pageY > rect_annot.getAttribute('y') &&
+					(e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
+                    ) {
+                    // Display the annotation
+                    
+                    // TODO
+                    // For the tests now
+                    var annot_1 = new AnnotationText(1,1,"Je m'appelle Markus PIGROU");
+                    var annot_2 = new AnnotationText(1,1,"et j'aime les toupoutous");
+     
+                    annotation_text_displayer.displayCollection( [annot_1,annot_2], e.pageX, e.pageY);
+                } else {
+                   annotation_text_displayer.hideShowing();
+                }
+            }
+        }
+    },
+    
     save: function(e) {
         // Save the shapes drawn
     }
