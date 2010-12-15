@@ -251,15 +251,6 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
 
-  create_table "point", :force => true do |t|
-    t.integer "shape_id"
-    t.integer "order"
-    t.integer "x"
-    t.integer "y"
-  end
-
-<<<<<<< HEAD
-=======
   create_table "points", :force => true do |t|
     t.integer "shape_annotation_id"
     t.integer "order"
@@ -267,7 +258,6 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
     t.integer "coord_y"
   end
 
->>>>>>> 84659366ee66a126937159f30dd3a8b379f9e61d
   create_table "results", :force => true do |t|
     t.integer  "submission_id"
     t.string   "marking_state"
@@ -324,11 +314,8 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
 
   create_table "shape", :force => true do |t|
     t.integer "annotation_id"
-<<<<<<< HEAD
-=======
     t.string  "color"
     t.integer "thickness"
->>>>>>> 84659366ee66a126937159f30dd3a8b379f9e61d
   end
 
   create_table "submission_collectors", :force => true do |t|

@@ -1,4 +1,8 @@
-<h1>Top Kikoolol</h1>
-<object data="main/annotations/view_image_annotations?submission_file_id=<%= submission_file_id %>" width="3000px" height="1000px" type="image/svg+xml">
+<object data=<%=
+	url_for(:controller => "annotations",
+	:action => "view_image_annotations", 
+	:submission_file_id => @submission_file_id)%>
+	width="3000px" height="1000px" type="image/svg+xml">
+	<%=I18n.t("error_svg")%>
 </object>
-<h1>Bottom Kikoolol</h1>
+>>>>>>> 76097369f6935fb7364dc23f6c4d466c2cb29648

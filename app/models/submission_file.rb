@@ -1,14 +1,14 @@
 class SubmissionFile < ActiveRecord::Base
-  
+
   belongs_to  :submission
   has_many :annotations
   validates_associated :submission
   validates_presence_of :submission
   validates_presence_of :filename
   validates_presence_of :path
-  
+
   validates_inclusion_of :is_converted, :in => [true, false]
-  
+
   def get_file_type
     # This is where you can add more languages that SubmissionFile will
     # recognize.  It will return the name of the language, which
@@ -91,7 +91,7 @@ class SubmissionFile < ActiveRecord::Base
     end
     return all_annotations
   end
-  
+
   def convert_pdf_to_jpg
     return unless MarkusConfigurator.markus_config_pdf_support && self.is_pdf?
     m_logger = MarkusLogger.instance
@@ -152,7 +152,7 @@ class SubmissionFile < ActiveRecord::Base
       file_path = File.join(temp_dir, self.path, self.filename)
       FileUtils.mv(file_path, File.join(storage_path, self.filename), :force => true)
     ensure
-      FileUtils.remove_dir(temp_dir, true) if File.exists?(temp_dir)      
+      FileUtils.remove_dir(temp_dir, true) if File.exists?(temp_dir)
     end
     m_logger.log("Successfuly exported #{self.filename} from student repository")
   end
@@ -166,7 +166,7 @@ class SubmissionFile < ActiveRecord::Base
       annotations.each do |annot|
         if index == annot.line_start.to_i - 1
            text = AnnotationText.find(annot.annotation_text_id).content
-           result = result.concat(I18n.t("graders.download.begin_annotation", 
+           result = result.concat(I18n.t("graders.download.begin_annotation",
                :id => annot.annotation_number.to_s,
                :text => text,
                :comment_start => comment_syntax[0],
@@ -183,4 +183,3 @@ class SubmissionFile < ActiveRecord::Base
     return result
   end
 end
-

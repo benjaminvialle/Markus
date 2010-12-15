@@ -2,17 +2,17 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   version="1.1">
   <script xlink:href="/javascripts/annotations_svg.js" />
-  <style type="text/css"> 
+  <style type="text/css">
       @import url(/stylesheets/svg_style.css);
   </style>
-  
-  <image x="0" y="0"
+  <image x="0" y="16"
     width="200" height="150"
       style="z-index: 0;"
   xlink:href="<%= url_for(:action => 'download',
                           :controller => 'results',
               :select_file_id => @submission_file.id,
-              :show_in_browser => true) -%>" />
+	      :show_in_browser => true) -%>" />
+
 
   <g id="shapes">
   <% @annotations.each do |annotation| %>
@@ -58,6 +58,33 @@
   <text><%= annotation.annotation_text.content %></text>
   </g>
 <% end %>
-  </g>
-</svg>
+</g>
 
+  <g id="toolbar">
+    <image x="0" y="0"
+      width="16" height="16"
+      xlink:href = "/images/icons/pencil.png"
+    />
+    <image x="20" y="0"
+      width="16" height="16"
+      xlink:href = "/images/icons/shape_square_add.png"
+    />
+    <image x="40" y="0" z-index = "0"
+      width="16" height="16"
+      xlink:href = "/images/icons/comment_delete.png"
+    />
+    <image x="60" y="0"
+      width="16" height="16"
+      xlink:href = "/images/icons/disk.png"
+      onclick="hello()"
+      />
+      </g>
+      <script>
+      //<![CDATA[
+      function hello()
+      {
+      alert("hello")
+      }
+      ]]>
+      </script>
+ </svg>
