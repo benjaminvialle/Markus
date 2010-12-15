@@ -60,26 +60,29 @@
 
   <g id="toolbar" onmousemove ="return false;">	      
     <image x="0" y="0" 
-      style="z-index: 0;"
       width="16" height="16"
       xlink:href = "/images/icons/pencil.png"
     />
     <image x="20" y="0" 
       width="16" height="16"
       xlink:href = "/images/icons/shape_square_add.png" 
-      style="z-index: 0;"
     />
     <image x="40" y="0" z-index = "0"
       width="16" height="16"
       xlink:href = "/images/icons/comment_delete.png" 
-      style="z-index: 0;"
     />
     <image x="60" y="0"
       width="16" height="16"
-      style="z-index: 0;"
-      xlink:href = "/images/icons/disk.png"
+      xlink:href = "/images/icons/disk.png" 
+      onclick="hello()"
       />
-  </g> 
-
+      </g>
+      <script>
+      //<![CDATA[
+      function hello()
+      {
+      alert("hello")
+      }
+      ]]>
+      </script>
  </svg>
-
