@@ -69,27 +69,30 @@ var AnnotationTextDisplayer = Class.create({
             $('annotation_text_display').removeChild($('annotation_text_display').firstChild);
         }
         
-        // Now, compile all the annotations of the collection in the text node
-        
         // Maximum number of characters in a line
         var CharMaxNb=10;
-    
-        collection.each(function(annotation_text) {
+        // Counts the number of lines we will write
+        var lineCounter=0;
         
-            // First let's define a function to add a tspan in the DOM
-            appendTspan = function(text) {
-                // Add a child node tspan to the annotation text displayer 
-                var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-                tspan.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
-                tspan.setAttribute('dy', '1em');
-                tspan.textContent = text;
-                $('annotation_text_display').appendChild(tspan);
-            };
+        // First let's define a function to add a tspan in the DOM
+        appendTspan= function(text) {
+            // Add a child node tspan to the annotation text displayer 
+            var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+            tspan.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
+            tspan.setAttribute('dy', '1em');
+            tspan.textContent = text;
+            $('annotation_text_display').appendChild(tspan);
+        };
+        
+        // Now, compile all the annotations of the collection in the text node
+        for (var k=0; k<collection.length; k++){
+            // We will work with each annotation text
+            var annotation_text = collection[k];
             
-              
             // Then let's adapt text size of the annotation
             var wordList = annotation_text.getContent().split(' ');
             var wrapText='';
+            
             for (var i=0; i<wordList.length; i++) {
                 // Count the numbers of characters
                 if (parseInt(wrapText.length) + parseInt(wordList[i].length) < CharMaxNb
@@ -99,19 +102,19 @@ var AnnotationTextDisplayer = Class.create({
                 } else {
                     wrapText = wrapText + ' ' + wordList[i];
                     // Then we add the tspan node with the function we defined
-                    this.appendTspan(wrapText);
+                    appendTspan(wrapText);
+                    lineCounter = lineCounter + 1;
                     wrapText="";
                 }
             }
             // Finish by adding the last line the text node
-            this.appendTspan(wrapText);
-            
-                
-        }); 
-        
-        $('annotation_rect_display').setAttribute("width", 500);
-        $('annotation_rect_display').setAttribute("height", 100);
+            appendTspan(wrapText);
+            lineCounter = lineCounter + 1;
+        } 
+        $('annotation_rect_display').setAttribute("width", CharMaxNb + 'em');
+        $('annotation_rect_display').setAttribute("height", lineCounter + 'em');
     },
+    
     
     
     //Hide the displayer
