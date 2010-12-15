@@ -230,9 +230,68 @@ var Handler = {
     },
     
     save: function(e) {
-        // Save the shapes drawn
+        // Get the shapes properties
+        var color,
+            toSave = {
+                "annotation_text": 'Annotation text',
+                "shapes": [],
+                "areas": []
+            };
+
+        // Get the shapes and the areas drawn
+        $A($("shapes").childNodes).each(function(item) {
+            if(item.localName == null) return;
+            if(item.getAttribute("id").split("_")[0] == "new") {
+                if(item.localName == "g") {
+                    toSave.shapes.push(Handler.processShape(item));
+                } else if(item.localName == "rect") {
+                    toSave.areas.push(Handler.processArea(item));
+                }
+            }
+        });
+        console.debug(toSave);
+    },
+    
+    processShape: function(node) {
+        var shape = {
+                color: Handler.color,
+                thickness: Handler.thickness,
+                points: []
+            },
+            point;
+
+        $A(node.childNodes).each(function(path) {
+            path = path.getAttribute("d");
+                // The path syntax is "Mx,y Lx,y Lx,y"
+                path.split(' ').each(function(point) {
+                    // Remove the first letter (it's not part of the
+                    // coordinates)
+                    point = point.substr(1);
+                    
+                    shape.points.push({
+                        x: point.split(',')[0],
+                        y: point.split(',')[1]
+                    });
+
+                });
+        });
+
+        return shape;
+    },
+
+    processArea: function(node) {
+         return {
+            color: Handler.color,
+            thickness: Handler.thickness,
+            points: {
+                "top": parseInt(node.getAttribute("y")),
+                "left": parseInt(node.getAttribute("x")),
+                "bottom": (parseInt(node.getAttribute("height")) + parseInt(node.getAttribute("y"))),
+                "right": (parseInt(node.getAttribute("width")) + parseInt(node.getAttribute("x")))
+            }
+        };
     }
-	
+    
 
 };
 
