@@ -2,16 +2,13 @@
   xmlns:xlink="http://www.w3.org/1999/xlink"
   version="1.1">
   <script xlink:href="/javascripts/prototype.js" />
-
   <script xlink:href="/javascripts/annotations_svg.js" />
   <script xlink:href="/javascripts/SourceCodeGlower/AnnotationTextDisplayer.js"/>
   <script xlink:href="/javascripts/SourceCodeGlower/AnnotationText.js"/>
-  <style type="text/css"> 
+  <style type="text/css">
       @import url(/stylesheets/svg_style.css);
   </style>
-  
-
-  <image x="0" y="16"
+  <image x="0" y="0"
       width="100%" height="100%"
       style="z-index: 0;"
   xlink:href="<%= url_for(:action => 'download',
@@ -19,7 +16,7 @@
               :select_file_id => @submission_file.id,
 	      :show_in_browser => true) -%>" />
 
- 
+
   <g id="shapes">
   <% @annotations.each do |annotation| %>
   <g id="shape_<%= annotation.id%>">
@@ -53,7 +50,7 @@
 <% elsif annotation.type == "AreaAnnotation" %>
      <rect id="area_<%= annotation.id%>"x="<%= annotation.x1%>" y="<%= annotation.y1%>"
      width="<%= (annotation.y2 - annotation.y1)%>"
-     height="<%= (annotation.x2 - annotation.x1)%>" 
+     height="<%= (annotation.x2 - annotation.x1)%>"
      />
 <% end %>
   </g>
@@ -67,31 +64,27 @@
 <% end %>
 </g>
 
-  <g id="toolbar" onmousemove ="return false;">	      
-    <image x="0" y="0" 
+  <g id="toolbar">
+    <rect x="0" y="0" width="105" height="26" />
+    <image x="5" y="5"
       width="16" height="16"
+      id="button_shape"
       xlink:href = "/images/icons/pencil.png"
     />
-    <image x="20" y="0" 
+    <image x="30" y="5"
       width="16" height="16"
-      xlink:href = "/images/icons/shape_square_add.png" 
+      id="button_area"
+      xlink:href = "/images/icons/shape_square_add.png"
     />
-    <image x="40" y="0" z-index = "0"
+    <image x="55" y="5" z-index = "0"
       width="16" height="16"
-      xlink:href = "/images/icons/comment_delete.png" 
+      id="button_delete"
+      xlink:href = "/images/icons/comment_delete.png"
     />
-    <image x="60" y="0"
+    <image x="80" y="5"
       width="16" height="16"
-      xlink:href = "/images/icons/disk.png" 
-      onclick="hello()"
+      id="button_save"
+      xlink:href = "/images/icons/disk.png"
       />
       </g>
-      <script>
-      //<![CDATA[
-      function hello()
-      {
-      alert("hello")
-      }
-      ]]>
-      </script>
  </svg>

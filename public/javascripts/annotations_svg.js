@@ -35,7 +35,6 @@ var shapeAnnotation = {
         document.getElementById("shapes").appendChild(newGroup);
 
         shapeAnnotation.addPoint(e.pageX, e.pageY);
-
     },
 
     finalize: function(e) {
@@ -125,7 +124,7 @@ var annotation_text_displayer = {
 }
 
 var Handler = {
-    mode: "area",
+    mode: "view",
     init: function() {
         document.addEventListener("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
@@ -147,9 +146,14 @@ var Handler = {
                 shapeAnnotation.finalize(e);
             } else if(Handler.mode == "area") {
                 areaAnnotation.finalize(e);
-                Handler.mode= "view"; //TODO Change afterwards
             }
         }, false);
+		
+		["shape", "area", "save", "delete"].each(function(item) {
+				$("button_" + item).addEventListener("click", function(e) {
+					Handler.setMode(item);			
+				}, false);
+		});
         
         document.addEventListener("mousemove", Handler.mouseMove, false);
         
@@ -160,15 +164,19 @@ var Handler = {
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
+			document.documentElement.style.cursor = "crosshair";
 
         } else if(mode == "area") {
             this.mode = "area";
+			document.documentElement.style.cursor = "crosshair";
 
         } else if(mode == "delete") {
             this.mode = "delete";
+			document.documentElement.style.cursor = "crosshair";
 
         } else if(mode == "view") {
             this.mode = "view";
+			document.documentElement.style.cursor = "auto";
         
         }
     },
@@ -182,16 +190,16 @@ var Handler = {
     },
 
     mouseMove: function(e) {
-    	if(Handler.mode == "view"){
+    	if(Handler.mode == "view") {
     	    // For all annotations drawn by the user
             var svg_annotations = $("annotations").getElementsByTagName("rect");
-            for (var i = 0; i < svg_annotations.length; i++)
-            {
+            for (var i = 0; i < svg_annotations.length; i++) {
                 var rect_annot = svg_annotations.item(i); 
                 // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
-                if (e.pageX > rect_annot.getAttribute('x') && (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width'))) )
-                    &&
-                    e.pageY > rect_annot.getAttribute('y') && (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))) )
+                if (e.pageX > rect_annot.getAttribute('x') &&
+					(e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
+                    e.pageY > rect_annot.getAttribute('y') &&
+					(e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
                     ) {
                     // Display the annotation
                     
@@ -201,10 +209,9 @@ var Handler = {
                     var annot_2 = new AnnotationText(1,1,"et j'aime les toupoutous");
      
                     annotation_text_displayer.displayCollection( [annot_1,annot_2], e.pageX, e.pageY);
-                }else{
+                } else {
                    annotation_text_displayer.hideShowing();
                 }
-                
             }
         }
     },
@@ -212,6 +219,7 @@ var Handler = {
     save: function(e) {
         // Save the shapes drawn
     }
+	
 
 };
 
