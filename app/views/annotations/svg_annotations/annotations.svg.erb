@@ -1,11 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   version="1.1">
+  <script xlink:href="/javascripts/prototype.js" />
   <script xlink:href="/javascripts/annotations_svg.js" />
   <style type="text/css">
       @import url(/stylesheets/svg_style.css);
   </style>
-  <image x="0" y="16"
+  <image x="0" y="0"
     width="200" height="150"
       style="z-index: 0;"
   xlink:href="<%= url_for(:action => 'download',
@@ -61,30 +62,26 @@
 </g>
 
   <g id="toolbar">
-    <image x="0" y="0"
+    <rect x="0" y="0" width="105" height="26" />
+    <image x="5" y="5"
       width="16" height="16"
+      id="button_shape"
       xlink:href = "/images/icons/pencil.png"
     />
-    <image x="20" y="0"
+    <image x="30" y="5"
       width="16" height="16"
+      id="button_area"
       xlink:href = "/images/icons/shape_square_add.png"
     />
-    <image x="40" y="0" z-index = "0"
+    <image x="55" y="5" z-index = "0"
       width="16" height="16"
+      id="button_delete"
       xlink:href = "/images/icons/comment_delete.png"
     />
-    <image x="60" y="0"
+    <image x="80" y="5"
       width="16" height="16"
+      id="button_save"
       xlink:href = "/images/icons/disk.png"
-      onclick="hello()"
       />
       </g>
-      <script>
-      //<![CDATA[
-      function hello()
-      {
-      alert("hello")
-      }
-      ]]>
-      </script>
  </svg>

@@ -3,7 +3,7 @@
 /* page */
 svg {
   background-color: white;
-  }
+}
 /* Path */ 
 path {  
   stroke: #333333;
@@ -15,4 +15,15 @@ path {
 .area_annotation {
     stroke: #FF0000;
     fill: rgba(33, 33, 33, 0.3);
+}
+
+/* Toolbar */
+#toolbar rect {
+	border: 1px solid #333333;
+	padding: 5px;
+	fill: #ffffff;
+}
+
+#toolbar image {
+	cursor: pointer;
 }

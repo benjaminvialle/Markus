@@ -35,7 +35,6 @@ var shapeAnnotation = {
         document.getElementById("shapes").appendChild(newGroup);
 
         shapeAnnotation.addPoint(e.pageX, e.pageY);
-
     },
 
     finalize: function(e) {
@@ -121,7 +120,7 @@ var areaAnnotation = {
 };
 
 var Handler = {
-    mode: "shape",
+    mode: "view",
     init: function() {
         document.addEventListener("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
@@ -145,20 +144,30 @@ var Handler = {
                 areaAnnotation.finalize(e);
             }
         }, false);
+		
+		["shape", "area", "save", "delete"].each(function(item) {
+				$("button_" + item).addEventListener("click", function(e) {
+					Handler.setMode(item);			
+				}, false);
+		});
     },
 
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
+			document.documentElement.style.cursor = "crosshair";
 
         } else if(mode == "area") {
             this.mode = "area";
+			document.documentElement.style.cursor = "crosshair";
 
         } else if(mode == "delete") {
             this.mode = "delete";
+			document.documentElement.style.cursor = "crosshair";
 
         } else if(mode == "view") {
             this.mode = "view";
+			document.documentElement.style.cursor = "auto";
         
         }
     },
@@ -174,6 +183,7 @@ var Handler = {
     save: function(e) {
         // Save the shapes drawn
     }
+	
 
 };
 
