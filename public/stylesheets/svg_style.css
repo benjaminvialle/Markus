@@ -18,7 +18,7 @@ path {
 }
 
 /* Annotation Text Displayer */
-.annotation_text_display {
+#annotation_rect_display {
     stroke: #FF0000;
     fill: #F0F8FF;
 }

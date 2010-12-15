@@ -1,7 +1,7 @@
 /** Annotation Text Displayer Class
 
 This class is in charge of displaying collections of Annotation Texts.  It puts them
-in a G with a class called "annotation_text_display" and is in charge of displaying
+in a G with a class called "annotation_rect_display" and is in charge of displaying
 that G at given coordinates, and hiding that G.
 
 Multiple texts are displayed at once.
@@ -18,8 +18,17 @@ var AnnotationTextDisplayer = Class.create({
 
   initialize: function(parent_node) {
     //Create the G that we will display in
-    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    this.display_node.setAttribute('class', 'annotation_text_display');
+    this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    this.display_node.setAttribute('id', 'display_node');
+    
+    var area = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+    area.setAttribute('id', 'annotation_rect_display');
+    
+    var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    text.setAttribute('id', 'annotation_text_display');
+    
+    this.display_node.appendChild(area);
+    this.display_node.appendChild(text);
     
     $(parent_node).appendChild(this.display_node);
     this.hide();
@@ -36,12 +45,11 @@ var AnnotationTextDisplayer = Class.create({
     //string to display.  Each text will be contained in a new paragraph
     var final_string = '';
     collection.each(function(annotation_text) {
-      final_string += annotation_text.getContent() + "/n/n";
+      final_string += annotation_text.getContent() + "/n---/n";
     });
     
     //Update the Display node (a g, in this case) to be in the right
     //position, and to have the right contents
-    //final_string = final_string.replace(/\n/g, '<br/>');
     this.updateDisplayNode(final_string, x, y);
     
     //Show the Displayer
@@ -58,13 +66,43 @@ var AnnotationTextDisplayer = Class.create({
   
   
   updateDisplayNode: function(text, x, y) {
-    var display_node = $(this.getDisplayNode());
-    console.debug(text);
-    display_node.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
-    display_node.setAttribute("y", y + TEXT_DISPLAY_Y_OFFSET);
-    // Adapt size
-    display_node.setAttribute("width", 100);
-    display_node.setAttribute("height", 100);
+    var CharMaxNb=80;
+    
+    $('annotation_rect_display').setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
+    $('annotation_rect_display').setAttribute("y", y + TEXT_DISPLAY_Y_OFFSET);
+    
+    $('annotation_text_display').setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
+    $('annotation_text_display').setAttribute("y", y + TEXT_DISPLAY_Y_OFFSET);
+    
+    // Adapt size to text
+    var LineCharNb=0;
+    var wordList = text.split(' ');
+    var wrapText;
+    for (var i=0; i<wordList.length; i++) {
+      // Count the numbers of characters
+      if (parseInt(LineCharNb) + parseInt(wordList[i].length) < CharMaxNb){
+          if (wordList[i].indexOf('\n') != -1){
+              LineCharNb = parseInt(LineCharNb) + parseInt(wordList[i].length);
+              wrapText = wrapText + wordList[i];
+          }else{
+              LineCharNb=0;
+              wrapText = wrapText + wordList[i];
+          }
+      
+
+      }else{
+          wrapText = wrapText + "\n";
+          LineCharNb=0;
+      }
+      
+    }
+
+    $('annotation_text_display').textContent = wrapText ;
+    //var textNode = document.createTextNode(wrapText);
+    //$('annotation_text_display').appendChild(textNode);
+    
+    $('annotation_rect_display').setAttribute("width", 500);
+    $('annotation_rect_display').setAttribute("height", 100);
   },
   
   
