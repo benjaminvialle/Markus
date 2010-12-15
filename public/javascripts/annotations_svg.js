@@ -13,7 +13,7 @@ var shapeAnnotation = {
     },
 
     addPoint: function(x, y) {
-        var path = document.getElementById("shape_current").firstChild,
+        var path = $("shape_current").firstChild,
             points = path.getAttribute("d");
         if(points == "") {
             points = "M" + x + "," + y;
@@ -32,14 +32,14 @@ var shapeAnnotation = {
         newGroup.setAttribute("id", "shape_current");
         newPath.setAttribute("d", "");
         newGroup.appendChild(newPath);
-        document.getElementById("shapes").appendChild(newGroup);
+        $("shapes").appendChild(newGroup);
 
         shapeAnnotation.addPoint(e.pageX, e.pageY);
     },
 
     finalize: function(e) {
         // Moves the old shape
-        var oldGroup = document.getElementById("shape_current"),
+        var oldGroup = $("shape_current"),
             oldPath = oldGroup.firstChild,
             points = [];
 
@@ -87,7 +87,6 @@ var shapeAnnotation = {
 
 
 var areaAnnotation = {
-    startCoords: {"x": 0, "y": 0},
     create: function(e) {
         var selectBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         
@@ -99,32 +98,38 @@ var areaAnnotation = {
         selectBox.setAttribute("width", "0");
         selectBox.setAttribute("height", "0");
 
-        document.getElementById("annotations").appendChild(selectBox);
+        $("shapes").appendChild(selectBox);
     },
 
     finalize: function(e) {
-        var selectBox = document.getElementById("select_box");
+        var selectBox = $("select_box");
 
-        selectBox.setAttribute("id", "test");
+        selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
+        areaAnnotation.counter++;
     },
 
     trackMove: function(e) {
-        var selectBox = document.getElementById("select_box");
+        var selectBox = $("select_box");
 
         selectBox.setAttribute("x", Math.min(e.pageX, areaAnnotation.startCoords.x));
         selectBox.setAttribute("y", Math.min(e.pageY, areaAnnotation.startCoords.y));
         selectBox.setAttribute("width", Math.abs(e.pageX - areaAnnotation.startCoords.x));
         selectBox.setAttribute("height", Math.abs(e.pageY - areaAnnotation.startCoords.y));
-    }
+    },
+
+    startCoords: {"x": 0, "y": 0},
+    counter: 0
 
 };
 
 var annotation_text_displayer = {
 
-}
+};
 
 var Handler = {
     mode: "view",
+    color: "#333",
+    thickness: "2",
     init: function() {
         document.addEventListener("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
@@ -148,12 +153,17 @@ var Handler = {
                 areaAnnotation.finalize(e);
             }
         }, false);
-		
-		["shape", "area", "save", "delete", "view"].each(function(item) {
-				$("button_" + item).addEventListener("click", function(e) {
-					Handler.setMode(item);			
-				}, false);
-		});
+        
+        ["shape", "area", "save", "delete"].each(function(item) {
+                $("button_" + item).addEventListener("click", function(e) {
+                    if(item == "save") {
+                        Handler.setMode("view");
+                        Handler.displaySavePopUp();
+                    } else {
+                        Handler.setMode(item);
+                    }
+                }, false);
+        });
         
         document.addEventListener("mousemove", Handler.mouseMove, false);
         
@@ -164,20 +174,23 @@ var Handler = {
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
-			document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "crosshair";
+            $("button_save").style.display = "inline";
 
         } else if(mode == "area") {
             this.mode = "area";
-			document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "crosshair";
+            $("button_save").style.display = "inline";
 
         } else if(mode == "delete") {
             this.mode = "delete";
-			document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "crosshair";
+            $("button_save").style.display = "none";
 
         } else if(mode == "view") {
             this.mode = "view";
-			document.documentElement.style.cursor = "auto";
-        
+            document.documentElement.style.cursor = "auto";
+            $("button_save").style.display = "none";
         }
     },
 
@@ -190,16 +203,16 @@ var Handler = {
     },
 
     mouseMove: function(e) {
-    	if(Handler.mode == "view") {
-    	    // For all annotations drawn by the user
+        if(Handler.mode == "view") {
+            // For all annotations drawn by the user
             var svg_annotations = $("annotations").getElementsByTagName("rect");
             for (var i = 0; i < svg_annotations.length; i++) {
                 var rect_annot = svg_annotations.item(i); 
                 // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
                 if (e.pageX > rect_annot.getAttribute('x') &&
-					(e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
+                    (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
                     e.pageY > rect_annot.getAttribute('y') &&
-					(e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
+                    (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
                     ) {
                     // Display the annotation
                     
@@ -217,9 +230,68 @@ var Handler = {
     },
     
     save: function(e) {
-        // Save the shapes drawn
+        // Get the shapes properties
+        var color,
+            toSave = {
+                "annotation_text": 'Annotation text',
+                "shapes": [],
+                "areas": []
+            };
+
+        // Get the shapes and the areas drawn
+        $A($("shapes").childNodes).each(function(item) {
+            if(item.localName == null) return;
+            if(item.getAttribute("id").split("_")[0] == "new") {
+                if(item.localName == "g") {
+                    toSave.shapes.push(Handler.processShape(item));
+                } else if(item.localName == "rect") {
+                    toSave.areas.push(Handler.processArea(item));
+                }
+            }
+        });
+        console.debug(toSave);
+    },
+    
+    processShape: function(node) {
+        var shape = {
+                color: Handler.color,
+                thickness: Handler.thickness,
+                points: []
+            },
+            point;
+
+        $A(node.childNodes).each(function(path) {
+            path = path.getAttribute("d");
+                // The path syntax is "Mx,y Lx,y Lx,y"
+                path.split(' ').each(function(point) {
+                    // Remove the first letter (it's not part of the
+                    // coordinates)
+                    point = point.substr(1);
+                    
+                    shape.points.push({
+                        x: point.split(',')[0],
+                        y: point.split(',')[1]
+                    });
+
+                });
+        });
+
+        return shape;
+    },
+
+    processArea: function(node) {
+         return {
+            color: Handler.color,
+            thickness: Handler.thickness,
+            points: {
+                "top": parseInt(node.getAttribute("y")),
+                "left": parseInt(node.getAttribute("x")),
+                "bottom": (parseInt(node.getAttribute("height")) + parseInt(node.getAttribute("y"))),
+                "right": (parseInt(node.getAttribute("width")) + parseInt(node.getAttribute("x")))
+            }
+        };
     }
-	
+    
 
 };
 
