@@ -9,10 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-
-
-ActiveRecord::Schema.define(:version => 20101104143604) do
-
+ActiveRecord::Schema.define(:version => 20101215135205) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -311,12 +308,6 @@ ActiveRecord::Schema.define(:version => 20101104143604) do
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
   add_index "sessions", ["updated_at"], :name => "index_sessions_on_updated_at"
-
-  create_table "shape", :force => true do |t|
-    t.integer "annotation_id"
-    t.string  "color"
-    t.integer "thickness"
-  end
 
   create_table "submission_collectors", :force => true do |t|
     t.integer "child_pid"
