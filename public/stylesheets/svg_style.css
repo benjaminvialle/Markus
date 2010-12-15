@@ -25,6 +25,8 @@ path {
 
 #toolbar image {
 	cursor: pointer;
+}
+
 /* Annotation Text Displayer */
 .annotation_text_display {
     stroke: #FF0000;
