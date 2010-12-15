@@ -98,13 +98,14 @@ var areaAnnotation = {
         selectBox.setAttribute("width", "0");
         selectBox.setAttribute("height", "0");
 
-        document.getElementById("annotations").appendChild(selectBox);
+        $("shapes").appendChild(selectBox);
     },
 
     finalize: function(e) {
         var selectBox = $("select_box");
 
-        selectBox.setAttribute("id", "test");
+        selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
+        areaAnnotation.counter++;
     },
 
     trackMove: function(e) {
@@ -114,16 +115,21 @@ var areaAnnotation = {
         selectBox.setAttribute("y", Math.min(e.pageY, areaAnnotation.startCoords.y));
         selectBox.setAttribute("width", Math.abs(e.pageX - areaAnnotation.startCoords.x));
         selectBox.setAttribute("height", Math.abs(e.pageY - areaAnnotation.startCoords.y));
-    }
+    },
+
+    startCoords: {"x": 0, "y": 0},
+    counter: 0
 
 };
 
 var annotation_text_displayer = {
 
-}
+};
 
 var Handler = {
     mode: "view",
+    color: "#333",
+    thickness: "2",
     init: function() {
         document.addEventListener("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
@@ -163,20 +169,23 @@ var Handler = {
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
-			document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "crosshair";
+            $("button_save").style.display = "inline";
 
         } else if(mode == "area") {
             this.mode = "area";
-			document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "crosshair";
+            $("button_save").style.display = "inline";
 
         } else if(mode == "delete") {
             this.mode = "delete";
-			document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "crosshair";
+            $("button_save").style.display = "none";
 
         } else if(mode == "view") {
             this.mode = "view";
-			document.documentElement.style.cursor = "auto";
-        
+            document.documentElement.style.cursor = "auto";
+            $("button_save").style.display = "none";
         }
     },
 
