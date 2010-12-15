@@ -20,6 +20,7 @@ path {
 /* Toolbar */
 #toolbar rect {
 	fill: #ffffff;
+	cursor: auto;
 }
 
 #toolbar image {
