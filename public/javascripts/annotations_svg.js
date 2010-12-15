@@ -207,7 +207,9 @@ var Handler = {
                    (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
                     ) {
                     // Store the annotation
-                    annotationVector.push(new AnnotationText(1,1,"This is my line test")); // TODO only this line to change; link to the annotation
+                    annotationVector.push(new AnnotationText(1,1,"This is my line test: "
+                    + "i'm so proud that it works! ! ! Let's go in tonus tonight!"
+                    + "Marcus Pigrou is my idol..!")); // TODO only this line to change; link to the annotation text!
                 }
             }
             // Is the mouse over a shape. If not, hide the displayer.

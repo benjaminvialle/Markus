@@ -70,7 +70,7 @@ var AnnotationTextDisplayer = Class.create({
         }
         
         // Maximum number of characters in a line
-        var CharMaxNb=10;
+        var CharMaxNb=40;
         // Counts the number of lines we will write
         var lineCounter=0;
         
@@ -100,19 +100,19 @@ var AnnotationTextDisplayer = Class.create({
                     wrapText.length = parseInt(wrapText.length) + parseInt(wordList[i].length);
                     wrapText = wrapText + ' ' + wordList[i];
                 } else {
-                    wrapText = wrapText + ' ' + wordList[i];
                     // Then we add the tspan node with the function we defined
                     appendTspan(wrapText);
                     lineCounter = lineCounter + 1;
-                    wrapText="";
+                    wrapText= wordList[i];
                 }
             }
             // Finish by adding the last line the text node
             appendTspan(wrapText);
-            lineCounter = lineCounter + 1;
+            appendTspan(" ");
+            lineCounter = lineCounter + 2;
         } 
-        $('annotation_rect_display').setAttribute("width", CharMaxNb + 'em');
-        $('annotation_rect_display').setAttribute("height", lineCounter + 'em');
+        $('annotation_rect_display').setAttribute("width", CharMaxNb/2 + 'em');
+        $('annotation_rect_display').setAttribute("height", lineCounter + 1 + 'em');
     },
     
     
