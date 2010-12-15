@@ -38,7 +38,7 @@ var AnnotationTextDisplayer = Class.create({
   //x and y is the location on the screen where this collection will display
   displayCollection: function(collection, x, y) {
     //Are we already showing some Annotations?  Hide them then
-    this.hideShowing();
+    //this.hideShowing();
     //Return if the collection is empty
     if(collection.length == 0){ return;}
     //Now, compile all the annotations in this collection into a single
