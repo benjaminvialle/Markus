@@ -1,0 +1,24 @@
+/*** Style du SVG ***/
+
+/* page */
+svg {
+  background-color: white;
+  }
+/* Path */ 
+path {  
+  stroke: #333333;
+  stroke-width: 2px; 
+  fill: none;
+}
+  
+/* Select box */
+.area_annotation {
+    stroke: #FF0000;
+    fill: rgba(33, 33, 33, 0.3);
+}
+
+/* Annotation Text Displayer */
+.annotation_text_display {
+    stroke: #FF0000;
+    fill: #F0F8FF;
+}

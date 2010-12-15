@@ -1,9 +1,18 @@
 <svg xmlns="http://www.w3.org/2000/svg"
   xmlns:xlink="http://www.w3.org/1999/xlink"
   version="1.1">
+  <script xlink:href="/javascripts/prototype.js" />
+
   <script xlink:href="/javascripts/annotations_svg.js" />
+  <script xlink:href="/javascripts/SourceCodeGlower/AnnotationTextDisplayer.js"/>
+  <script xlink:href="/javascripts/SourceCodeGlower/AnnotationText.js"/>
+  <style type="text/css"> 
+      @import url(/stylesheets/svg_style.css);
+  </style>
+  
+
   <image x="0" y="16"
-    width="200" height="150"
+      width="100%" height="100%"
       style="z-index: 0;"
   xlink:href="<%= url_for(:action => 'download',
                           :controller => 'results',
@@ -12,7 +21,7 @@
 
  
   <g id="shapes">
-<% @annotations.each do |annotation| %>
+  <% @annotations.each do |annotation| %>
   <g id="shape_<%= annotation.id%>">
 <% if annotation.type == "ShapeAnnotation" %>
     <%
@@ -39,12 +48,13 @@
      paths.push(currentPath)
     %>
     <% paths.each do |path| %>
-      <path style="stroke: #FF0000; fill: none;" d="<%= path %>" />
+      <path style="stroke: <%= annotation.color %>; stroke-width: <%= annotation.thickness%>px" d="<%= path %>" />
     <% end %>
 <% elsif annotation.type == "AreaAnnotation" %>
-    <rect x="<%= annotation.x1%>" y="<%= annotation.y1%>"
-      width="<%= (annotation.y2 - annotation.y1)%>"
-      height="<%= (annotation.x2 - annotation.x1)%>" />
+     <rect id="area_<%= annotation.id%>"x="<%= annotation.x1%>" y="<%= annotation.y1%>"
+     width="<%= (annotation.y2 - annotation.y1)%>"
+     height="<%= (annotation.x2 - annotation.x1)%>" 
+     />
 <% end %>
   </g>
 <% end %>
