@@ -203,16 +203,16 @@ var Handler = {
     },
 
     mouseMove: function(e) {
-    	if(Handler.mode == "view") {
-    	    // For all annotations drawn by the user
+        if(Handler.mode == "view") {
+            // For all annotations drawn by the user
             var svg_annotations = $("annotations").getElementsByTagName("rect");
             for (var i = 0; i < svg_annotations.length; i++) {
                 var rect_annot = svg_annotations.item(i); 
                 // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
                 if (e.pageX > rect_annot.getAttribute('x') &&
-					(e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
+                    (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
                     e.pageY > rect_annot.getAttribute('y') &&
-					(e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
+                    (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
                     ) {
                     // Display the annotation
                     
