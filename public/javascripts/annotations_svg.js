@@ -149,7 +149,7 @@ var Handler = {
             }
         }, false);
 		
-		["shape", "area", "save", "delete"].each(function(item) {
+		["shape", "area", "save", "delete", "view"].each(function(item) {
 				$("button_" + item).addEventListener("click", function(e) {
 					Handler.setMode(item);			
 				}, false);
