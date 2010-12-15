@@ -14,8 +14,7 @@
   xlink:href="<%= url_for(:action => 'download',
                           :controller => 'results',
               :select_file_id => @submission_file.id,
-	      :show_in_browser => true) -%>" />
-
+              :show_in_browser => true) -%>" />
 
   <g id="shapes">
   <% @annotations.each do |annotation| %>
@@ -85,6 +84,14 @@
       width="16" height="16"
       id="button_save"
       xlink:href = "/images/icons/disk.png"
-      />
-      </g>
- </svg>
+    />
+  </g>
+  <!-- Process the embedded XHTML -->
+  <foreignObject width="1000" height="500">
+    <!-- XHTML content goes here -->
+    <body xmlns="http://www.w3.org/1999/xhtml">
+      <p>Here is a paragraph that requires word wrap</p>
+      <input id="hello" type="text" name="essai" value="hello.jpeg" onclick="this.focus()"/>
+    </body>
+  </foreignObject>
+</svg>
