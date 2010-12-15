@@ -18,6 +18,16 @@ path {
     fill: rgba(33, 33, 33, 0.3);
 }
 
+/* Hide annotation texts */
+#annotations text {
+	display: none;
+}
+
+/* But displays annotations when areas or shapes are hovered */
+#display_node text {
+	display: block;
+}
+
 /* Toolbar */
 #toolbar rect {
 	fill: #ffffff;
