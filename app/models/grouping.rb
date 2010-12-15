@@ -541,29 +541,25 @@ class Grouping < ActiveRecord::Base
 # Define if the current user can see the submission or not.
 
   def ensure_can_see?(user)
-    allow_to_see = true #define boolean 
-    is_here = false #variable to know if the user is a grader corresponding to the submission file
-    ta_memberships.find_all_by_grouping_id(self.id).each do |obj|
-      if (user.id == obj.user_id && obj.membership_status != 'rejected') 
-        is_here = true
-      end
-    end
-    if user.student?
-    #the user is a student but is not in the group
-      if (self.membership_status(user) == StudentMembership::STATUSES[:rejected] || self.membership_status(user).nil?) 
-        allow_to_see = false
+    if user.admin?
+      return true
+    elsif user.student?
+      if (self.membership_status(user) == StudentMembership::STATUSES[:rejected] ||
+        self.membership_status(user).nil?) 
+        return false
+      else 
+        return true
       end
       else
-        if !(user.admin?)
-          if !(is_here) #the user is a grader but is not grading this submission
-            allow_to_see = false
-          end
-        end
+       ta_memberships.find_all_by_grouping_id(self.id).each do |obj|
+         if (user.id == obj.user_id && obj.membership_status != 'rejected') 
+           return true
+         end
       end
-    return allow_to_see
-  end  
-  private
-  
+    end
+    return false
+  end
+ 
   # Once a grouping is valid, grant (write) repository permissions for students
   # who have accepted memberships (including the inviter)
   #
