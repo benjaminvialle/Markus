@@ -153,12 +153,17 @@ var Handler = {
                 areaAnnotation.finalize(e);
             }
         }, false);
-		
-		["shape", "area", "save", "delete"].each(function(item) {
-				$("button_" + item).addEventListener("click", function(e) {
-					Handler.setMode(item);			
-				}, false);
-		});
+        
+        ["shape", "area", "save", "delete"].each(function(item) {
+                $("button_" + item).addEventListener("click", function(e) {
+                    if(item == "save") {
+                        Handler.setMode("view");
+                        Handler.displaySavePopUp();
+                    } else {
+                        Handler.setMode(item);
+                    }
+                }, false);
+        });
         
         document.addEventListener("mousemove", Handler.mouseMove, false);
         
