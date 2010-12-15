@@ -20,10 +20,13 @@ path {
 /* Toolbar */
 #toolbar rect {
 	fill: #ffffff;
+	cursor: auto;
 }
 
 #toolbar image {
 	cursor: pointer;
+}
+
 /* Annotation Text Displayer */
 #annotation_rect_display {
     stroke: #FF0000;
