@@ -13,7 +13,7 @@ var shapeAnnotation = {
     },
 
     addPoint: function(x, y) {
-        var path = document.getElementById("shape_current").firstChild,
+        var path = $("shape_current").firstChild,
             points = path.getAttribute("d");
         if(points == "") {
             points = "M" + x + "," + y;
@@ -32,14 +32,14 @@ var shapeAnnotation = {
         newGroup.setAttribute("id", "shape_current");
         newPath.setAttribute("d", "");
         newGroup.appendChild(newPath);
-        document.getElementById("shapes").appendChild(newGroup);
+        $("shapes").appendChild(newGroup);
 
         shapeAnnotation.addPoint(e.pageX, e.pageY);
     },
 
     finalize: function(e) {
         // Moves the old shape
-        var oldGroup = document.getElementById("shape_current"),
+        var oldGroup = $("shape_current"),
             oldPath = oldGroup.firstChild,
             points = [];
 
@@ -87,7 +87,6 @@ var shapeAnnotation = {
 
 
 var areaAnnotation = {
-    startCoords: {"x": 0, "y": 0},
     create: function(e) {
         var selectBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         
@@ -103,13 +102,13 @@ var areaAnnotation = {
     },
 
     finalize: function(e) {
-        var selectBox = document.getElementById("select_box");
+        var selectBox = $("select_box");
 
         selectBox.setAttribute("id", "test");
     },
 
     trackMove: function(e) {
-        var selectBox = document.getElementById("select_box");
+        var selectBox = $("select_box");
 
         selectBox.setAttribute("x", Math.min(e.pageX, areaAnnotation.startCoords.x));
         selectBox.setAttribute("y", Math.min(e.pageY, areaAnnotation.startCoords.y));
