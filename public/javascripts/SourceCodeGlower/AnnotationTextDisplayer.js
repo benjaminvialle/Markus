@@ -112,7 +112,7 @@ var AnnotationTextDisplayer = Class.create({
             lineCounter = lineCounter + 2;
         } 
         $('annotation_rect_display').setAttribute("width", CharMaxNb/2 + 'em');
-        $('annotation_rect_display').setAttribute("height", lineCounter + 1 + 'em');
+        $('annotation_rect_display').setAttribute("height", lineCounter + 'em');
     },
     
     
