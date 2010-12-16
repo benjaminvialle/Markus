@@ -38,31 +38,38 @@ var AnnotationTextDisplayer = Class.create({
     // Display all the annotations below
     // The variable 'e' is the Mouse Event 'mousemove' managed by the class Handler
     displayAnnotations: function(e){
-        console.debug(this);
         // For all annotations drawn by the user
-        var svg_annotations = $("shapes").getElementsByTagName("rect");
+        var svg_areas = $("shapes").getElementsByTagName("rect");
+        var svg_paths = $("shapes").getElementsByTagName("path");
         
         var annotationVector = $A(); // To store the annotations we will display         
-        var rect_annot; // To save each annotation we will treat
+        var shape_annot; // To save each annotation we will treat
         
-        // For each annotation in the DOM
-        for (var i = 0; i < svg_annotations.length; i++) {
-            rect_annot = svg_annotations.item(i); 
+        // For each 'area' in the DOM
+        for (var i = 0; i < svg_areas.length; i++) {
+            shape_annot = svg_areas.item(i); 
             // Are we over a rectangle area ?
             // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
-            if (e.pageX > rect_annot.getAttribute('x') &&
-                (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
-                e.pageY > rect_annot.getAttribute('y') &&
-                (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
+            if (e.pageX > shape_annot.getAttribute('x') &&
+                (e.pageX < (parseInt(shape_annot.getAttribute('x')) + parseInt(shape_annot.getAttribute('width')))) &&
+                e.pageY > shape_annot.getAttribute('y') &&
+                (e.pageY < (parseInt(shape_annot.getAttribute('y')) + parseInt(shape_annot.getAttribute('height'))))
 
                 ) {
+                
+                // Look for the annotation which in linked to the 
                 // Store the annotation
-                annotationVector.push(new AnnotationText(1,1,"This is my line test: "
-                + "i'm so proud that it works! ! ! Let's go in tonus tonight!"
-                + "Marcus Pigrou is my idol..! AbracadabraPicetPicEtColegramBouretBourEtRatatam")); // TODO only this line to change; link to the annotation text! 
+                annotationVector.push(new AnnotationText(1,1,"This is a area annotation: let's wrap this text... "
+                + "Duis dignissim turpis a metus hendrerit nec porttitor elit accumsan. Aenean pharetra vestibulum nisi, "
+                + "eu ultrices sem aliquam at. "
+                + "AbracadabraPicetPicEtColegramBouretBourEtRatatam"
+                + "AbracadabraPicetPicEtColegramBouretBourEtRatatam"
+                + "AbracadabraPicetPicEtColegramBouretBourEtRatatam")); // TODO only this line to change; link to the annotation text! 
             }
         }
-        // Is the mouse over a shape. If not, hide the displayer.
+        // For each 'path' in the DOM
+        
+        // Is the mouse over a shape? If not, hide the displayer.
         if (annotationVector.length == 0) {
             this.hideShowing();
         }else{
@@ -97,7 +104,7 @@ var AnnotationTextDisplayer = Class.create({
         }
     },
     
-    
+    // Wraps the text of each annotation. Displays all the annotation in the Displayer rectangle, and sets its position near the mouse.
     updateDisplayNode: function(collection, x, y) {
     
         $('annotation_rect_display').setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
@@ -140,14 +147,25 @@ var AnnotationTextDisplayer = Class.create({
                 && wordList[i].indexOf('\n') == -1) {
                     wrapText.length = parseInt(wrapText.length) + parseInt(wordList[i].length);
                     wrapText = wrapText + ' ' + wordList[i];
-                } else {
-                    // If the word is bigger than the max number of characters
-                    //if () {
-                    
-                    //}
-                    // Then we add the tspan node with the function we defined
+                } else {    // There is not enough place to put the word
+                    // First we add the tspan node with the function we defined
                     appendTspan(wrapText);
                     lineCounter = lineCounter + 1;
+                    
+                    // Let's put the final word which is to big in the next line
+                    
+                    // If the word is bigger than the max number of characters
+                    // We have to cut it and just append a little part of it to the next line
+                    if (wordList[i].length > CharMaxNb) {
+                        var longWord = wordList[i];
+                        while (longWord.length > CharMaxNb) {
+                            appendTspan(longWord.substring(0,CharMaxNb-3) + '-');
+                            lineCounter = lineCounter + 1;
+                            longWord = '-' + longWord.substring(CharMaxNb-3,longWord.length);
+                        }
+                        wordList[i] = longWord;
+                    }
+                    // Append the word to the next line
                     wrapText= wordList[i];
                 }
             }
@@ -156,7 +174,7 @@ var AnnotationTextDisplayer = Class.create({
             appendTspan(" ");
             lineCounter = lineCounter + 2;
         } 
-        $('annotation_rect_display').setAttribute("width", CharMaxNb/2 + 'em');
+        $('annotation_rect_display').setAttribute("width", parseInt(5*CharMaxNb/8) + 'em');
         $('annotation_rect_display').setAttribute("height", lineCounter + 'em');
     },
     
