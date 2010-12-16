@@ -195,7 +195,7 @@ var Handler = {
             } else if(Handler.mode == "area") {
                 areaAnnotation.finalize(e);
             }
-        });
+        }, false);
 
         ["shape", "area", "save", "delete", "view"].each(function(item) {
                 Event.observe($("button_" + item), "click", function(e) {
@@ -214,6 +214,10 @@ var Handler = {
             
     },
 
+   displaySavePopUp: function() {
+	var pop = $("modal")
+	pop.style.display='block';
+		  },
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";

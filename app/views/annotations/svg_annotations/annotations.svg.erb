@@ -7,6 +7,7 @@
   <script xlink:href="/javascripts/SourceCodeGlower/AnnotationText.js"/>
   <style type="text/css">
       @import url(/stylesheets/svg_style.css);
+      @import url(/stylesheets/main.css);
   </style>
   <image x="0" y="0"
       width="100%" height="100%"
@@ -14,8 +15,7 @@
   xlink:href="<%= url_for(:action => 'download',
                           :controller => 'results',
               :select_file_id => @submission_file.id,
-	      :show_in_browser => true) -%>" />
-
+              :show_in_browser => true) -%>" />
 
   <g id="shapes">
   <% @annotations.each do |annotation| %>
@@ -63,35 +63,14 @@
   </g>
 <% end %>
 </g>
-
-  <g id="toolbar">
-    <rect x="0" y="0" width="140" height="26" />
-    <image x="5" y="5"
-      width="16" height="16"
-      id="button_shape"
-      xlink:href = "/images/icons/pencil.png"
-    />
-    <image x="30" y="5"
-      width="16" height="16"
-      id="button_area"
-      xlink:href = "/images/icons/shape_square_add.png"
-    />
-    <image x ="105" y="5"
-      width="16" height="16"
-      id="button_view"
-      xlink:href = "/images/icons/eye.png"
-    />
-    <image x="55" y="5" z-index = "0"
-      width="16" height="16"
-      id="button_delete"
-      xlink:href = "/images/icons/comment_delete.png"
-    />
-    <image x="80" y="5"
-      width="16" height="16"
-      id="button_save"
-      xlink:href = "/images/icons/disk.png"
-      />
-      </g>
+  <!-- this partial is only used to make the code more easy to read : it displays the toolbar -->
+  <%= render :partial => 'annotations/svg_annotations/toolbar.svg.erb', :locals => {:annotation_categories => @annotation_categories} %>
+  <!-- this partial is only used to make the code more easy to read : this one is for popup -->
+  <g id="modal">
+    <foreignObject width="1000" height="500" x="0" y="50">
+     <%= render :partial => 'annotations/svg_annotations/save_popup', :locals => {:annotation_categories => @annotation_categories} %> 
+    </foreignObject>
+  </g>
   <script>
     //<![CDATA[
     Handler.queryURI = "<%= url_for(:controller =>"annotations" ,
