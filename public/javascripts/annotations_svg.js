@@ -131,7 +131,7 @@ var Handler = {
     color: "#333",
     thickness: "2",
     init: function() {
-        document.addEventListener("mousedown", function(e) {
+        document.observe("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
             // firefox. As the annotated image *is* the background,
             // this was quite annoying
@@ -142,35 +142,39 @@ var Handler = {
             } else if(Handler.mode == "area") {
                 areaAnnotation.create(e);
             }
-            document.addEventListener("mousemove", Handler.trackMove, false);
-        }, false);
+            document.observe("mousemove", Handler.trackMove);
+        });
 
-        document.addEventListener("mouseup", function(e) {
-            document.removeEventListener("mousemove", Handler.trackMove, false);
+        document.observe("mouseup", function(e) {
+            document.stopObserving("mousemove", Handler.trackMove);
             if(Handler.mode == "shape") {
                 shapeAnnotation.finalize(e);
             } else if(Handler.mode == "area") {
                 areaAnnotation.finalize(e);
             }
         }, false);
-        
-        ["shape", "area", "save", "delete"].each(function(item) {
-                $("button_" + item).addEventListener("click", function(e) {
+
+        ["shape", "area", "save", "delete", "view"].each(function(item) {
+                Event.observe($("button_" + item), "click", function(e) {
                     if(item == "save") {
                         Handler.setMode("view");
                         Handler.displaySavePopUp();
                     } else {
                         Handler.setMode(item);
                     }
-                }, false);
+                });
         });
         
-        document.addEventListener("mousemove", Handler.mouseMove, false);
+        document.observe("mousemove", Handler.mouseMove);
         
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
             
     },
 
+   displaySavePopUp: function() {
+	var pop = $("modal")
+	pop.style.display='block';
+		  },
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
@@ -194,6 +198,7 @@ var Handler = {
         }
     },
 
+    // Is called when the mouse moves *while drawing*
     trackMove: function(e) {
         if(Handler.mode == "shape") {
             shapeAnnotation.trackMove(e);
@@ -201,11 +206,15 @@ var Handler = {
             areaAnnotation.trackMove(e);
         }
     },
-
+    
+    // Is called when the mouse moves
     mouseMove: function(e) {
         if(Handler.mode == "view") {
             // For all annotations drawn by the user
-            var svg_annotations = $("annotations").getElementsByTagName("rect");
+            var svg_annotations = $("shapes").getElementsByTagName("rect");
+            
+            var annotationVector = $A();                   
+                    
             for (var i = 0; i < svg_annotations.length; i++) {
                 var rect_annot = svg_annotations.item(i); 
                 // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
@@ -213,18 +222,23 @@ var Handler = {
                     (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
                     e.pageY > rect_annot.getAttribute('y') &&
                     (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
+
                     ) {
-                    // Display the annotation
-                    
-                    // TODO
-                    // For the tests now
-                    var annot_1 = new AnnotationText(1,1,"Je m'appelle Markus PIGROU");
-                    var annot_2 = new AnnotationText(1,1,"et j'aime les toupoutous");
-     
-                    annotation_text_displayer.displayCollection( [annot_1,annot_2], e.pageX, e.pageY);
-                } else {
-                   annotation_text_displayer.hideShowing();
+                    // Store the annotation
+                    annotationVector.push(new AnnotationText(1,1,"This is my line test: "
+                    + "i'm so proud that it works! ! ! Let's go in tonus tonight!"
+                    + "Marcus Pigrou is my idol..! AbracadabraPicetPicEtColegram")); // TODO only this line to change; link to the annotation text!
                 }
+            }
+            // Is the mouse over a shape. If not, hide the displayer.
+            if (annotationVector.length == 0) {
+                annotation_text_displayer.hideShowing();
+            }else{
+                annotation_text_displayer.displayCollection(
+                     annotationVector,
+                     e.pageX, 
+                     e.pageY
+                );
             }
         }
     },
@@ -249,8 +263,24 @@ var Handler = {
                 }
             }
         });
-        console.debug(toSave);
+
+        // Actually saves the shapes
+        new Ajax.Request(Handler.queryURI, {
+            method: 'post',
+            onSuccess: function(transport) {
+                var response = transport.responseText;
+                // TODO Delete the sent shapes, and draw the new ones 
+            },
+            onFailure: function() {
+                // TODO Inform the user that something happened.
+            }
+        });
     },
+	
+	deleteAnnotation: function(annotation) {
+		// TODO make an AJAX call to remove the annotation from DB
+		// TODO then remove it from the page.
+	},
     
     processShape: function(node) {
         var shape = {
@@ -295,5 +325,5 @@ var Handler = {
 
 };
 
-document.addEventListener("DOMContentLoaded", Handler.init, false);
+document.observe("DOMContentLoaded", Handler.init);
 

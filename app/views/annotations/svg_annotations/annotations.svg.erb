@@ -63,54 +63,19 @@
   </g>
 <% end %>
 </g>
-
-  <g id="toolbar">
-    <rect x="0" y="0" width="105" height="26" />
-    <image x="5" y="5"
-      width="16" height="16"
-      id="button_shape"
-      xlink:href = "/images/icons/pencil.png"
-    />
-    <image x="30" y="5"
-      width="16" height="16"
-      id="button_area"
-      xlink:href = "/images/icons/shape_square_add.png"
-    />
-    <image x="55" y="5" z-index = "0"
-      width="16" height="16"
-      id="button_delete"
-      xlink:href = "/images/icons/comment_delete.png"
-    />
-    <image x="80" y="5"
-      width="16" height="16"
-      id="button_save"
-      xlink:href = "/images/icons/disk.png"
-    />
+  <!-- this partial is only used to make the code more easy to read : it displays the toolbar -->
+  <%= render :partial => 'annotations/svg_annotations/toolbar.svg.erb', :locals => {:annotation_categories => @annotation_categories} %>
+  <!-- this partial is only used to make the code more easy to read : this one is for popup -->
+  <g id="modal">
+    <foreignObject width="1000" height="500" x="0" y="50">
+     <%= render :partial => 'annotations/svg_annotations/save_popup', :locals => {:annotation_categories => @annotation_categories} %> 
+    </foreignObject>
   </g>
-  <!-- Process the embedded XHTML -->
-  <foreignObject width="1000" height="500"
-                 x="0" y="50">
-    <!-- XHTML content goes here -->
-    <body xmlns="http://www.w3.org/1999/xhtml">
-      <div id="create_annotation_dialog"> <!--  style="display:none;"> -->
-      <h2><%= I18n.t("marker.annotation.new_annotation") %></h2>
-      <p>
-      <textarea id="new_annotation_content" rows="3" cols="42" onclick="this.focus()"></textarea>
-      </p>
-      <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
-      <select id="new_annotation_category">
-      <option value=""><%=t('annotations.one_time_only')%></option>
-      <% @annotation_categories.each do |annotation_category| %>
-        <option value="<%=h(annotation_category.id)%>"><%=h(annotation_category.annotation_category_name)%></option>
-      <% end %>
-      </select>
-      <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-      <button onclick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
-      <button onclick="modal.close();"><%= I18n.t("cancel") %></button>
-      </p>
-
-      </div>
-
-    </body>
-  </foreignObject>
-</svg>
+  <script>
+    //<![CDATA[
+    Handler.queryURI = "<%= url_for(:controller =>"annotations" ,
+                                     :action =>"write_annotations",
+                                    :submission_file_id => @submission_file_id) %>";
+    //]]>
+  </script>
+ </svg>

@@ -4,6 +4,7 @@
 svg {
   background-color: white;
 }
+
 /* Path */ 
 path {  
   stroke: #333333;
@@ -15,6 +16,16 @@ path {
 .area_annotation {
     stroke: #FF0000;
     fill: rgba(33, 33, 33, 0.3);
+}
+
+/* Hide annotation texts */
+#annotations text {
+	display: none;
+}
+
+/* But displays annotations when areas or shapes are hovered */
+#display_node text {
+	display: block;
 }
 
 /* Toolbar */
@@ -33,7 +44,11 @@ path {
 }
 
 /* Annotation Text Displayer */
-.annotation_text_display {
+#annotation_rect_display {
     stroke: #FF0000;
     fill: #F0F8FF;
+}
+
+#modal {
+     display: none;
 }
