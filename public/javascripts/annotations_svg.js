@@ -78,7 +78,7 @@ var shapeAnnotation = {
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
         shapeAnnotation.counter++;        
     },
-		
+        
     processShape: function(node) {
         var shape = {
                 color: Handler.color,
@@ -87,7 +87,7 @@ var shapeAnnotation = {
             },
             point;
 
-		$A(node.childNodes).each(function(path) {
+        $A(node.childNodes).each(function(path) {
             path = path.getAttribute("d");
                 // The path syntax is "Mx,y Lx,y Lx,y"
                 path.split(' ').each(function(point) {
@@ -102,7 +102,7 @@ var shapeAnnotation = {
 
                 });
         });
-		
+        
 
 
         return shape;
@@ -137,7 +137,7 @@ var areaAnnotation = {
         selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
         areaAnnotation.counter++;
     },
-	
+    
     processArea: function(node) {
          return {
             color: Handler.color,
@@ -214,10 +214,14 @@ var Handler = {
             
     },
 
-   displaySavePopUp: function() {
-	var pop = $("modal")
-	pop.style.display='block';
-		  },
+	displaySavePopUp: function() {
+    	$("modal").style.display='block';
+    },
+	
+	closeSavePopUp: function() {
+		$("modal").style.display='none';
+	},
+
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
@@ -289,13 +293,13 @@ var Handler = {
     save: function(e) {
         // Get the shapes properties
         var color, annotations = Handler.processNewAnnotations();
-            		
+                    
 
 
         // Actually saves the shapes
         new Ajax.Request(Handler.queryURI, {
             method: 'post',
-			parameters: { annotations: Object.toJSON(annotations) },
+            parameters: { annotations: Object.toJSON(annotations) },
             onSuccess: function(transport) {
                 var response = transport.responseText;
                 // TODO Delete the sent shapes, and draw the new ones 
@@ -305,19 +309,19 @@ var Handler = {
             }
         });
     },
-	
-	deleteAnnotation: function(annotation) {
-		// TODO make an AJAX call to remove the annotation from DB
-		// TODO then remove it from the page.
-	},
-	
-	processNewAnnotations: function() {
-		var toSave = {
+    
+    deleteAnnotation: function(annotation) {
+        // TODO make an AJAX call to remove the annotation from DB
+        // TODO then remove it from the page.
+    },
+    
+    processNewAnnotations: function() {
+        var toSave = {
                 "annotation_text": 'Annotation text',
                 "shapes": [],
                 "areas": []
         };
-		
+        
         // Get the shapes and the areas drawn
         $A($("shapes").childNodes).each(function(item) {
             if(item.localName == null) return;
@@ -329,8 +333,8 @@ var Handler = {
                 }
             }
         });
-		return toSave;
-	}
+        return toSave;
+    }
 
 };
 
