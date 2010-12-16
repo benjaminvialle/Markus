@@ -100,8 +100,9 @@ class AnnotationsController < ApplicationController
     submission = Submission.find_by_id(@submission_file.submission_id)
     grouping = Grouping.find_by_id(submission.grouping_id)
 
-    # TODO : Catch @annotation_categories correctly
-    @annotation_categories = Array.new
+    #Catch assignment's categories
+    assignment = submission.assignment
+    @annotation_categories = assignment.annotation_categories
 
     if grouping.ensure_can_see?(current_user)
       @annotations = @submission_file.annotations
