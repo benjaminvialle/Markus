@@ -103,8 +103,6 @@ var shapeAnnotation = {
                 });
         });
         
-
-
         return shape;
     },
 
@@ -165,14 +163,12 @@ var areaAnnotation = {
 
 };
 
-var annotation_text_displayer = {
-
-};
 
 var Handler = {
     mode: "view",
     color: "#333",
     thickness: "2",
+    annotation_text_displayer: {},
     init: function() {
         document.observe("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
@@ -259,6 +255,20 @@ var Handler = {
     mouseMove: function(e) {
         if(Handler.mode == "view") {
             annotation_text_displayer.displayAnnotations(e);
+        }
+    },
+    
+    // Is called when the mouse is over a path
+    mouseOverPath: function(e) {
+        if(Handler.mode == "view") {
+            annotation_text_displayer.addAnnotationPath(e);
+        }
+    },
+    
+    // Is called when the mouse leaves a path
+    mouseOutPath: function(e) {
+        if(Handler.mode == "view") {
+            annotation_text_displayer.clearAnnotationPath(e);
         }
     },
     

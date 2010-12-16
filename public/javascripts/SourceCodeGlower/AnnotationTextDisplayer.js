@@ -16,6 +16,8 @@ var TEXT_DISPLAY_Y_OFFSET = 10;
 
 var AnnotationTextDisplayer = Class.create({
 
+    annotationPaths: $A(),
+
     initialize: function(parent_node) {
         //Create the G that we will display in
         this.display_node = document.createElementNS("http://www.w3.org/2000/svg", "g");
@@ -40,7 +42,6 @@ var AnnotationTextDisplayer = Class.create({
     displayAnnotations: function(e){
         // For all annotations drawn by the user
         var svg_areas = $("shapes").getElementsByTagName("rect");
-        var svg_paths = $("shapes").getElementsByTagName("path");
         
         var annotationVector = $A(); // To store the annotations we will display         
         var shape_annot; // To save each annotation we will treat
@@ -62,12 +63,16 @@ var AnnotationTextDisplayer = Class.create({
                 annotationVector.push(new AnnotationText(1,1,"This is a area annotation: let's wrap this text... "
                 + "Duis dignissim turpis a metus hendrerit nec porttitor elit accumsan. Aenean pharetra vestibulum nisi, "
                 + "eu ultrices sem aliquam at. "
-                + "AbracadabraPicetPicEtColegramBouretBourEtRatatam"
-                + "AbracadabraPicetPicEtColegramBouretBourEtRatatam"
-                + "AbracadabraPicetPicEtColegramBouretBourEtRatatam")); // TODO only this line to change; link to the annotation text! 
+                )); // TODO only this line to change; link to the annotation text! 
             }
         }
-        // For each 'path' in the DOM
+        
+        // For each 'path' in the annotationPaths
+        this.annotationPaths.each(function(path) {
+            // Look for the annotation which in linked to the 
+                // Store the annotation
+                annotationVector.push(new AnnotationText(1,1,"This is a shape annotation")); // TODO only this line to change; link to the annotation text! 
+        });
         
         // Is the mouse over a shape? If not, hide the displayer.
         if (annotationVector.length == 0) {
@@ -81,7 +86,17 @@ var AnnotationTextDisplayer = Class.create({
         }
     },
     
+    // Adds an annotation to the displayer path list
+    addAnnotationPath: function(e) {
+        this.annotationPaths.push(e.currentTarget);
+    },
  
+    // Clears displayer path list
+    clearAnnotationPath: function(e) {
+        this.annotationPaths.clear();
+    },
+    
+    
     // Assumes collection is subclass of Prototype Enumerable class
     // x and y is the location on the screen where this collection will be displayed
     displayCollection: function(collection, x, y) {
@@ -177,53 +192,6 @@ var AnnotationTextDisplayer = Class.create({
         $('annotation_rect_display').setAttribute("width", parseInt(5*CharMaxNb/8) + 'em');
         $('annotation_rect_display').setAttribute("height", lineCounter + 'em');
     },
-    
-    // Add an Event Listener 'mouseover'/'mouseout' in order to display/hide the linked annotation. 
-    addAnnotationListener: function(element){
-    
-        element.addEventListener("mouseover", function(e){
-			// Look for the annotation
-			var annotationString = "annotation_" + e.currentTarget.id.split('_')[1];
-			var targetAnnotation = $(annotationString);
-			
-			if(targetAnnotation!=null){
-				if (targetAnnotation.getAttribute("style").indexOf("display: none;") != -1) {
-				    // Get Mouse Coordinates to display the annotation
-					var posx = 0;
-					var posy = 0;
-					if (e.pageX || e.pageY){
-						posx = e.pageX;
-						posy = e.pageY;
-					}
-					else if (e.clientX || e.clientY){
-						posx = e.clientX + document.body.scrollLeft
-							+ document.documentElement.scrollLeft;
-						posy = e.clientY + document.body.scrollTop
-							+ document.documentElement.scrollTop;
-					}
-                    
-                    // Adds the annotation to the current displayer
-                    
-                    
-				}
-			}
-			
-		}, true);
-		shape.addEventListener("mouseout", function(e){
-			
-		
-		
-			var annotationString = "annotation_" + e.currentTarget.id.split('_')[1];
-			var targetAnnotation = $(annotationString);
-			
-			if(targetAnnotation != null){
-				if (targetAnnotation.getAttribute("style").indexOf("display: block;") != -1) {
-					// TODO Re-launch the calculus of text annotation
-				}
-			}
-		}, true);
-    },   
-    
     
     //Hide the displayer
     hide: function() {
