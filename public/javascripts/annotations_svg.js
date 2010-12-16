@@ -77,6 +77,7 @@ var shapeAnnotation = {
 
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
         shapeAnnotation.counter++;        
+		Handler.displaySaveButton();
     },
         
     processShape: function(node) {
@@ -136,6 +137,7 @@ var areaAnnotation = {
 
         selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
         areaAnnotation.counter++;
+		Handler.displaySaveButton();
     },
     
     processArea: function(node) {
@@ -216,7 +218,6 @@ var Handler = {
         document.observe("mousemove", Handler.mouseMove);
         
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
-            
     },
 
 	displaySavePopUp: function() {
@@ -226,27 +227,33 @@ var Handler = {
 	closeSavePopUp: function() {
 		$("modal").style.display='none';
 	},
+	
+	/* Called when a new shape / area is drawn */
+	displaySaveButton: function() {
+		$("button_save").style.display = "inline";
+	},
+
+	/* Called when the shapes / areas are saved in the db*/
+	hideSaveButton: function() {
+		$("button_save").style.display = "none";
+	},
 
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
             document.documentElement.style.cursor = "crosshair";
-            $("button_save").style.display = "inline";
 
         } else if(mode == "area") {
             this.mode = "area";
             document.documentElement.style.cursor = "crosshair";
-            $("button_save").style.display = "inline";
 
         } else if(mode == "delete") {
             this.mode = "delete";
             document.documentElement.style.cursor = "crosshair";
-            $("button_save").style.display = "none";
 
         } else if(mode == "view") {
             this.mode = "view";
             document.documentElement.style.cursor = "auto";
-            $("button_save").style.display = "none";
         }
     },
 
@@ -309,9 +316,11 @@ var Handler = {
             onSuccess: function(transport) {
                 var response = transport.responseText;
                 // TODO Delete the sent shapes, and draw the new ones 
+				Handler.hideSaveButton();
             },
             onFailure: function() {
                 // TODO Inform the user that something happened.
+				alert("Could not save the annotations. Please try again later");
             }
         });
     },
