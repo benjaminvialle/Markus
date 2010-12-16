@@ -259,8 +259,24 @@ var Handler = {
                 }
             }
         });
-        console.debug(toSave);
+
+        // Actually saves the shapes
+        new Ajax.Request(Handler.queryURI, {
+            method: 'post',
+            onSuccess: function(transport) {
+                var response = transport.responseText;
+                // TODO Delete the sent shapes, and draw the new ones 
+            },
+            onFailure: function() {
+                // TODO Inform the user that something happened.
+            }
+        });
     },
+	
+	deleteAnnotation: function(annotation) {
+		// TODO make an AJAX call to remove the annotation from DB
+		// TODO then remove it from the page.
+	},
     
     processShape: function(node) {
         var shape = {
