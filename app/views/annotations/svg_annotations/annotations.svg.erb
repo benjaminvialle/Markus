@@ -120,4 +120,11 @@
     </body>
   </foreignObject>
   </g>
-</svg>
+  <script>
+    //<![CDATA[
+    Handler.queryURI = "<%= url_for(:controller =>"annotations" ,
+                                     :action =>"write_annotations",
+                                    :submission_file_id => @submission_file_id) %>";
+    //]]>
+  </script>
+ </svg>
