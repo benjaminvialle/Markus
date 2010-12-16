@@ -194,7 +194,7 @@ var Handler = {
         }
     },
 
-    // Is called after a left click and when the mouse moves 
+    // Is called when the mouse moves *while drawing*
     trackMove: function(e) {
         if(Handler.mode == "shape") {
             shapeAnnotation.trackMove(e);
