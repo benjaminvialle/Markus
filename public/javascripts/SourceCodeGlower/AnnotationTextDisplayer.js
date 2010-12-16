@@ -82,14 +82,14 @@ var AnnotationTextDisplayer = Class.create({
     },
     
  
-    //Assumes collection is subclass of Prototype Enumerable class
-    //x and y is the location on the screen where this collection will be displayed
+    // Assumes collection is subclass of Prototype Enumerable class
+    // x and y is the location on the screen where this collection will be displayed
     displayCollection: function(collection, x, y) {
-        //Return if the collection is empty
+        // Return if the collection is empty
         if(collection.length == 0){ return;}
         
-        //Update the Display node (a g, in this case) to be in the right
-        //position, and to have the right contents
+        // Update the Display node (a g, in this case) to be in the right
+        // position, and to have the right contents
         this.updateDisplayNode(collection, x, y);
         
         //Show the Displayer
@@ -97,11 +97,21 @@ var AnnotationTextDisplayer = Class.create({
     },
     
     
-    //Hide all showing annotations.
+    // Hide all showing annotations.
     hideShowing: function() {
         if(this.getShowing()) {
             this.hide();
         }
+    },
+    
+    // Defines a function to add a tspan in $('annotation_text_display')
+    appendTspan: function(text,x) {
+        // Add a child node tspan to the annotation text displayer 
+        var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspan.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
+        tspan.setAttribute('dy', '1em');
+        tspan.textContent = text;
+        $('annotation_text_display').appendChild(tspan);
     },
     
     // Wraps the text of each annotation. Displays all the annotation in the Displayer rectangle, and sets its position near the mouse.
@@ -122,16 +132,6 @@ var AnnotationTextDisplayer = Class.create({
         // Counts the number of lines we will write
         var lineCounter=0;
         
-        // First let's define a function to add a tspan in the DOM
-        appendTspan= function(text) {
-            // Add a child node tspan to the annotation text displayer 
-            var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-            tspan.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
-            tspan.setAttribute('dy', '1em');
-            tspan.textContent = text;
-            $('annotation_text_display').appendChild(tspan);
-        };
-        
         // Now, compile all the annotations of the collection in the text node
         for (var k=0; k<collection.length; k++){
             // We will work with each annotation text
@@ -149,7 +149,7 @@ var AnnotationTextDisplayer = Class.create({
                     wrapText = wrapText + ' ' + wordList[i];
                 } else {    // There is not enough place to put the word
                     // First we add the tspan node with the function we defined
-                    appendTspan(wrapText);
+                    this.appendTspan(wrapText,x);
                     lineCounter = lineCounter + 1;
                     
                     // Let's put the final word which is to big in the next line
@@ -159,7 +159,7 @@ var AnnotationTextDisplayer = Class.create({
                     if (wordList[i].length > CharMaxNb) {
                         var longWord = wordList[i];
                         while (longWord.length > CharMaxNb) {
-                            appendTspan(longWord.substring(0,CharMaxNb-3) + '-');
+                            this.appendTspan(longWord.substring(0,CharMaxNb-3) + '-',x);
                             lineCounter = lineCounter + 1;
                             longWord = '-' + longWord.substring(CharMaxNb-3,longWord.length);
                         }
@@ -170,14 +170,59 @@ var AnnotationTextDisplayer = Class.create({
                 }
             }
             // Finish by adding the last line the text node
-            appendTspan(wrapText);
-            appendTspan(" ");
+            this.appendTspan(wrapText,x);
+            this.appendTspan(" ",x);
             lineCounter = lineCounter + 2;
         } 
         $('annotation_rect_display').setAttribute("width", parseInt(5*CharMaxNb/8) + 'em');
         $('annotation_rect_display').setAttribute("height", lineCounter + 'em');
     },
     
+    // Add an Event Listener 'mouseover'/'mouseout' in order to display/hide the linked annotation. 
+    addAnnotationListener: function(element){
+    
+        element.addEventListener("mouseover", function(e){
+			// Look for the annotation
+			var annotationString = "annotation_" + e.currentTarget.id.split('_')[1];
+			var targetAnnotation = $(annotationString);
+			
+			if(targetAnnotation!=null){
+				if (targetAnnotation.getAttribute("style").indexOf("display: none;") != -1) {
+				    // Get Mouse Coordinates to display the annotation
+					var posx = 0;
+					var posy = 0;
+					if (e.pageX || e.pageY){
+						posx = e.pageX;
+						posy = e.pageY;
+					}
+					else if (e.clientX || e.clientY){
+						posx = e.clientX + document.body.scrollLeft
+							+ document.documentElement.scrollLeft;
+						posy = e.clientY + document.body.scrollTop
+							+ document.documentElement.scrollTop;
+					}
+                    
+                    // Adds the annotation to the current displayer
+                    
+                    
+				}
+			}
+			
+		}, true);
+		shape.addEventListener("mouseout", function(e){
+			
+		
+		
+			var annotationString = "annotation_" + e.currentTarget.id.split('_')[1];
+			var targetAnnotation = $(annotationString);
+			
+			if(targetAnnotation != null){
+				if (targetAnnotation.getAttribute("style").indexOf("display: block;") != -1) {
+					// TODO Re-launch the calculus of text annotation
+				}
+			}
+		}, true);
+    },   
     
     
     //Hide the displayer
