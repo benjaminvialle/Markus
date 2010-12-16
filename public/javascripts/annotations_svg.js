@@ -171,6 +171,10 @@ var Handler = {
             
     },
 
+   displaySavePopUp: function() {
+	var pop = $("modal")
+	pop.style.display='block';
+		  },
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";

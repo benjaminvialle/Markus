@@ -37,3 +37,7 @@ path {
     stroke: #FF0000;
     fill: #F0F8FF;
 }
+
+#modal {
+     display: none;
+}
