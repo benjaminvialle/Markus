@@ -153,8 +153,7 @@ var Handler = {
                 areaAnnotation.finalize(e);
             }
         }, false);
-        
-        ["shape", "area", "save", "delete"].each(function(item) {
+        ["shape", "area", "save", "delete", "view"].each(function(item) {
                 $("button_" + item).addEventListener("click", function(e) {
                     if(item == "save") {
                         Handler.setMode("view");
@@ -198,6 +197,7 @@ var Handler = {
         }
     },
 
+    // Is called after a left click and when the mouse moves 
     trackMove: function(e) {
         if(Handler.mode == "shape") {
             shapeAnnotation.trackMove(e);
@@ -205,11 +205,15 @@ var Handler = {
             areaAnnotation.trackMove(e);
         }
     },
-
+    
+    // Is called when the mouse moves
     mouseMove: function(e) {
         if(Handler.mode == "view") {
             // For all annotations drawn by the user
-            var svg_annotations = $("annotations").getElementsByTagName("rect");
+            var svg_annotations = $("shapes").getElementsByTagName("rect");
+            
+            var annotationVector = $A();                   
+                    
             for (var i = 0; i < svg_annotations.length; i++) {
                 var rect_annot = svg_annotations.item(i); 
                 // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
@@ -217,18 +221,23 @@ var Handler = {
                     (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
                     e.pageY > rect_annot.getAttribute('y') &&
                     (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
+
                     ) {
-                    // Display the annotation
-                    
-                    // TODO
-                    // For the tests now
-                    var annot_1 = new AnnotationText(1,1,"Je m'appelle Markus PIGROU");
-                    var annot_2 = new AnnotationText(1,1,"et j'aime les toupoutous");
-     
-                    annotation_text_displayer.displayCollection( [annot_1,annot_2], e.pageX, e.pageY);
-                } else {
-                   annotation_text_displayer.hideShowing();
+                    // Store the annotation
+                    annotationVector.push(new AnnotationText(1,1,"This is my line test: "
+                    + "i'm so proud that it works! ! ! Let's go in tonus tonight!"
+                    + "Marcus Pigrou is my idol..! AbracadabraPicetPicEtColegram")); // TODO only this line to change; link to the annotation text!
                 }
+            }
+            // Is the mouse over a shape. If not, hide the displayer.
+            if (annotationVector.length == 0) {
+                annotation_text_displayer.hideShowing();
+            }else{
+                annotation_text_displayer.displayCollection(
+                     annotationVector,
+                     e.pageX, 
+                     e.pageY
+                );
             }
         }
     },
