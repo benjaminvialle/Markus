@@ -1,6 +1,6 @@
 /** Annotation Text Displayer Class
 
-This class is in charge of displaying collections of Annotation Texts.    It puts them
+This class is in charge of displaying collections of Annotation Texts. It puts them
 in a G with a class called "annotation_rect_display" and is in charge of displaying
 that G at given coordinates, and hiding that G.
 

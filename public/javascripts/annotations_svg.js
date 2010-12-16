@@ -223,7 +223,10 @@ var Handler = {
                     // Store the annotation
                     annotationVector.push(new AnnotationText(1,1,"This is my line test: "
                     + "i'm so proud that it works! ! ! Let's go in tonus tonight!"
-                    + "Marcus Pigrou is my idol..! AbracadabraPicetPicEtColegram")); // TODO only this line to change; link to the annotation text!
+                    + "Marcus Pigrou is my idol..! AbracadabraPicetPicEtColegramBouretBourEtRatatam")); // TODO only this line to change; link to the annotation text!
+                    
+                    
+                    
                 }
             }
             // Is the mouse over a shape. If not, hide the displayer.
