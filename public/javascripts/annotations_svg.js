@@ -131,7 +131,7 @@ var Handler = {
     color: "#333",
     thickness: "2",
     init: function() {
-        document.addEventListener("mousedown", function(e) {
+        document.observe("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
             // firefox. As the annotated image *is* the background,
             // this was quite annoying
@@ -142,30 +142,30 @@ var Handler = {
             } else if(Handler.mode == "area") {
                 areaAnnotation.create(e);
             }
-            document.addEventListener("mousemove", Handler.trackMove, false);
-        }, false);
+            document.observe("mousemove", Handler.trackMove);
+        });
 
-        document.addEventListener("mouseup", function(e) {
-            document.removeEventListener("mousemove", Handler.trackMove, false);
+        document.observe("mouseup", function(e) {
+            document.stopObserving("mousemove", Handler.trackMove);
             if(Handler.mode == "shape") {
                 shapeAnnotation.finalize(e);
             } else if(Handler.mode == "area") {
                 areaAnnotation.finalize(e);
             }
-        }, false);
+        });
 
         ["shape", "area", "save", "delete", "view"].each(function(item) {
-                $("button_" + item).addEventListener("click", function(e) {
+                Event.observe($("button_" + item), "click", function(e) {
                     if(item == "save") {
                         Handler.setMode("view");
                         Handler.displaySavePopUp();
                     } else {
                         Handler.setMode(item);
                     }
-                }, false);
+                });
         });
         
-        document.addEventListener("mousemove", Handler.mouseMove, false);
+        document.observe("mousemove", Handler.mouseMove);
         
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
             
@@ -321,5 +321,5 @@ var Handler = {
 
 };
 
-document.addEventListener("DOMContentLoaded", Handler.init, false);
+document.observe("DOMContentLoaded", Handler.init);
 
