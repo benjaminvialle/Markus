@@ -197,6 +197,7 @@ var Handler = {
             }
         }, false);
 
+		// Attach controls in the toolbar
         ["shape", "area", "save", "delete", "view"].each(function(item) {
                 Event.observe($("button_" + item), "click", function(e) {
                     if(item == "save") {
@@ -207,6 +208,10 @@ var Handler = {
                     }
                 });
         });
+
+		// Attach controls in the modal window
+		Event.observe($("modal_save"), "click", Handler.save);
+		Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
         
         document.observe("mousemove", Handler.mouseMove);
         
@@ -294,7 +299,8 @@ var Handler = {
         // Get the shapes properties
         var color, annotations = Handler.processNewAnnotations();
                     
-
+		// Get the annotation text
+		annotations.annotation_text = $F("new_annotation_text");
 
         // Actually saves the shapes
         new Ajax.Request(Handler.queryURI, {
@@ -317,7 +323,6 @@ var Handler = {
     
     processNewAnnotations: function() {
         var toSave = {
-                "annotation_text": 'Annotation text',
                 "shapes": [],
                 "areas": []
         };
