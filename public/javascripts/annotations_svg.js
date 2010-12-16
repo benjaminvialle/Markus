@@ -220,10 +220,12 @@ var Handler = {
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
     },
 
+	/* Fired when the save button (in the toolbar) is clicked */
 	displaySavePopUp: function() {
     	$("modal").style.display='block';
     },
 	
+	/* Fired when the cancel button (in the modal window) is clicked */
 	closeSavePopUp: function() {
 		$("modal").style.display='none';
 	},
@@ -238,6 +240,7 @@ var Handler = {
 		$("button_save").style.display = "none";
 	},
 
+	/* Change mode */
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
