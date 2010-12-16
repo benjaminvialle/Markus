@@ -34,6 +34,47 @@ var AnnotationTextDisplayer = Class.create({
         this.hide();
     },
     
+    
+    // Display all the annotations below
+    // The variable 'e' is the Mouse Event 'mousemove' managed by the class Handler
+    displayAnnotations: function(e){
+        console.debug(this);
+        // For all annotations drawn by the user
+        var svg_annotations = $("shapes").getElementsByTagName("rect");
+        
+        var annotationVector = $A(); // To store the annotations we will display         
+        var rect_annot; // To save each annotation we will treat
+        
+        // For each annotation in the DOM
+        for (var i = 0; i < svg_annotations.length; i++) {
+            rect_annot = svg_annotations.item(i); 
+            // Are we over a rectangle area ?
+            // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
+            if (e.pageX > rect_annot.getAttribute('x') &&
+                (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
+                e.pageY > rect_annot.getAttribute('y') &&
+                (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
+
+                ) {
+                // Store the annotation
+                annotationVector.push(new AnnotationText(1,1,"This is my line test: "
+                + "i'm so proud that it works! ! ! Let's go in tonus tonight!"
+                + "Marcus Pigrou is my idol..! AbracadabraPicetPicEtColegramBouretBourEtRatatam")); // TODO only this line to change; link to the annotation text! 
+            }
+        }
+        // Is the mouse over a shape. If not, hide the displayer.
+        if (annotationVector.length == 0) {
+            this.hideShowing();
+        }else{
+            this.displayCollection(
+                 annotationVector,
+                 e.pageX, 
+                 e.pageY
+            );
+        }
+    },
+    
+ 
     //Assumes collection is subclass of Prototype Enumerable class
     //x and y is the location on the screen where this collection will be displayed
     displayCollection: function(collection, x, y) {
@@ -100,6 +141,10 @@ var AnnotationTextDisplayer = Class.create({
                     wrapText.length = parseInt(wrapText.length) + parseInt(wordList[i].length);
                     wrapText = wrapText + ' ' + wordList[i];
                 } else {
+                    // If the word is bigger than the max number of characters
+                    //if () {
+                    
+                    //}
                     // Then we add the tspan node with the function we defined
                     appendTspan(wrapText);
                     lineCounter = lineCounter + 1;

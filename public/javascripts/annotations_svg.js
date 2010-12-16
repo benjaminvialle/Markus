@@ -166,9 +166,9 @@ var Handler = {
                 });
         });
         
-        document.observe("mousemove", Handler.mouseMove);
-        
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
+        
+        document.observe("mousemove", Handler.mouseMove);
             
     },
 
@@ -211,39 +211,7 @@ var Handler = {
     // Is called when the mouse moves
     mouseMove: function(e) {
         if(Handler.mode == "view") {
-            // For all annotations drawn by the user
-            var svg_annotations = $("shapes").getElementsByTagName("rect");
-            
-            var annotationVector = $A();                   
-                    
-            for (var i = 0; i < svg_annotations.length; i++) {
-                var rect_annot = svg_annotations.item(i); 
-                // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
-                if (e.pageX > rect_annot.getAttribute('x') &&
-                    (e.pageX < (parseInt(rect_annot.getAttribute('x')) + parseInt(rect_annot.getAttribute('width')))) &&
-                    e.pageY > rect_annot.getAttribute('y') &&
-                    (e.pageY < (parseInt(rect_annot.getAttribute('y')) + parseInt(rect_annot.getAttribute('height'))))
-
-                    ) {
-                    // Store the annotation
-                    annotationVector.push(new AnnotationText(1,1,"This is my line test: "
-                    + "i'm so proud that it works! ! ! Let's go in tonus tonight!"
-                    + "Marcus Pigrou is my idol..! AbracadabraPicetPicEtColegramBouretBourEtRatatam")); // TODO only this line to change; link to the annotation text!
-                    
-                    
-                    
-                }
-            }
-            // Is the mouse over a shape. If not, hide the displayer.
-            if (annotationVector.length == 0) {
-                annotation_text_displayer.hideShowing();
-            }else{
-                annotation_text_displayer.displayCollection(
-                     annotationVector,
-                     e.pageX, 
-                     e.pageY
-                );
-            }
+            annotation_text_displayer.displayAnnotations(e);
         }
     },
     
