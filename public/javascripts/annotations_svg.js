@@ -152,6 +152,7 @@ var Handler = {
             } else if(Handler.mode == "area") {
                 areaAnnotation.finalize(e);
             }
+
         });
 
         ["shape", "area", "save", "delete", "view"].each(function(item) {
@@ -171,6 +172,10 @@ var Handler = {
             
     },
 
+   displaySavePopUp: function() {
+	var pop = $("modal")
+	pop.style.display='block';
+		  },
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
