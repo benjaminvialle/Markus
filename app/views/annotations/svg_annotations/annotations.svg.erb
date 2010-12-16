@@ -64,6 +64,7 @@
 <% end %>
 </g>
   <% # if the user is the student, we don't display the toolbar %>
+  <% # the svg is in view mode by default %>
   <% if !@current_user.student? %>
     <!-- this partial is only used to make the code more easy to read : it displays the toolbar -->
     <%= render :partial => 'annotations/svg_annotations/toolbar.svg.erb', :locals => {:annotation_categories => @annotation_categories} %>
