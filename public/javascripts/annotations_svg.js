@@ -31,6 +31,7 @@ var shapeAnnotation = {
 
         newGroup.setAttribute("id", "shape_current");
         newPath.setAttribute("d", "");
+        newPath.setAttribute("style", "stroke: " + Handler.color + "; stroke-width: " + Handler.thickness);
         newGroup.appendChild(newPath);
         $("shapes").appendChild(newGroup);
 
@@ -63,7 +64,7 @@ var shapeAnnotation = {
                     }
 
                     currentPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                    //currentPath.setAttribute("style", "stroke: #FF0000; fill: none;");
+                    currentPath.setAttribute("style", oldPath.getAttribute("style"));
                     currentPath.setAttribute("d", "M" + point.x + "," + point.y);
                     oldGroup.appendChild(currentPath);
                 } else {
@@ -76,6 +77,35 @@ var shapeAnnotation = {
 
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
         shapeAnnotation.counter++;        
+    },
+		
+    processShape: function(node) {
+        var shape = {
+                color: Handler.color,
+                thickness: Handler.thickness,
+                points: []
+            },
+            point;
+
+		$A(node.childNodes).each(function(path) {
+            path = path.getAttribute("d");
+                // The path syntax is "Mx,y Lx,y Lx,y"
+                path.split(' ').each(function(point) {
+                    // Remove the first letter (it's not part of the
+                    // coordinates)
+                    point = point.substr(1);
+                    
+                    shape.points.push({
+                        x: point.split(',')[0],
+                        y: point.split(',')[1]
+                    });
+
+                });
+        });
+		
+
+
+        return shape;
     },
 
     counter: 0,
@@ -106,6 +136,19 @@ var areaAnnotation = {
 
         selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
         areaAnnotation.counter++;
+    },
+	
+    processArea: function(node) {
+         return {
+            color: Handler.color,
+            thickness: Handler.thickness,
+            points: {
+                "top": parseInt(node.getAttribute("y")),
+                "left": parseInt(node.getAttribute("x")),
+                "bottom": (parseInt(node.getAttribute("height")) + parseInt(node.getAttribute("y"))),
+                "right": (parseInt(node.getAttribute("width")) + parseInt(node.getAttribute("x")))
+            }
+        };
     },
 
     trackMove: function(e) {
@@ -241,28 +284,14 @@ var Handler = {
     
     save: function(e) {
         // Get the shapes properties
-        var color,
-            toSave = {
-                "annotation_text": 'Annotation text',
-                "shapes": [],
-                "areas": []
-            };
+        var color, annotations = Handler.processNewAnnotations();
+            		
 
-        // Get the shapes and the areas drawn
-        $A($("shapes").childNodes).each(function(item) {
-            if(item.localName == null) return;
-            if(item.getAttribute("id").split("_")[0] == "new") {
-                if(item.localName == "g") {
-                    toSave.shapes.push(Handler.processShape(item));
-                } else if(item.localName == "rect") {
-                    toSave.areas.push(Handler.processArea(item));
-                }
-            }
-        });
 
         // Actually saves the shapes
         new Ajax.Request(Handler.queryURI, {
             method: 'post',
+			parameters: { annotations: Object.toJSON(annotations) },
             onSuccess: function(transport) {
                 var response = transport.responseText;
                 // TODO Delete the sent shapes, and draw the new ones 
@@ -277,47 +306,27 @@ var Handler = {
 		// TODO make an AJAX call to remove the annotation from DB
 		// TODO then remove it from the page.
 	},
-    
-    processShape: function(node) {
-        var shape = {
-                color: Handler.color,
-                thickness: Handler.thickness,
-                points: []
-            },
-            point;
-
-        $A(node.childNodes).each(function(path) {
-            path = path.getAttribute("d");
-                // The path syntax is "Mx,y Lx,y Lx,y"
-                path.split(' ').each(function(point) {
-                    // Remove the first letter (it's not part of the
-                    // coordinates)
-                    point = point.substr(1);
-                    
-                    shape.points.push({
-                        x: point.split(',')[0],
-                        y: point.split(',')[1]
-                    });
-
-                });
-        });
-
-        return shape;
-    },
-
-    processArea: function(node) {
-         return {
-            color: Handler.color,
-            thickness: Handler.thickness,
-            points: {
-                "top": parseInt(node.getAttribute("y")),
-                "left": parseInt(node.getAttribute("x")),
-                "bottom": (parseInt(node.getAttribute("height")) + parseInt(node.getAttribute("y"))),
-                "right": (parseInt(node.getAttribute("width")) + parseInt(node.getAttribute("x")))
-            }
+	
+	processNewAnnotations: function() {
+		var toSave = {
+                "annotation_text": 'Annotation text',
+                "shapes": [],
+                "areas": []
         };
-    }
-    
+		
+        // Get the shapes and the areas drawn
+        $A($("shapes").childNodes).each(function(item) {
+            if(item.localName == null) return;
+            if(item.getAttribute("id").split("_")[0] == "new") {
+                if(item.localName == "g") {
+                    toSave.shapes.push(shapeAnnotation.processShape(item));
+                } else if(item.localName == "rect") {
+                    toSave.areas.push(areaAnnotation.processArea(item));
+                }
+            }
+        });
+		return toSave;
+	}
 
 };
 
