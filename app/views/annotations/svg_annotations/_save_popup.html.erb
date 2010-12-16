@@ -1,24 +1,31 @@
-
     <!-- XHTML content goes here -->
+    <!-- WARNING : DO NOT include this partial everywhere
+        There is a <body> tag -->
     <body xmlns="http://www.w3.org/1999/xhtml">
       <div id="create_annotation_dialog"> <!--  style="display:none;"> -->
-      <h2><%= I18n.t("marker.annotation.new_annotation") %></h2>
-      <p>
-      <textarea id="new_annotation_content" rows="3" cols="42" onclick="this.focus()"></textarea>
-      </p>
-      <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
-      <select id="new_annotation_category">
-      <option value=""><%=t('annotations.one_time_only')%></option>
-      <% @annotation_categories.each do |annotation_category| %>
-        <option value="<%=h(annotation_category.id)%>"><%=h(annotation_category.annotation_category_name)%></option>
-      <% end %>
-      </select>
-      <p style="margin-top: 5px; border-top: 1px solid #000000; padding-top: 10px;">
-      <button onclick="submit_new_annotation($F('new_annotation_content'), $F('new_annotation_category'), $F('x1'), $F('x2'), $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation") %></button>
-      <button onclick="modal.close();"><%= I18n.t("cancel") %></button>
-      </p>
-
+        <h2><%= I18n.t("marker.annotation.new_annotation") %></h2>
+        <p>
+          <textarea id="new_annotation_content" rows="3" cols="42" 
+            onclick="this.focus()">
+          </textarea>
+        </p>
+        <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
+        <select id="new_annotation_category">
+          <option value=""><%=t('annotations.one_time_only')%></option>
+          <% @annotation_categories.each do |annotation_category| %>
+          <option value="<%=h(annotation_category.id)%>">
+            <%=h(annotation_category.annotation_category_name)%>
+          </option>
+          <% end %>
+        </select>
+        <p style="margin-top: 5px; border-top: 1px solid #000000;
+          padding-top: 10px;">
+          <button onclick="submit_new_annotation($F('new_annotation_content'),
+            $F('new_annotation_category'), $F('x1'), $F('x2'),
+            $F('y1'), $F('y2'));"><%= I18n.t("marker.annotation.new_annotation")
+            %>
+          </button>
+          <button onclick="modal.close();"><%= I18n.t("cancel") %></button>
+        </p>
       </div>
-
     </body>
-  
