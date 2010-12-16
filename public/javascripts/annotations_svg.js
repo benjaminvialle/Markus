@@ -45,6 +45,12 @@ var shapeAnnotation = {
             points = [];
 
         points = oldPath.getAttribute("d").split(" ");
+
+		if(points.length < 2) {
+			// If there is only one point, don't save it
+			oldGroup.parentNode.removeChild(oldGroup);
+			return;
+		}
         // Chops the path in 10-node long paths. This is because the
         // mouseover event is fired when the mouse is over the area
         // outlined by the path, not the stroke itself.
@@ -135,6 +141,12 @@ var areaAnnotation = {
     finalize: function(e) {
         var selectBox = $("select_box");
 
+        // If the area is just a point, there is nothing to do
+        if(selectBox.getAttribute("width") == "0" ||
+					selectBox.getAttribute("height") == "0") {
+			selectBox.parentNode.removeChild(selectBox);
+            return;
+		}
         selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
         areaAnnotation.counter++;
 		Handler.displaySaveButton();
