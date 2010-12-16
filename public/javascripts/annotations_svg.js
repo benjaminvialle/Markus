@@ -77,6 +77,7 @@ var shapeAnnotation = {
 
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
         shapeAnnotation.counter++;        
+		Handler.displaySaveButton();
     },
         
     processShape: function(node) {
@@ -136,6 +137,7 @@ var areaAnnotation = {
 
         selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
         areaAnnotation.counter++;
+		Handler.displaySaveButton();
     },
     
     processArea: function(node) {
@@ -197,6 +199,7 @@ var Handler = {
             }
         }, false);
 
+		// Attach controls in the toolbar
         ["shape", "area", "save", "delete", "view"].each(function(item) {
                 Event.observe($("button_" + item), "click", function(e) {
                     if(item == "save") {
@@ -207,41 +210,53 @@ var Handler = {
                     }
                 });
         });
+
+		// Attach controls in the modal window
+		Event.observe($("modal_save"), "click", Handler.save);
+		Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
         
         document.observe("mousemove", Handler.mouseMove);
         
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
-            
     },
 
+	/* Fired when the save button (in the toolbar) is clicked */
 	displaySavePopUp: function() {
     	$("modal").style.display='block';
     },
 	
+	/* Fired when the cancel button (in the modal window) is clicked */
 	closeSavePopUp: function() {
 		$("modal").style.display='none';
 	},
+	
+	/* Called when a new shape / area is drawn */
+	displaySaveButton: function() {
+		$("button_save").style.display = "inline";
+	},
 
+	/* Called when the shapes / areas are saved in the db*/
+	hideSaveButton: function() {
+		$("button_save").style.display = "none";
+	},
+
+	/* Change mode */
     setMode: function(mode) {
         if(mode == "shape") {
             this.mode = "shape";
             document.documentElement.style.cursor = "crosshair";
-            $("button_save").style.display = "inline";
 
         } else if(mode == "area") {
             this.mode = "area";
             document.documentElement.style.cursor = "crosshair";
-            $("button_save").style.display = "inline";
 
         } else if(mode == "delete") {
             this.mode = "delete";
             document.documentElement.style.cursor = "crosshair";
-            $("button_save").style.display = "none";
 
         } else if(mode == "view") {
             this.mode = "view";
             document.documentElement.style.cursor = "auto";
-            $("button_save").style.display = "none";
         }
     },
 
@@ -294,7 +309,8 @@ var Handler = {
         // Get the shapes properties
         var color, annotations = Handler.processNewAnnotations();
                     
-
+		// Get the annotation text
+		annotations.annotation_text = $F("new_annotation_text");
 
         // Actually saves the shapes
         new Ajax.Request(Handler.queryURI, {
@@ -303,9 +319,11 @@ var Handler = {
             onSuccess: function(transport) {
                 var response = transport.responseText;
                 // TODO Delete the sent shapes, and draw the new ones 
+				Handler.hideSaveButton();
             },
             onFailure: function() {
                 // TODO Inform the user that something happened.
+				alert("Could not save the annotations. Please try again later");
             }
         });
     },
@@ -317,7 +335,6 @@ var Handler = {
     
     processNewAnnotations: function() {
         var toSave = {
-                "annotation_text": 'Annotation text',
                 "shapes": [],
                 "areas": []
         };
