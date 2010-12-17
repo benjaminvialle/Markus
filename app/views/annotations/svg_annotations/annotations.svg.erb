@@ -17,10 +17,20 @@
               :select_file_id => @submission_file.id,
               :show_in_browser => true) -%>" />
 
+  <g id="areas">
+  <% @annotations.each do |annotation| %>
+<% if annotation.type == "AreaAnnotation" %>
+     <rect id="area_<%= annotation.id%>"x="<%= annotation.x1%>" y="<%= annotation.y1%>"
+     width="<%= (annotation.y2 - annotation.y1)%>"
+     height="<%= (annotation.x2 - annotation.x1)%>"
+     />
+<% end %>
+<% end %>
+  </g>
   <g id="shapes">
   <% @annotations.each do |annotation| %>
-  <g id="shape_<%= annotation.id%>">
-<% if annotation.type == "ShapeAnnotation" %>
+    <g id="shape_<%= annotation.id%>">
+    <% if annotation.type == "ShapeAnnotation" %>
     <%
      paths = []
      currentPath = ""
@@ -47,13 +57,8 @@
     <% paths.each do |path| %>
       <path style="stroke: <%= annotation.color %>; stroke-width: <%= annotation.thickness%>px" d="<%= path %>" />
     <% end %>
-<% elsif annotation.type == "AreaAnnotation" %>
-     <rect id="area_<%= annotation.id%>"x="<%= annotation.x1%>" y="<%= annotation.y1%>"
-     width="<%= (annotation.y2 - annotation.y1)%>"
-     height="<%= (annotation.x2 - annotation.x1)%>"
-     />
-<% end %>
-  </g>
+  <% end %>
+    </g>
 <% end %>
   </g>
   <g id="annotations">
@@ -63,9 +68,12 @@
   </g>
 <% end %>
 </g>
-
-  <!-- this partial is only used to make the code more easy to read : it displays the toolbar -->
-  <%= render :partial => 'annotations/svg_annotations/toolbar.svg.erb', :locals => {:annotation_categories => @annotation_categories} %>
+  <% # if the user is the student, we don't display the toolbar %>
+  <% # the svg is in view mode by default %>
+  <% if !@current_user.student? %>
+    <!-- this partial is only used to make the code more easy to read : it displays the toolbar -->
+    <%= render :partial => 'annotations/svg_annotations/toolbar.svg.erb', :locals => {:annotation_categories => @annotation_categories} %>
+  <% end %>
   <!-- this partial is only used to make the code more easy to read : this one is for popup -->
   <g id="modal">
     <foreignObject width="450" height="300" x="50" y="50">

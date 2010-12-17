@@ -82,12 +82,33 @@ var shapeAnnotation = {
         }
 
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
+        $A(oldGroup.childNodes).each(function(path) {
+            Event.observe(path, "click", function(e) {
+                // Remove the g element containing all the paths
+                this.parentNode.parentNode.removeChild(this.parentNode);
+            });
+        });
         shapeAnnotation.counter++;        
         Handler.displaySaveButton();
     },
-        
+
+    processShapes: function() {
+        var shapes = [];
+        // Get the shapes and the areas drawn
+        $A($("shapes").childNodes).each(function(item) {
+            if(item.localName == null) return;
+            if(item.getAttribute("id").split("_")[0] == "new") {
+                if(item.localName == "g") {
+                    shapes.push(shapeAnnotation.processShape(item));
+                }
+            }
+        });
+        return shapes;
+    },
+
     processShape: function(node) {
         var shape = {
+                localId: node.getAttribute("id").split("_")[2],
                 color: Handler.color,
                 thickness: Handler.thickness,
                 points: []
@@ -117,7 +138,6 @@ var shapeAnnotation = {
     lastCoords: null, 
     lastTime: new Date().getTime(),
     points: 0
-    
 };
 
 
@@ -133,7 +153,7 @@ var areaAnnotation = {
         selectBox.setAttribute("width", "0");
         selectBox.setAttribute("height", "0");
 
-        $("shapes").appendChild(selectBox);
+        $("areas").appendChild(selectBox);
     },
 
     finalize: function(e) {
@@ -145,13 +165,35 @@ var areaAnnotation = {
 			selectBox.parentNode.removeChild(selectBox);
             return;
 		}
+
+        Event.observe(selectBox, "click", function(e) {
+            if(Handler.mode == "delete") {
+                this.parentNode.removeChild(this);
+            }
+        });
+
         selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
         areaAnnotation.counter++;
         Handler.displaySaveButton();
     },
     
+    processAreas: function() {
+        var areas = [];
+        // Get the shapes and the areas drawn
+        $A($("areas").childNodes).each(function(item) {
+            if(item.localName == null) return;
+            if(item.getAttribute("id").split("_")[0] == "new") {
+                if(item.localName == "rect") {
+                    areas.push(areaAnnotation.processArea(item));
+                }
+            }
+        });
+        return areas;
+    },
+
     processArea: function(node) {
          return {
+            localId: node.getAttribute("id").split("_")[2],
             color: Handler.color,
             thickness: Handler.thickness,
             points: {
@@ -174,7 +216,6 @@ var areaAnnotation = {
 
     startCoords: {"x": 0, "y": 0},
     counter: 0
-
 };
 
 
@@ -248,6 +289,7 @@ var Handler = {
     /* Fired when the cancel button (in the modal window) is clicked */
     closeSavePopUp: function() {
         $("modal").style.display='none';
+        $("new_annotation_text").clear();
     },
     
     /* Called when a new shape / area is drawn */
@@ -272,7 +314,7 @@ var Handler = {
 
         } else if(mode == "delete") {
             this.mode = "delete";
-            document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "auto";
 
         } else if(mode == "view") {
             this.mode = "view";
@@ -323,8 +365,9 @@ var Handler = {
             parameters: { annotations: Object.toJSON(annotations) },
             onSuccess: function(transport) {
                 var response = transport.responseText;
-                // TODO Delete the sent shapes, and draw the new ones 
+                Handler.processSavedAnnotations(response)
                 Handler.hideSaveButton();
+                $("new_annotation_text").clear();
             },
             onFailure: function() {
                 // TODO Inform the user that something happened.
@@ -337,27 +380,32 @@ var Handler = {
         // TODO make an AJAX call to remove the annotation from DB
         // TODO then remove it from the page.
     },
-    
+
+    // Generates a JSON object containing shapes and areas drawn by the user
     processNewAnnotations: function() {
         var toSave = {
                 "shapes": [],
                 "areas": []
         };
         
-        // Get the shapes and the areas drawn
-        $A($("shapes").childNodes).each(function(item) {
-            if(item.localName == null) return;
-            if(item.getAttribute("id").split("_")[0] == "new") {
-                if(item.localName == "g") {
-                    toSave.shapes.push(shapeAnnotation.processShape(item));
-                } else if(item.localName == "rect") {
-                    toSave.areas.push(areaAnnotation.processArea(item));
-                }
-            }
-        });
-        return toSave;
-    }
+        toSave.shapes = shapeAnnotation.processShapes();
+        toSave.areas = areaAnnotation.processAreas();
 
+        return toSave;
+    },
+
+    // Processes the saved annotations so that they can be used like the ones
+    // included in the SVG
+    processSavedAnnotations: function(db_ids) {
+        $H(db_ids.shapes).each(function(shape) {
+            $('new_shape_' + shape.key).setAttribute("id", "shape_" + shape.value);
+        });
+
+        $H(db_ids.areas).each(function(area) {
+            console.debug(area);
+            $('new_area_' + area.key).setAttribute("id", "area_" + area.value);
+        });
+    }
 };
 
 document.observe("DOMContentLoaded", Handler.init);

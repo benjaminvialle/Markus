@@ -12,7 +12,7 @@ class AnnotationsController < ApplicationController
     submission= @submission_file.submission
     @annotation = TextAnnotation.new
     @annotation.update_attributes({
-      :line_start => params[:line_start], 
+      :line_start => params[:line_start],
       :line_end => params[:line_end],
       :submission_file_id => params[:submission_file_id],
       :annotation_number => submission.annotations.count + 1
@@ -100,8 +100,9 @@ class AnnotationsController < ApplicationController
     submission = Submission.find_by_id(@submission_file.submission_id)
     grouping = Grouping.find_by_id(submission.grouping_id)
 
-    # TODO : Catch @annotation_categories correctly
-    @annotation_categories = Array.new
+    #Catch assignment's categories
+    assignment = submission.assignment
+    @annotation_categories = assignment.annotation_categories
 
     if grouping.ensure_can_see?(current_user)
       @annotations = @submission_file.annotations
@@ -113,32 +114,64 @@ class AnnotationsController < ApplicationController
     end
   end
 
-#  def write_annotations
-#    return unless request.post?
-#    annotationtext = TextAnnotation.new
-#    annotationtext.save 
-#    liste_annotations.each do |obj|
-#      if obj.type = "shape"
-#        shapeAnnotation = ShapeAnnotation.new
-#	shapeAnnotation.annotation_text_id = annotationtext.id
-#	shapeAnnotation.save
-#	  points.each do |member|
-#	    point = Point.new
-#	    point.coord_x = member.x
-#	    point.coord_y = member.y
-#	    point.shape_annotation_id=shapeAnnotation.id
-#	    point.save
-#	  end
-#      else       
-#        areaAnnotation = AeraAnnotation.new
-#	areaAnnotation.annotation_text_id = annotationtext.id
-#	  edges.each do |member|
-#	    areaAnnotation.y1 = member.top
-#	    areaAnnotation.x1 = member.left
-#	    areaAnnotation.y2 = member.bottom
-#	    areaAnnotation.x2 = member.right
-#	    areaAnnotation.save
-#	  end
-#      end
-#    end
+  def write_annotations
+    return unless request.post?
+    # Parse the JSON send to the controller
+    res = ActiveSupport::JSON.decode(params[:annotations])
+    db_ids = {"shapes" => {}, "areas" => {}}
+    # Create an AnnotationText
+    if res.has_key?("annotation_text")
+      text = AnnotationText.create({
+        :content => res["annotation_text"],
+      })
+      text.save
+    elsif res.has_key?("annotation_category_id")
+      text = AnnotationText.create({
+        :annotation_category_id => res["annotation_category_id"]
+      })
+      text.save
+    end
+    res["areas"].each do |area|
+      a = AreaAnnotation.create({
+        :thickness => area["thickness"],
+        :color => area["color"],
+        :x1 => area["points"]["left"],
+        :x2 => area["points"]["right"],
+        :y1 => area["points"]["top"],
+        :y2 => area["points"]["bottom"],
+        :annotation_text_id => text.id
+      })
+      a.save
+      unless a.id.nil?
+        db_ids["areas"][area["localId"]] = a.id
+      end
+    end
+
+    res["shapes"].each do |shape|
+      a = ShapeAnnotation.create({
+        :thickness => shape["thickness"],
+        :color => shape["color"],
+        :annotation_text_id => text.id
+      })
+      a.save
+      unless a.id.nil?
+        order = 0
+        shape["points"].each do |point|
+          p = Point.create({
+            :coord_x => point["x"],
+            :coord_y => point["y"],
+            :order => order,
+            :shape_annotation_id => a.id
+          })
+          p.save
+          order += 1
+        end
+        db_ids["shapes"][shape["localId"]] = a.id
+      end
+    end
+
+    render :json => db_ids
+
+  end
+
 end
