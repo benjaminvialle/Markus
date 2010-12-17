@@ -87,6 +87,11 @@ var shapeAnnotation = {
                 // Remove the g element containing all the paths
                 this.parentNode.parentNode.removeChild(this.parentNode);
             });
+
+            // Add a listener to the newly created shape
+            Event.observe(path, 'mouseout', Handler.mouseOutPath);
+            Event.observe(path, 'mouseover', Handler.mouseOverPath);
+
         });
         shapeAnnotation.counter++;        
         Handler.displaySaveButton();
@@ -270,10 +275,10 @@ var Handler = {
         // Looks for path already in the svg and links to the annotation displayer
         $$('#shapes path').each(function(path) {
             // Checks the user did not create a rect during init!
-            if (path.id.indexOf('new') == 0) {
+            if (path.id.indexOf('new') == -1) {
                 // Adds the mouse Event
-                Event.observe(path.id,'mouseout',Handler.mouseOutPath);
-                Event.observe(path.id,'mouseover',Handler.mouseOverPath);                
+                Event.observe(path, 'mouseout', Handler.mouseOutPath);
+                Event.observe(path, 'mouseover', Handler.mouseOverPath);                
             }
         });
         
@@ -399,12 +404,15 @@ var Handler = {
     processSavedAnnotations: function(db_ids) {
         $H(db_ids.shapes).each(function(shape) {
             $('new_shape_' + shape.key).setAttribute("id", "shape_" + shape.value);
+            // Add a listener to the newly created shape
+            Event.observe('shape_'+ shape.value, 'mouseout', Handler.mouseOutPath);
+            Event.observe('shape_'+ shape.value, 'mouseover', Handler.mouseOverPath);
         });
 
         $H(db_ids.areas).each(function(area) {
-            console.debug(area);
             $('new_area_' + area.key).setAttribute("id", "area_" + area.value);
         });
+
     }
 };
 

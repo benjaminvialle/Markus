@@ -41,29 +41,37 @@ var AnnotationTextDisplayer = Class.create({
     // The variable 'e' is the Mouse Event 'mousemove' managed by the class Handler
     displayAnnotations: function(e){
         // For all annotations drawn by the user
-        var svg_areas = $("shapes").getElementsByTagName("rect");
+        var svg_areas = $("areas").getElementsByTagName("rect");
         
         var annotationVector = $A(); // To store the annotations we will display         
         var shape_annot; // To save each annotation we will treat
         
         // For each 'area' in the DOM
         for (var i = 0; i < svg_areas.length; i++) {
-            shape_annot = svg_areas.item(i); 
+            area = svg_areas.item(i); 
             // Are we over a rectangle area ?
             // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
-            if (e.pageX > shape_annot.getAttribute('x') &&
-                (e.pageX < (parseInt(shape_annot.getAttribute('x')) + parseInt(shape_annot.getAttribute('width')))) &&
-                e.pageY > shape_annot.getAttribute('y') &&
-                (e.pageY < (parseInt(shape_annot.getAttribute('y')) + parseInt(shape_annot.getAttribute('height'))))
+            if (e.pageX > area.getAttribute('x') &&
+                (e.pageX < (parseInt(area.getAttribute('x')) + parseInt(area.getAttribute('width')))) &&
+                e.pageY > area.getAttribute('y') &&
+                (e.pageY < (parseInt(area.getAttribute('y')) + parseInt(area.getAttribute('height'))))
 
                 ) {
                 
                 // Look for the annotation which in linked to the 
                 // Store the annotation
-                annotationVector.push(new AnnotationText(1,1,"This is a area annotation: let's wrap this text... "
-                + "Duis dignissim turpis a metus hendrerit nec porttitor elit accumsan. Aenean pharetra vestibulum nisi, "
-                + "eu ultrices sem aliquam at. "
-                )); // TODO only this line to change; link to the annotation text! 
+                if(area.getAttribute("id").indexOf("new") != -1) {
+                    annotationVector.push(new AnnotationText(1,1,"This is a area annotation: let's wrap this text... "
+                    + "Duis dignissim turpis a metus hendrerit nec porttitor elit accumsan. Aenean pharetra vestibulum nisi, "
+                    + "eu ultrices sem aliquam at. "
+                )); 
+                } else {
+                    console.debug(area.getAttribute("id").split("_"));
+                    annotationVector.push(
+                        new AnnotationText(
+                            area.getAttribute("id").split("_")[1], 1,
+                            $("annotation_"+area.getAttribute("id").split("_")[1]).textContent));
+                }
             }
         }
         
@@ -71,7 +79,15 @@ var AnnotationTextDisplayer = Class.create({
         this.annotationPaths.each(function(path) {
             // Look for the annotation which in linked to the 
                 // Store the annotation
-                annotationVector.push(new AnnotationText(1,1,"This is a shape annotation")); // TODO only this line to change; link to the annotation text! 
+                if(area.getAttribute("id").indexOf("new") != -1) {
+                    annotationVector.push(new AnnotationText(1,1,"This is a shape annotation"));
+                } else {
+                    console.debug($("annotation_"+area.parentNode.getAttribute("id")));
+                    annotationVector.push(
+                        new AnnotationText(
+                            area.getAttribute("id").split("_")[1], 1,
+                            $("annotation_"+area.parentNode.getAttribute("id").split("_")[1]).textContent));
+                }
         });
         
         // Is the mouse over a shape? If not, hide the displayer.
