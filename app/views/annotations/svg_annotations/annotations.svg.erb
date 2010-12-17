@@ -63,9 +63,7 @@
   </g>
   <g id="annotations">
 <% @annotations.each do |annotation| %>
-  <g id="annotation_<%= annotation.id%>">
-  <text><%= annotation.annotation_text.content %></text>
-  </g>
+  <text id="annotation_<%= annotation.id%>"><%= annotation.annotation_text.content %></text>
 <% end %>
 </g>
   <% # if the user is the student, we don't display the toolbar %>

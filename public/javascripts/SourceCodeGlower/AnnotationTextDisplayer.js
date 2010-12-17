@@ -69,7 +69,7 @@ var AnnotationTextDisplayer = Class.create({
                     annotationVector.push(
                         new AnnotationText(
                             area.getAttribute("id").split("_")[1], 1,
-                            $("annotation_"+area.getAttribute("id").split("_")[1]).textContent));
+                            $("annotation_"+area.getAttribute("id").split("_")[1]).firstChild.textContent));
                 }
             }
         }
@@ -81,7 +81,6 @@ var AnnotationTextDisplayer = Class.create({
                 if(path.parentNode.getAttribute("id").indexOf("new") != -1) {
                     annotationVector.push(new AnnotationText(1,1,"This is a shape annotation"));
                 } else {
-                    console.debug($("annotation_"+path.parentNode.getAttribute("id")));
                     annotationVector.push(
                         new AnnotationText(
                             path.parentNode.getAttribute("id").split("_")[1], 1,
