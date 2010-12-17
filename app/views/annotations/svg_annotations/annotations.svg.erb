@@ -21,8 +21,8 @@
   <% @annotations.each do |annotation| %>
 <% if annotation.type == "AreaAnnotation" %>
      <rect id="area_<%= annotation.id%>" x="<%= annotation.x1%>" y="<%= annotation.y1%>"
-     width="<%= (annotation.y2 - annotation.y1)%>"
-     height="<%= (annotation.x2 - annotation.x1)%>"
+     width="<%= (annotation.x2 - annotation.x1)%>"
+     height="<%= (annotation.y2 - annotation.y1)%>"
      />
 <% end %>
 <% end %>
