@@ -226,6 +226,17 @@ var Handler = {
         
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
         
+        // Looks for path already in the svg and links to the annotation displayer
+        $$('#shapes path').each(function(path) {
+            // Checks the user did not create a rect during init!
+            if (path.id.indexOf('new') == 0) {
+                // Adds the mouse Event
+                Event.observe(path.id,'mouseout',Handler.mouseOutPath);
+                Event.observe(path.id,'mouseover',Handler.mouseOverPath);                
+            }
+        });
+        
+        // Calls Handler.mouseMove when the mouse moves
         document.observe("mousemove", Handler.mouseMove);      
     },
 
