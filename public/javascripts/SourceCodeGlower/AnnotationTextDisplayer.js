@@ -69,7 +69,7 @@ var AnnotationTextDisplayer = Class.create({
                     annotationVector.push(
                         new AnnotationText(
                             area.getAttribute("id").split("_")[1], 1,
-                            $("annotation_"+area.getAttribute("id").split("_")[1]).firstChild.textContent));
+                            $("annotation_"+area.getAttribute("id").split("_")[1]).textContent));
                 }
             }
         }
