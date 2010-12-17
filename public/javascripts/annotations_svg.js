@@ -268,6 +268,7 @@ var Handler = {
     /* Fired when the cancel button (in the modal window) is clicked */
     closeSavePopUp: function() {
         $("modal").style.display='none';
+        $("new_annotation_text").clear();
     },
     
     /* Called when a new shape / area is drawn */
@@ -360,6 +361,7 @@ var Handler = {
                 var response = transport.responseText;
                 Handler.processSavedAnnotations(response)
                 Handler.hideSaveButton();
+                $("new_annotation_text").clear();
             },
             onFailure: function() {
                 // TODO Inform the user that something happened.
