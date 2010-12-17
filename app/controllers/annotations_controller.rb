@@ -12,7 +12,7 @@ class AnnotationsController < ApplicationController
     submission= @submission_file.submission
     @annotation = TextAnnotation.new
     @annotation.update_attributes({
-      :line_start => params[:line_start], 
+      :line_start => params[:line_start],
       :line_end => params[:line_end],
       :submission_file_id => params[:submission_file_id],
       :annotation_number => submission.annotations.count + 1
@@ -117,13 +117,17 @@ class AnnotationsController < ApplicationController
   def write_annotations
     return unless request.post?
     # Parse the JSON send to the controller
-    res = JSON.parse(params[:annotations])
+    res = ActiveSupport::JSON.decode(params[:annotations])
+    db_ids = {"shapes" => {}, "areas" => {}}
     # Create an AnnotationText
     if res.has_key?("annotation_text")
-      # TODO Add Annotation Categories
       text = AnnotationText.create({
-        :content => res["annotation_test"],
-        :annotation_category_id => '1' #TODO
+        :content => res["annotation_text"],
+      })
+      text.save
+    elsif res.has_key?("annotation_category_id")
+      text = AnnotationText.create({
+        :annotation_category_id => res["annotation_category_id"]
       })
       text.save
     end
@@ -138,7 +142,36 @@ class AnnotationsController < ApplicationController
         :annotation_text_id => text.id
       })
       a.save
+      unless a.id.nil?
+        db_ids["areas"][area["localId"]] = a.id
+      end
     end
+
+    res["shapes"].each do |shape|
+      a = ShapeAnnotation.create({
+        :thickness => shape["thickness"],
+        :color => shape["color"],
+        :annotation_text_id => text.id
+      })
+      a.save
+      unless a.id.nil?
+        order = 0
+        shape["points"].each do |point|
+          p = Point.create({
+            :coord_x => point["x"],
+            :coord_y => point["y"],
+            :order => order,
+            :shape_annotation_id => a.id
+          })
+          p.save
+          order += 1
+        end
+        db_ids["shapes"][shape["localId"]] = a.id
+      end
+    end
+
+    render :json => db_ids
+
   end
 
 end
