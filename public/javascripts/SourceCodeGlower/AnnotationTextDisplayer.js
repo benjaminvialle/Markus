@@ -1,6 +1,6 @@
 /** Annotation Text Displayer Class
 
-This class is in charge of displaying collections of Annotation Texts.    It puts them
+This class is in charge of displaying collections of Annotation Texts. It puts them
 in a G with a class called "annotation_rect_display" and is in charge of displaying
 that G at given coordinates, and hiding that G.
 
@@ -15,6 +15,8 @@ var TEXT_DISPLAY_X_OFFSET = 10;
 var TEXT_DISPLAY_Y_OFFSET = 10;
 
 var AnnotationTextDisplayer = Class.create({
+
+    annotationPaths: $A(),
 
     initialize: function(parent_node) {
         //Create the G that we will display in
@@ -34,14 +36,75 @@ var AnnotationTextDisplayer = Class.create({
         this.hide();
     },
     
-    //Assumes collection is subclass of Prototype Enumerable class
-    //x and y is the location on the screen where this collection will be displayed
+    
+    // Display all the annotations below
+    // The variable 'e' is the Mouse Event 'mousemove' managed by the class Handler
+    displayAnnotations: function(e){
+        // For all annotations drawn by the user
+        var svg_areas = $("shapes").getElementsByTagName("rect");
+        
+        var annotationVector = $A(); // To store the annotations we will display         
+        var shape_annot; // To save each annotation we will treat
+        
+        // For each 'area' in the DOM
+        for (var i = 0; i < svg_areas.length; i++) {
+            shape_annot = svg_areas.item(i); 
+            // Are we over a rectangle area ?
+            // Mouse Capture (mouse events do not accept multiple events for superimposed shapes) 
+            if (e.pageX > shape_annot.getAttribute('x') &&
+                (e.pageX < (parseInt(shape_annot.getAttribute('x')) + parseInt(shape_annot.getAttribute('width')))) &&
+                e.pageY > shape_annot.getAttribute('y') &&
+                (e.pageY < (parseInt(shape_annot.getAttribute('y')) + parseInt(shape_annot.getAttribute('height'))))
+
+                ) {
+                
+                // Look for the annotation which in linked to the 
+                // Store the annotation
+                annotationVector.push(new AnnotationText(1,1,"This is a area annotation: let's wrap this text... "
+                + "Duis dignissim turpis a metus hendrerit nec porttitor elit accumsan. Aenean pharetra vestibulum nisi, "
+                + "eu ultrices sem aliquam at. "
+                )); // TODO only this line to change; link to the annotation text! 
+            }
+        }
+        
+        // For each 'path' in the annotationPaths
+        this.annotationPaths.each(function(path) {
+            // Look for the annotation which in linked to the 
+                // Store the annotation
+                annotationVector.push(new AnnotationText(1,1,"This is a shape annotation")); // TODO only this line to change; link to the annotation text! 
+        });
+        
+        // Is the mouse over a shape? If not, hide the displayer.
+        if (annotationVector.length == 0) {
+            this.hideShowing();
+        }else{
+            this.displayCollection(
+                 annotationVector,
+                 e.pageX, 
+                 e.pageY
+            );
+        }
+    },
+    
+    // Adds an annotation to the displayer path list
+    addAnnotationPath: function(e) {
+        this.annotationPaths.push(e.currentTarget);
+    },
+ 
+    // Clears displayer path list
+    clearAnnotationPath: function(e) {
+        this.annotationPaths.clear();
+    },
+    
+    
+    // Assumes collection is subclass of Prototype Enumerable class
+    // x and y is the location on the screen where this collection will be displayed
     displayCollection: function(collection, x, y) {
-        //Return if the collection is empty
+        // Return if the collection is empty
         if(collection.length == 0){ return;}
         
-        //Update the Display node (a g, in this case) to be in the right
-        //position, and to have the right contents
+        // Update the Display node (a g, in this case) to be in the right
+        // position, and to have the right contents
         this.updateDisplayNode(collection, x, y);
         
         //Show the Displayer
@@ -49,14 +112,24 @@ var AnnotationTextDisplayer = Class.create({
     },
     
     
-    //Hide all showing annotations.
+    // Hide all showing annotations.
     hideShowing: function() {
         if(this.getShowing()) {
             this.hide();
         }
     },
     
+    // Defines a function to add a tspan in $('annotation_text_display')
+    appendTspan: function(text,x) {
+        // Add a child node tspan to the annotation text displayer 
+        var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+        tspan.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
+        tspan.setAttribute('dy', '1em');
+        tspan.textContent = text;
+        $('annotation_text_display').appendChild(tspan);
+    },
     
+    // Wraps the text of each annotation. Displays all the annotation in the Displayer rectangle, and sets its position near the mouse.
     updateDisplayNode: function(collection, x, y) {
     
         $('annotation_rect_display').setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
@@ -74,16 +147,6 @@ var AnnotationTextDisplayer = Class.create({
         // Counts the number of lines we will write
         var lineCounter=0;
         
-        // First let's define a function to add a tspan in the DOM
-        appendTspan= function(text) {
-            // Add a child node tspan to the annotation text displayer 
-            var tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
-            tspan.setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
-            tspan.setAttribute('dy', '1em');
-            tspan.textContent = text;
-            $('annotation_text_display').appendChild(tspan);
-        };
-        
         // Now, compile all the annotations of the collection in the text node
         for (var k=0; k<collection.length; k++){
             // We will work with each annotation text
@@ -99,23 +162,36 @@ var AnnotationTextDisplayer = Class.create({
                 && wordList[i].indexOf('\n') == -1) {
                     wrapText.length = parseInt(wrapText.length) + parseInt(wordList[i].length);
                     wrapText = wrapText + ' ' + wordList[i];
-                } else {
-                    // Then we add the tspan node with the function we defined
-                    appendTspan(wrapText);
+                } else {    // There is not enough place to put the word
+                    // First we add the tspan node with the function we defined
+                    this.appendTspan(wrapText,x);
                     lineCounter = lineCounter + 1;
+                    
+                    // Let's put the final word which is to big in the next line
+                    
+                    // If the word is bigger than the max number of characters
+                    // We have to cut it and just append a little part of it to the next line
+                    if (wordList[i].length > CharMaxNb) {
+                        var longWord = wordList[i];
+                        while (longWord.length > CharMaxNb) {
+                            this.appendTspan(longWord.substring(0,CharMaxNb-3) + '-',x);
+                            lineCounter = lineCounter + 1;
+                            longWord = '-' + longWord.substring(CharMaxNb-3,longWord.length);
+                        }
+                        wordList[i] = longWord;
+                    }
+                    // Append the word to the next line
                     wrapText= wordList[i];
                 }
             }
             // Finish by adding the last line the text node
-            appendTspan(wrapText);
-            appendTspan(" ");
+            this.appendTspan(wrapText,x);
+            this.appendTspan(" ",x);
             lineCounter = lineCounter + 2;
         } 
-        $('annotation_rect_display').setAttribute("width", CharMaxNb/2 + 'em');
+        $('annotation_rect_display').setAttribute("width", parseInt(5*CharMaxNb/8) + 'em');
         $('annotation_rect_display').setAttribute("height", lineCounter + 'em');
     },
-    
-    
     
     //Hide the displayer
     hide: function() {
