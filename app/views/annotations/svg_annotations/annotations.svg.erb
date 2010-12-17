@@ -20,7 +20,7 @@
   <g id="areas">
   <% @annotations.each do |annotation| %>
 <% if annotation.type == "AreaAnnotation" %>
-     <rect id="area_<%= annotation.id%>"x="<%= annotation.x1%>" y="<%= annotation.y1%>"
+     <rect id="area_<%= annotation.id%>" x="<%= annotation.x1%>" y="<%= annotation.y1%>"
      width="<%= (annotation.y2 - annotation.y1)%>"
      height="<%= (annotation.x2 - annotation.x1)%>"
      />
@@ -84,7 +84,7 @@
     //<![CDATA[
     Handler.queryURI = "<%= url_for(:controller =>"annotations" ,
                                      :action =>"write_annotations",
-                                    :submission_file_id => @submission_file_id) %>";
+                                    :submission_file_id => @submission_file.id) %>";
     //]]>
   </script>
 </svg>
