@@ -82,6 +82,12 @@ var shapeAnnotation = {
         }
 
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
+        $A(oldGroup.childNodes).each(function(path) {
+            Event.observe(path, "click", function(e) {
+                // Remove the g element containing all the paths
+                this.parentNode.parentNode.removeChild(this.parentNode);
+            });
+        });
         shapeAnnotation.counter++;        
         Handler.displaySaveButton();
     },
@@ -159,6 +165,13 @@ var areaAnnotation = {
 			selectBox.parentNode.removeChild(selectBox);
             return;
 		}
+
+        Event.observe(selectBox, "click", function(e) {
+            if(Handler.mode == "delete") {
+                this.parentNode.removeChild(this);
+            }
+        });
+
         selectBox.setAttribute("id", "new_area_" + areaAnnotation.counter);
         areaAnnotation.counter++;
         Handler.displaySaveButton();
@@ -290,7 +303,7 @@ var Handler = {
 
         } else if(mode == "delete") {
             this.mode = "delete";
-            document.documentElement.style.cursor = "crosshair";
+            document.documentElement.style.cursor = "auto";
 
         } else if(mode == "view") {
             this.mode = "view";
