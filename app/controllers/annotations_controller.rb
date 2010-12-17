@@ -139,7 +139,9 @@ class AnnotationsController < ApplicationController
         :x2 => area["points"]["right"],
         :y1 => area["points"]["top"],
         :y2 => area["points"]["bottom"],
-        :annotation_text_id => text.id
+        :annotation_text_id => text.id,
+        :submission_file_id => params[:submission_file_id].to_i,
+        :annotation_number => 1
       })
       a.save
       unless a.id.nil?
@@ -151,7 +153,9 @@ class AnnotationsController < ApplicationController
       a = ShapeAnnotation.create({
         :thickness => shape["thickness"],
         :color => shape["color"],
-        :annotation_text_id => text.id
+        :annotation_text_id => text.id,
+        :submission_file_id => params[:submission_file_id].to_i,
+        :annotation_number => 1
       })
       a.save
       unless a.id.nil?

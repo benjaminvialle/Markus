@@ -66,7 +66,6 @@ var AnnotationTextDisplayer = Class.create({
                     + "eu ultrices sem aliquam at. "
                 )); 
                 } else {
-                    console.debug(area.getAttribute("id").split("_"));
                     annotationVector.push(
                         new AnnotationText(
                             area.getAttribute("id").split("_")[1], 1,
