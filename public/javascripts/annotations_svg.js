@@ -102,6 +102,7 @@ var shapeAnnotation = {
 
     processShape: function(node) {
         var shape = {
+                localId: node.getAttribute("id").split("_")[2],
                 color: Handler.color,
                 thickness: Handler.thickness,
                 points: []
@@ -181,6 +182,7 @@ var areaAnnotation = {
 
     processArea: function(node) {
          return {
+            localId: node.getAttribute("id").split("_")[2],
             color: Handler.color,
             thickness: Handler.thickness,
             points: {
@@ -356,7 +358,7 @@ var Handler = {
             parameters: { annotations: Object.toJSON(annotations) },
             onSuccess: function(transport) {
                 var response = transport.responseText;
-                // TODO Delete the sent shapes, and draw the new ones 
+                Handler.processSavedAnnotations(response)
                 Handler.hideSaveButton();
             },
             onFailure: function() {
@@ -386,10 +388,16 @@ var Handler = {
 
     // Processes the saved annotations so that they can be used like the ones
     // included in the SVG
-    processSavedAnnotations: function() {
-        // TODO
-    }
+    processSavedAnnotations: function(db_ids) {
+        $H(db_ids.shapes).each(function(shape) {
+            $('new_shape_' + shape.key).setAttribute("id", "shape_" + shape.value);
+        });
 
+        $H(db_ids.areas).each(function(area) {
+            console.debug(area);
+            $('new_area_' + area.key).setAttribute("id", "area_" + area.value);
+        });
+    }
 };
 
 document.observe("DOMContentLoaded", Handler.init);
