@@ -18,10 +18,17 @@ class SubmissionRule < ActiveRecord::Base
     @get_collection_time = calculate_collection_time
   end
 
-  # Based on the assignment's due date, return the collection time for submissions
-  # Return a value of type Time
   def calculate_collection_time
-    raise NotImplementedError.new("SubmissionRule:  calculate_collection_time not implemented")
+    return assignment.latest_due_date + hours_sum.hours
+  end
+
+  def calculate_grouping_collection_time(grouping)
+    if !grouping.inviter.section.nil?
+      return SectionDueDate.due_date_for(grouping.inviter.section,
+                                         assignment)
+    else
+      return assignment.due_date + hours_sum.hours
+    end
   end
 
   # When Students commit code after the collection time, MarkUs should warn
@@ -81,4 +88,7 @@ class SubmissionRule < ActiveRecord::Base
     return [0, overtime_hours].max
   end
 
+  def hours_sum
+    return 0
+  end
 end

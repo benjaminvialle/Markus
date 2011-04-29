@@ -181,13 +181,23 @@ function default_group_fields() {
 function update_due_date(new_due_date) {
   check_due_date(new_due_date);
   grace_periods.set_due_date(new_due_date);
+  penalty_decay_periods.set_due_date(new_due_date);
   penalty_periods.set_due_date(new_due_date);
   grace_periods.refresh();
+  penalty_decay_periods.refresh();
   penalty_periods.refresh();
 }
 
 function refresh_due_date() {
   update_due_date($F('assignment_due_date'));
+}
+
+function toggle_sections_due_date( section_due_dates_type ) {
+  if( section_due_dates_type ) {
+    $('section_due_dates_information').show();
+  } else {
+    $('section_due_dates_information').hide();
+  }
 }
 
 function check_due_date(new_due_date) {
@@ -202,7 +212,7 @@ function change_submission_rule() {
   $$('.period input').each(function(node) {
     $(node).enable();
   });
-  
+
   if($('grace_period_submission_rule').getValue() == null) {
      // Disable any grace_period_submission_rule periods
     $$('#grace_periods .period').each(function(node) { node.addClassName('disabled'); });
@@ -212,6 +222,17 @@ function change_submission_rule() {
     if ($$('#grace_periods .period').length == 0) {
         // Auto expand add a grace period if needed
         $("grace_period_link").onclick();
+    }
+  }
+  if($('penalty_decay_period_submission_rule').getValue() == null) {
+     // Disable any penalty_decay_period_submission_rule periods
+    $$('#penalty_decay_periods .period').each(function(node) { node.addClassName('disabled'); });
+    $$('#penalty_decay_periods .period input').each(function(node){node.disable();});
+  }
+  else {
+    if ($$('#penalty_decay_periods .period').length == 0) {
+         // Auto expand add a penalty period if needed
+        $("penalty_decay_period_link").onclick();
     }
   }
   if($('penalty_period_submission_rule').getValue() == null) {

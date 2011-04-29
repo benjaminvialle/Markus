@@ -6,9 +6,9 @@
 
 <% # UI LIBRARIES %>
 <%= javascript_include_tag "livepipe/livepipe.js",
-	"livepipe/window.js",
-	"livepipe/tabs.js",
-	:cache => "livepipe_cache" %>
+  "livepipe/window.js",
+  "livepipe/tabs.js",
+  :cache => "livepipe_cache" %>
 
 <%= javascript_include_tag "controls.js" %>
 <%= javascript_include_tag "DropDownMenu/DropDownMenu.js"%>
@@ -16,33 +16,34 @@
 
 <% # SOURCE CODE GLOWER AND IMAGE ANNOTATION MANAGER %>
 <%= javascript_include_tag "SourceCodeGlower/AnnotationText.js",
-	"SourceCodeGlower/AnnotationTextDisplayer.js",
-	"SourceCodeGlower/AnnotationTextManager.js",
-	"SourceCodeGlower/SourceCodeLine.js",
-	"SourceCodeGlower/SourceCodeLineAnnotations.js",
-	"SourceCodeGlower/SourceCodeLineCollection.js",
-	"SourceCodeGlower/SourceCodeLineArray.js",
-	"SourceCodeGlower/SourceCodeLine.js",
-	"SourceCodeGlower/SyntaxHighlighter1p5Line.js",
-	"SourceCodeGlower/SourceCodeLineManager.js",
-	"SourceCodeGlower/SourceCodeLineFactory.js",
-	"SourceCodeGlower/SourceCodeAdapter.js",
-	"SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
-	"SourceCodeGlower/ImageAnnotationGrid.js",
-	"SourceCodeGlower/ImageEventHandler.js",
-	:cache => "SourceCodeGlower_cache" %>
+  "SourceCodeGlower/AnnotationTextDisplayer.js",
+  "SourceCodeGlower/AnnotationTextManager.js",
+  "SourceCodeGlower/SourceCodeLine.js",
+  "SourceCodeGlower/SourceCodeLineAnnotations.js",
+  "SourceCodeGlower/SourceCodeLineCollection.js",
+  "SourceCodeGlower/SourceCodeLineArray.js",
+  "SourceCodeGlower/SourceCodeLine.js",
+  "SourceCodeGlower/SyntaxHighlighter1p5Line.js",
+  "SourceCodeGlower/SourceCodeLineManager.js",
+  "SourceCodeGlower/SourceCodeLineFactory.js",
+  "SourceCodeGlower/SourceCodeAdapter.js",
+  "SourceCodeGlower/SyntaxHighlighter1p5Adapter.js",
+  "SourceCodeGlower/ImageAnnotationGrid.js",
+  "SourceCodeGlower/ImageEventHandler.js",
+  :cache => "SourceCodeGlower_cache" %>
 
 <% # SYNTAX HIGHLIGHTER %>
 <%= javascript_include_tag "syntaxhighlighter/shCore.js",
-	"syntaxhighlighter/shBrushJava.js",
-	"syntaxhighlighter/shBrushXml.js",
-	"syntaxhighlighter/shBrushRuby.js",
-	"syntaxhighlighter/shBrushPython.js",
-	"syntaxhighlighter/shBrushJScript.js",
-	"syntaxhighlighter/shBrushCpp.js",
-	"syntaxhighlighter/shBrushScheme.js",
-	"syntaxhighlighter/shBrushUnknown.js",
-	:cache => "syntaxhighlighter_cache" %>
+  "syntaxhighlighter/shBrushJava.js",
+  "syntaxhighlighter/shBrushXml.js",
+  "syntaxhighlighter/shBrushRuby.js",
+  "syntaxhighlighter/shBrushPython.js",
+  "syntaxhighlighter/shBrushJScript.js",
+  "syntaxhighlighter/shBrushCpp.js",
+  "syntaxhighlighter/shBrushScheme.js",
+  "syntaxhighlighter/shBrushScilab.js",
+  "syntaxhighlighter/shBrushUnknown.js",
+  :cache => "syntaxhighlighter_cache" %>
 
 <% # VIEWING MARKS FUNCTIONS %>
 <%= javascript_include_tag "Grader/file_selector.js" %>
@@ -57,7 +58,7 @@
 
 <%= render :partial => "results/common/annotations.js" %>
 <%= render :partial => "results/student/boot.js", :locals => {:first_file => @first_file} %>
-
+<%= render :partial => "results/student/enable_remark_request_buttons.js" %>
 <div id="title_bar">
 <h1>Results For <%= h(sanitize(@assignment.short_identifier)) %></h1>
 </div>
@@ -66,5 +67,13 @@
 
 <%= render :partial => 'results/common/file_selector', :locals => {:files => @files, :can_download => false, :test_result_files => @test_result_files } %>
 
-<%= render :partial => 'results/student/student_panes', :locals => {:extra_marks_points => @extra_marks_points, :extra_marks_percentage => @extra_marks_percentage, :result => @result, :mark_criteria =>@mark_criteria, :marks_map => @marks_map, :assignment => @assignment } %>
+<%= render :partial => 'results/student/student_panes', 
+           :locals => {:extra_marks_points => @extra_marks_points, 
+           :extra_marks_percentage => @extra_marks_percentage, 
+           :result => @result, 
+           :mark_criteria =>@mark_criteria, 
+           :marks_map => @marks_map, 
+           :assignment => @assignment,
+           :submission => @submission,
+           :old_result => @old_result} %>
 </div>

@@ -4,7 +4,7 @@ require 'faker'
 
 Sham.section_name {Faker::Name.name}
 
-Sham.user_name {Faker::Name.name}
+Sham.user_name {Faker::Internet.user_name}
 Sham.admin_user_name {|i| "machinist_admin#{i}"}
 Sham.student_user_name {|i| "machinist_student#{i}"}
 Sham.ta_user_name {|i| "machinist_ta#{i}"}
@@ -68,14 +68,20 @@ Assignment.blueprint do
   submission_rule {NoLateSubmissionRule.make}
   allow_web_submits {true}
   display_grader_names_to_students {false}
+  section_due_dates_type(false)
   enable_test {true}
   tokens_per_day {10}
   assign_graders_to_criteria {false}
+  assignment_stat {AssignmentStat.make}
 end
 
 AssignmentFile.blueprint do
   assignment
   filename
+end
+
+AssignmentStat.blueprint do
+  assignment_id {0}
 end
 
 CriterionTaAssociation.blueprint do
@@ -156,7 +162,7 @@ AreaAnnotation.blueprint do
     )}
   annotation_text_id {1}
   submission_file_id {submission_file.id}
-  annotation_number {rand(1000)}
+  annotation_number {rand(1000)+1}
 end
 
 Mark.blueprint do
@@ -208,6 +214,11 @@ ShapeAnnotation.blueprint do
   annotation_text_id {1}
   submission_file_id {submission_file.id}
   annotation_number {rand(1000)}
+
+SectionDueDate.blueprint do
+  section {Section.make}
+  assignment {Assignment.make}
+  due_date
 end
 
 Student.blueprint do
@@ -241,6 +252,11 @@ SubmissionFile.blueprint do
   submission
   filename
   path
+end
+
+PenaltyDecayPeriodSubmissionRule.blueprint do
+  assignment_id {0}
+  type {'PenaltyDecayPeriodSubmissionRule'}
 end
 
 PenaltyPeriodSubmissionRule.blueprint do
@@ -287,10 +303,11 @@ TextAnnotation.blueprint do
   annotation_text {AnnotationText.make(
     :annotation_category => AnnotationCategory.make(:assignment => submission_file.submission.grouping.assignment)
     )}
-  annotation_number {rand(1000)}
+  annotation_number {rand(1000)+1}
 end
 
 Token.blueprint do
   grouping_id {Grouping.make.id}
   tokens {5}
+end
 end

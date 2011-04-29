@@ -4,7 +4,7 @@ class SubmissionsController < ApplicationController
   include SubmissionsHelper
   include PaginationHelper
   
-  before_filter    :authorize_only_for_admin, :except => [:populate_file_manager, :browse,
+  before_filter    :authorize_only_for_admin, :except => [:server_time, :populate_file_manager, :browse,
   :index, :file_manager, :update_files, 
   :download, :s_table_paginate, :collect_and_begin_grading,
   :manually_collect_and_begin_grading, :collect_ta_submissions, :repo_browser,
@@ -116,7 +116,6 @@ class SubmissionsController < ApplicationController
  
   def file_manager
     @assignment = Assignment.find(params[:id])
-
     @grouping = current_user.accepted_grouping_for(@assignment.id)
 
     if @grouping.nil?
@@ -423,7 +422,7 @@ class SubmissionsController < ApplicationController
         raise I18n.t("student.submission.expect_filter")
       end
       # Get all Groupings for this filter
-      groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id})
+      groupings = S_TABLE_PARAMS[:filters][params[:filter]][:proc].call({:assignment => assignment, :user_id => current_user.id}, {})
     else
       # User selected particular Grouping IDs
       if params[:groupings].nil?
@@ -500,4 +499,8 @@ class SubmissionsController < ApplicationController
     send_data assignment.get_svn_repo_list, :disposition => 'attachment', :type => 'text/plain', :filename => "#{assignment.short_identifier}_svn_repo_list"
   end
 
+  #This action is called periodically from file_manager.
+  def server_time
+    render :partial => 'server_time'
+  end
 end

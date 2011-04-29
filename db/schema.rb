@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20101215135205) do
+ActiveRecord::Schema.define(:version => 20110313200240) do
 
   create_table "annotation_categories", :force => true do |t|
     t.text     "annotation_category_name"
@@ -57,6 +57,11 @@ ActiveRecord::Schema.define(:version => 20101215135205) do
   add_index "assignment_files", ["assignment_id", "filename"], :name => "index_assignment_files_on_assignment_id_and_filename", :unique => true
   add_index "assignment_files", ["assignment_id"], :name => "index_assignment_files_on_assignment_id"
 
+  create_table "assignment_stats", :force => true do |t|
+    t.integer "assignment_id"
+    t.text    "grade_distribution_percentage"
+  end
+
   create_table "assignments", :force => true do |t|
     t.string   "short_identifier",                                       :null => false
     t.string   "description"
@@ -75,7 +80,7 @@ ActiveRecord::Schema.define(:version => 20101215135205) do
     t.string   "marking_scheme_type",              :default => "rubric"
     t.boolean  "allow_web_submits",                :default => true
     t.boolean  "section_groups_only"
-    t.boolean  "section_due_dates",                :default => false
+    t.boolean  "section_due_dates_type",           :default => false
     t.boolean  "display_grader_names_to_students"
     t.boolean  "enable_test",                      :default => false,    :null => false
     t.integer  "notes_count",                      :default => 0
@@ -202,7 +207,7 @@ ActiveRecord::Schema.define(:version => 20101215135205) do
     t.string "repo_name"
   end
 
-  add_index "groups", ["group_name"], :name => "groups_n1"
+  add_index "groups", ["group_name"], :name => "groups_name_unique", :unique => true
 
   create_table "marks", :force => true do |t|
     t.integer  "result_id"
@@ -244,6 +249,7 @@ ActiveRecord::Schema.define(:version => 20101215135205) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "hours"
+    t.integer  "interval"
   end
 
   add_index "periods", ["submission_rule_id"], :name => "index_periods_on_submission_rule_id"
@@ -288,9 +294,9 @@ ActiveRecord::Schema.define(:version => 20101215135205) do
   add_index "rubric_criteria", ["assignment_id", "rubric_criterion_name"], :name => "index_rubric_criteria_on_assignment_id_and_name", :unique => true
 
   create_table "section_due_dates", :force => true do |t|
-    t.integer  "sections_id"
-    t.integer  "assignments_id"
     t.datetime "due_date"
+    t.integer  "section_id"
+    t.integer  "assignment_id"
   end
 
   create_table "sections", :force => true do |t|
@@ -339,10 +345,11 @@ ActiveRecord::Schema.define(:version => 20101215135205) do
     t.datetime "created_at"
     t.integer  "submission_version"
     t.boolean  "submission_version_used"
-    t.integer  "revision_number",         :null => false
-    t.datetime "revision_timestamp",      :null => false
+    t.integer  "revision_number",          :null => false
+    t.datetime "revision_timestamp",       :null => false
     t.integer  "remark_result_id"
     t.text     "remark_request"
+    t.datetime "remark_request_timestamp"
   end
 
   add_index "submissions", ["grouping_id"], :name => "index_submissions_on_grouping_id"

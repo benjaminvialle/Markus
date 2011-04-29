@@ -39,15 +39,7 @@ en:
     markus_copyright:   "Copyright (c) 2008-2010 by the authors."
     markus_credits:     "Credits"
     markus_credits_thanks:      "Thanks to everyone who contributed to and made MarkUs possible. In particular to:"
-    fall_2008:          "Fall 2008"
-    winter_2009:        "Winter 2009"
-    winter_2010:        "Winter 2010"
-    summer_2009:        "Summer 2009"
-    summer_2010:        "Summer 2010"
-    fall_2009:          "Fall 2009"
-    fall_2010:          "Fall 2010"
-    industry_advisors:  "Industry Advisors"
-    supervisor:         "Supervisor"
+    supervisors:        "Supervisors:"
     contact_us:         "Contact Us"
     email_more_info:    "E-mail: <a href=\"mailto:info@markusproject.org\">info@markusproject.org</a> or <a href=\"mailto:markus-users@cs.toronto.edu\">markus-users@cs.toront   o.edu</a><br/>Please visit: <a href=\"http://www.markusproject.org/\">http://www.markusproject.org/</a> for more information."
 
@@ -94,6 +86,10 @@ en:
       completed: "Completed"
       released: "Released"
       remark_requested: "Remark Requested"
+      not_complete: "Can not release result for %{group_name}: the marking state is not complete"
+      no_submission: "%{group_name} has no submissions"
+      no_result: "%{group_name} has no results"
+      result_not_saved: "%{group_name}'s submission result could not be saved"
     collect_submissions:
       collect_all: "Collect All Submissions"
       collect_ta: "Collect all your assigned submissions"
@@ -149,6 +145,10 @@ en:
             change_marking_scheme_type: "Changing marking scheme will delete your criteria and marks."
         allow_web_submits: "Allow Web Submits?"
         display_grader_names_to_students: "Display grader names to students?"
+        section_due_date_not_displayed: "Due dates are specific to sections." 
+        section_due_date_type: "Due dates are specified per section." 
+        section_due_date_option:  "If the section due dates option is checked, students can only form groups within their section."
+        section_due_dates_info:  "<b>Important</b> The global due date needs to be filled in. If a section has no due date specified, the global due date will be used instead. Students not assigned to any section will only be allowed to form groups with students without section either."
     your_mark:  "Your mark:"
 
     members:            "Members"
@@ -167,8 +167,10 @@ en:
     delete:             "Delete"
     create:             "Create"
     bulk_action:        "Bulk action"
+    submit_request:     "Submit Request to Instructor"
     submit:             "Submit"
     cancel:             "Cancel"
+    cancel_remark:      "Cancel Remark Request"
     filters:            "Filters"
     all:                "All"
     hidden:             "Hidden"
@@ -193,6 +195,7 @@ en:
     give_grace_credits:  "Give Grace Credits:"
     add_section:        "Add section"
     no_result:          "No marks are available for this assignment."
+    no_remark_result:   "Remark results are not yet available for this assignment."
     unmarked:           "unmarked"
     partial:           "partial"
     complete:           "complete"
@@ -217,6 +220,16 @@ en:
       across_all_submission_files: "Current annotations across all submission files. Click on the line number to jump to the location in the file."
       annot_summary: "Annot. Summary"
       source_code: "Source Code"
+      remark_request: "Remark Request"
+      remark_submitted_on: "Remark Request Submitted On"
+      remark_instructions: "Instructions for Remark Requests"
+      remark_due_date:  "Remark Due Date"
+      no_remark_due_date: "No due date assigned"
+      past_remark_due_date: "It is already past the remark due date."
+      about_remark_save: "Please note that the instructor will be unaware of your saved request unless it has been submitted."
+      about_remark_submission: "Once a remark request has been submitted, you will not be able to see your original results until remark results are available.  You will also not be able to edit the request."
+      cancel_remark_to_change: "In order to change your request, you must cancel your existing request and create a new one."
+      remark_submitted: "Your remark request has been submitted:"
       previous_submission:  "Previous Submission"
       next_submission:      "Next Submission"
       marking_status:       "Marking Status:"
@@ -272,6 +285,8 @@ en:
     collect_and_grade_overwrite_warning:  "Collecting and grading this revision will overwrite any previous collections/grading done for this group on this assignment.  Are you sure you want to do this?"
     uncommitted_changes_warning: "Your changes are not yet saved, do you still want to navigate away?"
     discard_changes_message: "Are you sure you want to discard your changes?"
+    cancel_remark_request: "Are you sure you want to cancel your remark request?  Your existing request will be deleted, and this cannot be undone."
+    confirm_remark_submit: "Are you sure you want to submit your remark request?  You will not be able to see your results until remarking is finished."
     invalid_id: "must be an id that is an integer greater than 0"
     still_working_warning: "There are unfinished jobs still being processed.  They might not be saved if you leave now."
 
@@ -342,6 +357,7 @@ en:
       revised_by:           "Revised By"
       replace:              "Replace"
       delete:               "Delete"
+      can_begin_grading:    "Can begin grading"
 
     grade_entry_forms:
       blank_field: "can't be blank"
@@ -505,7 +521,7 @@ en:
       no_students_selected: "No students were selected, so no changes were made."
       upload:
         upload_a_class_list: "Upload a class list"
-        select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name</code>"
+        select_csv_file:     "Select a CSV file of the following form: <code>user_name,last_name,first_name(,section)</code>"
         student_same_number: "If a student with the same student number exists, then the student's information is updated."
         csv_file:            "CSV File"
       download:
@@ -571,6 +587,7 @@ en:
        has decline the invitation</span>"
       cancel_invitation: "Are you sure you want to cancel this invitation?"
       cancel_invitation_title: "Cancel invitation"
+      section_groups_only: "You can invite only students of your section"
       submission:
         file_manager: "%{short_identifier}: File Manager"
         current_path: "Current Path:"
@@ -749,6 +766,21 @@ en:
         to:  "to"
         alert: "You must select the Grace Period Submission Rule to add a grace period."
 
+      penalty_decay_period_submission_rule:
+        name: "Penalty Period Submission Rule"
+        short_name: "Penalty Decay"
+        description: "You may submit up to %{penalty_decay_period_limit} hour(s) past the due date, but will have the appropriate percentage deducted from your final result"
+        form_description: "Use Penalty Decay Formula"
+        add_penalty_decay: "Add a Decay Period"
+        alert: "You must select the Penalty Decay Submission Rule to add a decay period."
+        from: "From"
+        to: "to"
+        hours: "hour(s)..."
+        after: "After"
+        each: "each"
+        deduct: "Deduct"
+        for: "for"
+
       penalty_period_submission_rule:
         name: "Penalty Period Submission Rule"
         short_name:  "Penalty Period"
@@ -832,19 +864,35 @@ en:
         level_index: "Level %{index}"
       download:
         title: "Download Rubric File"
-        prompt: "Rubric criteria are currently available in CSV."
+        prompt: "Rubric criteria are currently available in CSV and YAML."
         link_csv: "Download rubric in CSV Format"
+        link_yml: "Download rubric in YAML Format"
       upload:
         success: "Rubric criteria successfully uploaded: %{nb_updates} update(s)."
-        title: "Upload Rubric Criteria File"
-        prompt: "Select a CSV file to upload"
-        format_html: "
+        csv_title: "Upload CSV File"
+        yml_title: "Upload YML File"
+        csv_prompt: "Select a CSV file to upload"
+        yml_prompt: "Select a YML file to upload"
+        format_csv_html: "
         <p>The file should have the following format:</p>
         <ul><li>one record per line;</li><li>each line should be terminated by a carriage-return line-feed.</li></ul>
         <code>criteria_name,weight,<em>level_names</em>,<em>level_descriptions</em></code>
         <p>where <em>level_names</em> must contains the name of each level (seperated by commas)<br />
         and <em>level_descriptions</em> could contains the description of each level (optional, also seperated
         by commas)."
+        format_yml_html: "
+          <p>The file should have the following format:<br />
+              <code>criterion_name:<br />
+                    &nbsp;&nbsp;weight: weight<br />
+                    &nbsp;&nbsp;level_0:<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;name: level_name<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;description: level_description<br />
+                    &nbsp;&nbsp;level_1:<br />
+                    &nbsp;&nbsp;&nbsp;&nbsp;[...]
+          </p>"
+        error: "Some rubric criteria were invalid:"
+        syntax_error: "There is an error in the file you uploaded : %{error}"
+        empty_error: "No criteria were found in the provided file."
       error_total: "total weight must be positive"
       defaults:
         level_0: "Very Poor"
@@ -941,6 +989,7 @@ en:
       update_section: "Update Section"
       add_section: "Add a new section"
       manage_users: "Manage Users"
+      due_dates_type: "Section due dates type: "
       create:
         success: "Section successfully created."
         error:   "Failed to create section."
@@ -989,6 +1038,19 @@ en:
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
+    
+    #app/views/main/_assignment_info_summary.erb
+    assignment_average:        "Assignment Average:"
+    assignments_submitted:     "Assignments Submitted:"
+    assignments_graded:        "Assignments Graded:"
+    refresh_graph:             "Refresh the graph"
+    
+    #app/views/main/_grader_summary.erb
+    grader_distribution:       "Grader Distribution:"
+    assign_graders:            "Assign Graders"
+
+    #app/views/main/_grade_distribution_graph.html.erb
+    grade_distribution:         "Grade Distribution"
 
     #Test Framework
     test_framework:
@@ -1046,3 +1108,5 @@ en:
       array:
         sentence_connector: "and"
         skip_last_comma: true
+
+    server_time: "Server Time:"
