@@ -76,8 +76,8 @@ var AnnotationTextDisplayer = Class.create({
                 if(! ~path.getAttribute("id").indexOf("new")) {
                     annotationVector.push(
                         new AnnotationText(
-                            path.parentNode.getAttribute("id").split("_")[1], 1,
-                            $("annotation_"+path.parentNode.getAttribute("id").split("_")[1]).textContent));
+                            path.getAttribute("id").split("_")[1], 1,
+                            $("annotation_"+path.getAttribute("id").split("_")[1]).textContent));
                 }
         });
         
