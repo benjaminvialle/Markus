@@ -85,9 +85,9 @@ var shapeAnnotation = {
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
         $A(oldGroup.childNodes).each(function(path) {
             Event.observe(path, "click", function(e) {
-                // Remove the g element containing all the paths
-                this.parentNode.parentNode.removeChild(this.parentNode);
-                Handler.hideSaveButtonIfNecessary();
+                if(Handler.mode == "delete") {
+                    Handler.deleteAnnotation(e.currentTarget.parentNode);
+                }
             });
 
         });
@@ -172,8 +172,7 @@ var areaAnnotation = {
 
         Event.observe(selectBox, "click", function(e) {
             if(Handler.mode == "delete") {
-                this.parentNode.removeChild(this);
-                Handler.hideSaveButtonIfNecessary();
+                Handler.deleteAnnotation(e.currentTarget);
             }
         });
 
@@ -273,11 +272,29 @@ var Handler = {
 
 
         // Looks for path already in the svg and links to the annotation displayer
+        // Attach the delete shape listener too
         $$('#shapes g').each(function(shape) {
-            // Checks the user did not create a rect during init!
+            // Checks the user did not create a shape during init!
             if (! ~shape.id.indexOf('current')) {
                 Event.observe(shape, 'mouseout', Handler.mouseOutPath);
                 Event.observe(shape, 'mouseover', Handler.mouseOverPath);
+
+                Event.observe(shape, 'click', function(e) {
+                    if(Handler.mode == "delete") {
+                        Handler.deleteAnnotation(e.currentTarget);
+                    }
+                });
+            }
+        });
+
+        $$('#areas rect').each(function(area) {
+            // Checks the user did not create a shape during init!
+            if (! ~area.id.indexOf('current')) {
+                Event.observe(area, 'click', function(e) {
+                    if(Handler.mode == "delete") {
+                        Handler.deleteAnnotation(e.currentTarget);
+                    }
+                });
             }
         });
 
@@ -391,7 +408,7 @@ var Handler = {
         annotations.annotation_text = $F("new_annotation_text");
 
         // Actually saves the shapes
-        new Ajax.Request(Handler.queryURI, {
+        new Ajax.Request(Handler.queryURI.write_annotations, {
             method: 'post',
             parameters: { annotations: Object.toJSON(annotations) },
             onSuccess: function(transport) {
@@ -408,8 +425,33 @@ var Handler = {
     },
 
     deleteAnnotation: function(annotation) {
-        // TODO make an AJAX call to remove the annotation from DB
-        // TODO then remove it from the page.
+        // This annotation has not been saved yet, just remove it from the DOM
+        if(~annotation.id.indexOf("new")) {
+            annotation.parentNode.removeChild(annotation);
+            Handler.hideSaveButtonIfNecessary();
+        } else {
+            var annotation_id = annotation.id.split("_")[1],
+                params = {};
+                if(~annotation.id.indexOf("shape")) {
+                    params.shape_id = annotation_id;
+                } else if(~annotation.id.indexOf("area")) {
+                    params.area_id = annotation_id;
+                }
+            // Make the AJAX call
+            new Ajax.Request(Handler.queryURI.delete_annotation, {
+                method: 'post',
+                parameters: params,
+                onSuccess: function(transport) {
+                    var annotation_text = $("annotation_" + annotation_id);
+                    annotation_text.parentNode.removeChild(annotation_text);
+                    annotation.parentNode.removeChild(annotation);
+                },
+                onFailure: function() {
+                    // TODO Inform the user that something happened.
+                    alert("Could not delete the annotation. Please try again later");
+                }
+            });
+        }
     },
 
     // Generates a JSON object containing shapes and areas drawn by the user
