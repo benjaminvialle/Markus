@@ -373,6 +373,7 @@ var Handler = {
                 Handler.processSavedAnnotations(response)
                 Handler.hideSaveButton();
                 $("new_annotation_text").clear();
+                Handler.closeSavePopUp();
             },
             onFailure: function() {
                 // TODO Inform the user that something happened.
