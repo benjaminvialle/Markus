@@ -88,10 +88,6 @@ var shapeAnnotation = {
                 this.parentNode.parentNode.removeChild(this.parentNode);
             });
 
-            // Add a listener to the newly created shape
-            Event.observe(path, 'mouseout', Handler.mouseOutPath);
-            Event.observe(path, 'mouseover', Handler.mouseOverPath);
-
         });
         shapeAnnotation.counter++;
         Handler.displaySaveButton();
