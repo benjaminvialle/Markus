@@ -372,7 +372,6 @@ var Handler = {
                 var response = transport.responseText;
                 Handler.processSavedAnnotations(annotations.annotation_text, response.evalJSON())
                 Handler.hideSaveButton();
-                $("new_annotation_text").clear();
                 Handler.closeSavePopUp();
             },
             onFailure: function() {
