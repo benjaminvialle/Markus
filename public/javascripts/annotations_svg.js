@@ -230,6 +230,7 @@ var Handler = {
     thickness: "2",
     annotation_text_displayer: {},
     init: function() {
+        annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
         document.observe("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
             // firefox. As the annotated image *is* the background,
@@ -270,7 +271,6 @@ var Handler = {
         Event.observe($("modal_save"), "click", Handler.save);
         Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
 
-        annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
 
         // Looks for path already in the svg and links to the annotation displayer
         $$('#shapes path').each(function(path) {
