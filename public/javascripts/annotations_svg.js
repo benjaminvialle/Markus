@@ -24,7 +24,7 @@ var shapeAnnotation = {
         path.setAttribute("d", points);
         shapeAnnotation.points++;
     },
-    
+
     create: function(e) {
         var newGroup = document.createElementNS("http://www.w3.org/2000/svg", "g"),
             newPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -46,11 +46,11 @@ var shapeAnnotation = {
 
         points = oldPath.getAttribute("d").split(" ");
 
-		if(points.length < 2) {
-			// If there is only one point, don't save it
-			oldGroup.parentNode.removeChild(oldGroup);
-			return;
-		}
+        if(points.length < 2) {
+            // If there is only one point, don't save it
+            oldGroup.parentNode.removeChild(oldGroup);
+            return;
+        }
         // Chops the path in 10-node long paths. This is because the
         // mouseover event is fired when the mouse is over the area
         // outlined by the path, not the stroke itself.
@@ -93,7 +93,7 @@ var shapeAnnotation = {
             Event.observe(path, 'mouseover', Handler.mouseOverPath);
 
         });
-        shapeAnnotation.counter++;        
+        shapeAnnotation.counter++;
         Handler.displaySaveButton();
     },
 
@@ -127,7 +127,7 @@ var shapeAnnotation = {
                     // Remove the first letter (it's not part of the
                     // coordinates)
                     point = point.substr(1);
-                    
+
                     shape.points.push({
                         x: point.split(',')[0],
                         y: point.split(',')[1]
@@ -135,12 +135,12 @@ var shapeAnnotation = {
 
                 });
         });
-        
+
         return shape;
     },
 
     counter: 0,
-    lastCoords: null, 
+    lastCoords: null,
     lastTime: new Date().getTime(),
     points: 0
 };
@@ -149,7 +149,7 @@ var shapeAnnotation = {
 var areaAnnotation = {
     create: function(e) {
         var selectBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        
+
         this.startCoords = {"x": e.pageX, "y": e.pageY};
         selectBox.setAttribute("id", "select_box");
         selectBox.setAttribute("class", "area_annotation");
@@ -166,10 +166,10 @@ var areaAnnotation = {
 
         // If the area is just a point, there is nothing to do
         if(selectBox.getAttribute("width") == "0" ||
-					selectBox.getAttribute("height") == "0") {
-			selectBox.parentNode.removeChild(selectBox);
+                    selectBox.getAttribute("height") == "0") {
+            selectBox.parentNode.removeChild(selectBox);
             return;
-		}
+        }
 
         Event.observe(selectBox, "click", function(e) {
             if(Handler.mode == "delete") {
@@ -181,7 +181,7 @@ var areaAnnotation = {
         areaAnnotation.counter++;
         Handler.displaySaveButton();
     },
-    
+
     processAreas: function() {
         var areas = [];
         // Get the shapes and the areas drawn
@@ -269,34 +269,34 @@ var Handler = {
         // Attach controls in the modal window
         Event.observe($("modal_save"), "click", Handler.save);
         Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
-        
+
         annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
-        
+
         // Looks for path already in the svg and links to the annotation displayer
         $$('#shapes path').each(function(path) {
             // Checks the user did not create a rect during init!
             if (path.id.indexOf('new') == -1) {
                 // Adds the mouse Event
                 Event.observe(path, 'mouseout', Handler.mouseOutPath);
-                Event.observe(path, 'mouseover', Handler.mouseOverPath);                
+                Event.observe(path, 'mouseover', Handler.mouseOverPath);
             }
         });
-        
+
         // Calls Handler.mouseMove when the mouse moves
-        document.observe("mousemove", Handler.mouseMove);      
+        document.observe("mousemove", Handler.mouseMove);
     },
 
     /* Fired when the save button (in the toolbar) is clicked */
     displaySavePopUp: function() {
         $("modal").style.display='block';
     },
-    
+
     /* Fired when the cancel button (in the modal window) is clicked */
     closeSavePopUp: function() {
         $("modal").style.display='none';
         $("new_annotation_text").clear();
     },
-    
+
     /* Called when a new shape / area is drawn */
     displaySaveButton: function() {
         $("button_save").style.display = "inline";
@@ -335,32 +335,32 @@ var Handler = {
             areaAnnotation.trackMove(e);
         }
     },
-    
+
     // Is called when the mouse moves
     mouseMove: function(e) {
         if(Handler.mode == "view") {
             annotation_text_displayer.displayAnnotations(e);
         }
     },
-    
+
     // Is called when the mouse is over a path
     mouseOverPath: function(e) {
         if(Handler.mode == "view") {
             annotation_text_displayer.addAnnotationPath(e);
         }
     },
-    
+
     // Is called when the mouse leaves a path
     mouseOutPath: function(e) {
         if(Handler.mode == "view") {
             annotation_text_displayer.clearAnnotationPath(e);
         }
     },
-    
+
     save: function(e) {
         // Get the shapes properties
         var color, annotations = Handler.processNewAnnotations();
-                    
+
         // Get the annotation text
         annotations.annotation_text = $F("new_annotation_text");
 
@@ -381,7 +381,7 @@ var Handler = {
             }
         });
     },
-    
+
     deleteAnnotation: function(annotation) {
         // TODO make an AJAX call to remove the annotation from DB
         // TODO then remove it from the page.
@@ -393,7 +393,7 @@ var Handler = {
                 "shapes": [],
                 "areas": []
         };
-        
+
         toSave.shapes = shapeAnnotation.processShapes();
         toSave.areas = areaAnnotation.processAreas();
 
