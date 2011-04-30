@@ -93,6 +93,23 @@ class SubmissionFile < ActiveRecord::Base
     end
     return all_annotations
   end
+  
+  # move images into pdfs dir to have them in cache
+  # it is necessary to have them in the disk to catch their size
+  def move_to_cache
+    m_logger = MarkusLogger.instance
+    storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
+      self.submission.grouping.group.repository_name,
+      self.path)
+    file_path = File.join(storage_path, self.filename.split('.')[0] + '.jpg')
+    FileUtils.remove_file(file_path, true) if File.exists?(file_path)
+    self.export_file(storage_path)
+    if File.exists?(file_path)
+      m_logger.log("Successfully copied #{self.filename} to the cache")
+    else
+      m_logger.log("Problem when exporting file to the cache")
+    end
+  end
 
   def convert_pdf_to_jpg
     return unless MarkusConfigurator.markus_config_pdf_support && self.is_pdf?

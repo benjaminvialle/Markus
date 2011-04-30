@@ -103,10 +103,9 @@ class AnnotationsController < ApplicationController
     #Catch assignment's categories
     assignment = submission.assignment
     @annotation_categories = assignment.annotation_categories
-
+    @size = ImageSize.new(open(File.join(MarkusConfigurator.markus_config_pdf_storage, @submission_file.submission.grouping.group.repository_name, @submission_file.path, @submission_file.filename)).read).size
     if grouping.ensure_can_see?(current_user)
       @annotations = @submission_file.annotations
-      #@points = @annotations.first.points
       render 'annotations/svg_annotations/annotations.svg.erb'
     else
       render :file => "#{RAILS_ROOT}/public/404.html",

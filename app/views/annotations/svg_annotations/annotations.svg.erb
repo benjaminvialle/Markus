@@ -10,7 +10,7 @@
       @import url(/stylesheets/main.css);
   </style>
   <image x="0" y="0"
-      width="100%" height="100%"
+      width="<%= @size[0] -%>" height="<%= @size[1] -%>"
       style="z-index: 0;"
   xlink:href="<%= url_for(:action => 'download',
                           :controller => 'results',

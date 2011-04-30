@@ -9,15 +9,16 @@
 source 'http://rubygems.org'
 
 # Bundler requires these gems in all environments
-gem "rails", "2.3.10"
+gem "rails", "~>2.3"
 gem "db_populate"
 gem "rubyzip"
 gem "ya2yaml"
-gem "i18n" 
+gem "i18n"
 gem "will_paginate"
 gem "fastercsv"
 gem "mongrel_cluster"
 gem "routing-filter"
+gem "image_size"
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).

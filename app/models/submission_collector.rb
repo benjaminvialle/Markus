@@ -175,8 +175,10 @@ class SubmissionCollector < ActiveRecord::Base
     new_submission = assignment.submission_rule.apply_submission_rule(
       new_submission)
     #convert any pdf submission files to jpgs
+    #cache image files in the same repository as pdf files
     new_submission.submission_files.each do |subm_file|
       subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
+      subm_file.move_to_cache if subm_file.is_supported_image?
     end
     grouping.is_collected = true
     remove_grouping_from_queue(grouping)
@@ -196,6 +198,7 @@ class SubmissionCollector < ActiveRecord::Base
       new_submission = Submission.create_by_revision_number(grouping, rev_num)
       new_submission.submission_files.each do |subm_file|
         subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
+        subm_file.move_to_cache if subm_file.is_supported_image?
       end
       grouping.is_collected = true
       grouping.save
@@ -224,6 +227,7 @@ class SubmissionCollector < ActiveRecord::Base
       if MarkusConfigurator.markus_config_pdf_support
         new_submission.submission_files.each do |subm_file|
           subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
+          subm_file.move_to_cache if subm_file.is_supported_image?
         end
         grouping.is_collected = true
         grouping.save
