@@ -258,7 +258,7 @@ var Handler = {
         ["shape", "area", "save", "delete", "view"].each(function(item) {
                 Event.observe($("button_" + item), "click", function(e) {
                     if(item == "save") {
-                        Handler.setMode("view");
+                        Handler.setMode("save");
                         Handler.displaySavePopUp();
                     } else {
                         Handler.setMode(item);
@@ -295,6 +295,7 @@ var Handler = {
     closeSavePopUp: function() {
         $("modal").style.display='none';
         $("new_annotation_text").clear();
+        Handler.setMode("view");
     },
 
     /* Called when a new shape / area is drawn */
@@ -323,6 +324,10 @@ var Handler = {
 
         } else if(mode == "view") {
             this.mode = "view";
+            document.documentElement.style.cursor = "auto";
+
+        } else if(mode == "save") {
+            this.mode = "save";
             document.documentElement.style.cursor = "auto";
         }
     },
