@@ -177,4 +177,42 @@ class AnnotationsController < ApplicationController
 
   end
 
+  def delete_annotation
+    return unless request.post?
+    if params.has_key? :shape_id
+      @annotation = ShapeAnnotation.find(params[:shape_id])
+      if !@annotation.nil?
+        @points = @annotation.points
+        @points.each do |point|
+          point.destroy
+        end
+      end
+    elsif params.has_key? :area_id
+      @annotation = AreaAnnotation.find(params[:area_id])
+    end
+
+    if !@annotation.nil?
+      @text = @annotation.annotation_text
+      @area_sibling = AreaAnnotation.first(:conditions =>  ["annotation_text_id = ?", @text.id])
+      @shape_sibling = ShapeAnnotation.first(:conditions =>  ["annotation_text_id = ?", @text.id])
+      if @area_sibling.nil? and @shape_sibling.nil?
+        @text.destroy
+      end
+      @old_annotation = @annotation.destroy
+      @submission_file_id = params[:submission_file_id]
+      @submission_file = SubmissionFile.find(@submission_file_id)
+      @submission = @submission_file.submission
+      @annotations = @submission.annotations
+      @annotations.each do |annot|
+        if annot.annotation_number > @old_annotation.annotation_number
+          annot.annotation_number -= 1
+          annot.save
+        end
+      end
+    end
+
+    render :json => {"ok" => 1}
+
+  end
+
 end

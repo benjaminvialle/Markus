@@ -24,7 +24,7 @@ var shapeAnnotation = {
         path.setAttribute("d", points);
         shapeAnnotation.points++;
     },
-    
+
     create: function(e) {
         var newGroup = document.createElementNS("http://www.w3.org/2000/svg", "g"),
             newPath = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -46,11 +46,12 @@ var shapeAnnotation = {
 
         points = oldPath.getAttribute("d").split(" ");
 
-		if(points.length < 2) {
-			// If there is only one point, don't save it
-			oldGroup.parentNode.removeChild(oldGroup);
-			return;
-		}
+        if(points.length < 2) {
+            // If there is only one point, don't save it
+            oldGroup.parentNode.removeChild(oldGroup);
+            Handler.hideSaveButtonIfNecessary();
+            return;
+        }
         // Chops the path in 10-node long paths. This is because the
         // mouseover event is fired when the mouse is over the area
         // outlined by the path, not the stroke itself.
@@ -84,16 +85,13 @@ var shapeAnnotation = {
         oldGroup.setAttribute("id", "new_shape_" + shapeAnnotation.counter);
         $A(oldGroup.childNodes).each(function(path) {
             Event.observe(path, "click", function(e) {
-                // Remove the g element containing all the paths
-                this.parentNode.parentNode.removeChild(this.parentNode);
+                if(Handler.mode == "delete") {
+                    Handler.deleteAnnotation(e.currentTarget.parentNode);
+                }
             });
 
-            // Add a listener to the newly created shape
-            Event.observe(path, 'mouseout', Handler.mouseOutPath);
-            Event.observe(path, 'mouseover', Handler.mouseOverPath);
-
         });
-        shapeAnnotation.counter++;        
+        shapeAnnotation.counter++;
         Handler.displaySaveButton();
     },
 
@@ -127,7 +125,7 @@ var shapeAnnotation = {
                     // Remove the first letter (it's not part of the
                     // coordinates)
                     point = point.substr(1);
-                    
+
                     shape.points.push({
                         x: point.split(',')[0],
                         y: point.split(',')[1]
@@ -135,12 +133,12 @@ var shapeAnnotation = {
 
                 });
         });
-        
+
         return shape;
     },
 
     counter: 0,
-    lastCoords: null, 
+    lastCoords: null,
     lastTime: new Date().getTime(),
     points: 0
 };
@@ -149,7 +147,7 @@ var shapeAnnotation = {
 var areaAnnotation = {
     create: function(e) {
         var selectBox = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-        
+
         this.startCoords = {"x": e.pageX, "y": e.pageY};
         selectBox.setAttribute("id", "select_box");
         selectBox.setAttribute("class", "area_annotation");
@@ -166,14 +164,15 @@ var areaAnnotation = {
 
         // If the area is just a point, there is nothing to do
         if(selectBox.getAttribute("width") == "0" ||
-					selectBox.getAttribute("height") == "0") {
-			selectBox.parentNode.removeChild(selectBox);
+                    selectBox.getAttribute("height") == "0") {
+            selectBox.parentNode.removeChild(selectBox);
+            Handler.hideSaveButtonIfNecessary();
             return;
-		}
+        }
 
         Event.observe(selectBox, "click", function(e) {
             if(Handler.mode == "delete") {
-                this.parentNode.removeChild(this);
+                Handler.deleteAnnotation(e.currentTarget);
             }
         });
 
@@ -181,7 +180,7 @@ var areaAnnotation = {
         areaAnnotation.counter++;
         Handler.displaySaveButton();
     },
-    
+
     processAreas: function() {
         var areas = [];
         // Get the shapes and the areas drawn
@@ -230,6 +229,7 @@ var Handler = {
     thickness: "2",
     annotation_text_displayer: {},
     init: function() {
+        annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
         document.observe("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
             // firefox. As the annotated image *is* the background,
@@ -258,7 +258,7 @@ var Handler = {
         ["shape", "area", "save", "delete", "view"].each(function(item) {
                 Event.observe($("button_" + item), "click", function(e) {
                     if(item == "save") {
-                        Handler.setMode("view");
+                        Handler.setMode("save");
                         Handler.displaySavePopUp();
                     } else {
                         Handler.setMode(item);
@@ -269,40 +269,79 @@ var Handler = {
         // Attach controls in the modal window
         Event.observe($("modal_save"), "click", Handler.save);
         Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
-        
-        annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
-        
+
+
         // Looks for path already in the svg and links to the annotation displayer
-        $$('#shapes path').each(function(path) {
-            // Checks the user did not create a rect during init!
-            if (path.id.indexOf('new') == -1) {
-                // Adds the mouse Event
-                Event.observe(path, 'mouseout', Handler.mouseOutPath);
-                Event.observe(path, 'mouseover', Handler.mouseOverPath);                
+        // Attach the delete shape listener too
+        $$('#shapes g').each(function(shape) {
+            // Checks the user did not create a shape during init!
+            if (! ~shape.id.indexOf('current')) {
+                Event.observe(shape, 'mouseout', Handler.mouseOutPath);
+                Event.observe(shape, 'mouseover', Handler.mouseOverPath);
+
+                Event.observe(shape, 'click', function(e) {
+                    if(Handler.mode == "delete") {
+                        Handler.deleteAnnotation(e.currentTarget);
+                    }
+                });
             }
         });
-        
+
+        $$('#areas rect').each(function(area) {
+            // Checks the user did not create a shape during init!
+            if (! ~area.id.indexOf('current')) {
+                Event.observe(area, 'click', function(e) {
+                    if(Handler.mode == "delete") {
+                        Handler.deleteAnnotation(e.currentTarget);
+                    }
+                });
+            }
+        });
+
         // Calls Handler.mouseMove when the mouse moves
-        document.observe("mousemove", Handler.mouseMove);      
+        document.observe("mousemove", Handler.mouseMove);
     },
 
     /* Fired when the save button (in the toolbar) is clicked */
     displaySavePopUp: function() {
         $("modal").style.display='block';
     },
-    
+
     /* Fired when the cancel button (in the modal window) is clicked */
     closeSavePopUp: function() {
         $("modal").style.display='none';
         $("new_annotation_text").clear();
+        Handler.setMode("view");
     },
-    
+
     /* Called when a new shape / area is drawn */
     displaySaveButton: function() {
         $("button_save").style.display = "inline";
     },
 
-    /* Called when the shapes / areas are saved in the db*/
+    /* Called when the shapes / areas are saved in the db */
+    hideSaveButtonIfNecessary: function() {
+        var newThings = false;
+        $$("#shapes g").each(function(shape) {
+            if(!newThings && ~shape.id.indexOf("new")) {
+                newThings = true;
+            }
+        });
+
+        if(!newThings) {
+            $$("#areas rect").each(function(area) {
+                if(!newThings && ~area.id.indexOf("new")) {
+                newThings = true;
+                }
+            });
+        }
+
+        if(!newThings) {
+            Handler.hideSaveButton();
+        }
+    },
+
+    /* Called when a shape / area is removed */
     hideSaveButton: function() {
         $("button_save").style.display = "none";
     },
@@ -324,6 +363,10 @@ var Handler = {
         } else if(mode == "view") {
             this.mode = "view";
             document.documentElement.style.cursor = "auto";
+
+        } else if(mode == "save") {
+            this.mode = "save";
+            document.documentElement.style.cursor = "auto";
         }
     },
 
@@ -335,44 +378,44 @@ var Handler = {
             areaAnnotation.trackMove(e);
         }
     },
-    
+
     // Is called when the mouse moves
     mouseMove: function(e) {
         if(Handler.mode == "view") {
             annotation_text_displayer.displayAnnotations(e);
         }
     },
-    
+
     // Is called when the mouse is over a path
     mouseOverPath: function(e) {
         if(Handler.mode == "view") {
             annotation_text_displayer.addAnnotationPath(e);
         }
     },
-    
+
     // Is called when the mouse leaves a path
     mouseOutPath: function(e) {
         if(Handler.mode == "view") {
             annotation_text_displayer.clearAnnotationPath(e);
         }
     },
-    
+
     save: function(e) {
         // Get the shapes properties
         var color, annotations = Handler.processNewAnnotations();
-                    
+
         // Get the annotation text
         annotations.annotation_text = $F("new_annotation_text");
 
         // Actually saves the shapes
-        new Ajax.Request(Handler.queryURI, {
+        new Ajax.Request(Handler.queryURI.write_annotations, {
             method: 'post',
             parameters: { annotations: Object.toJSON(annotations) },
             onSuccess: function(transport) {
                 var response = transport.responseText;
-                Handler.processSavedAnnotations(response)
+                Handler.processSavedAnnotations(annotations.annotation_text, response.evalJSON())
                 Handler.hideSaveButton();
-                $("new_annotation_text").clear();
+                Handler.closeSavePopUp();
             },
             onFailure: function() {
                 // TODO Inform the user that something happened.
@@ -380,10 +423,35 @@ var Handler = {
             }
         });
     },
-    
+
     deleteAnnotation: function(annotation) {
-        // TODO make an AJAX call to remove the annotation from DB
-        // TODO then remove it from the page.
+        // This annotation has not been saved yet, just remove it from the DOM
+        if(~annotation.id.indexOf("new")) {
+            annotation.parentNode.removeChild(annotation);
+            Handler.hideSaveButtonIfNecessary();
+        } else {
+            var annotation_id = annotation.id.split("_")[1],
+                params = {};
+                if(~annotation.id.indexOf("shape")) {
+                    params.shape_id = annotation_id;
+                } else if(~annotation.id.indexOf("area")) {
+                    params.area_id = annotation_id;
+                }
+            // Make the AJAX call
+            new Ajax.Request(Handler.queryURI.delete_annotation, {
+                method: 'post',
+                parameters: params,
+                onSuccess: function(transport) {
+                    var annotation_text = $("annotation_" + annotation_id);
+                    annotation_text.parentNode.removeChild(annotation_text);
+                    annotation.parentNode.removeChild(annotation);
+                },
+                onFailure: function() {
+                    // TODO Inform the user that something happened.
+                    alert("Could not delete the annotation. Please try again later");
+                }
+            });
+        }
     },
 
     // Generates a JSON object containing shapes and areas drawn by the user
@@ -392,7 +460,7 @@ var Handler = {
                 "shapes": [],
                 "areas": []
         };
-        
+
         toSave.shapes = shapeAnnotation.processShapes();
         toSave.areas = areaAnnotation.processAreas();
 
@@ -401,15 +469,25 @@ var Handler = {
 
     // Processes the saved annotations so that they can be used like the ones
     // included in the SVG
-    processSavedAnnotations: function(db_ids) {
+    processSavedAnnotations: function(text, db_ids) {
         $H(db_ids.shapes).each(function(shape) {
+            // Change the shape id to make it look like an old one
             $('new_shape_' + shape.key).setAttribute("id", "shape_" + shape.value);
+            //Create a text node containing the text
+            var textBox = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textBox.setAttribute("id", "annotation_" + shape.value);
+            textBox.textContent = text;
+            $('annotations').appendChild(textBox);
             // Add a listener to the newly created shape
             Event.observe('shape_'+ shape.value, 'mouseout', Handler.mouseOutPath);
             Event.observe('shape_'+ shape.value, 'mouseover', Handler.mouseOverPath);
         });
 
         $H(db_ids.areas).each(function(area) {
+            var textBox = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textBox.setAttribute("id", "annotation_" + area.value);
+            textBox.textContent = text;
+            $('annotations').appendChild(textBox);
             $('new_area_' + area.key).setAttribute("id", "area_" + area.value);
         });
 

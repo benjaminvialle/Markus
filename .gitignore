@@ -2,6 +2,7 @@
 
 config/database.yml
 config/local_environment_override.rb
+config/environments/development.rb
 
 # Data, bundle and log folder
 data/

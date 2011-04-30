@@ -60,12 +60,7 @@ var AnnotationTextDisplayer = Class.create({
                 
                 // Look for the annotation which in linked to the 
                 // Store the annotation
-                if(area.getAttribute("id").indexOf("new") != -1) {
-                    annotationVector.push(new AnnotationText(1,1,"This is a area annotation: let's wrap this text... "
-                    + "Duis dignissim turpis a metus hendrerit nec porttitor elit accumsan. Aenean pharetra vestibulum nisi, "
-                    + "eu ultrices sem aliquam at. "
-                )); 
-                } else {
+                if(! ~area.getAttribute("id").indexOf("new")) {
                     annotationVector.push(
                         new AnnotationText(
                             area.getAttribute("id").split("_")[1], 1,
@@ -78,13 +73,11 @@ var AnnotationTextDisplayer = Class.create({
         this.annotationPaths.each(function(path) {
             // Look for the annotation which in linked to the 
                 // Store the annotation
-                if(path.parentNode.getAttribute("id").indexOf("new") != -1) {
-                    annotationVector.push(new AnnotationText(1,1,"This is a shape annotation"));
-                } else {
+                if(! ~path.getAttribute("id").indexOf("new")) {
                     annotationVector.push(
                         new AnnotationText(
-                            path.parentNode.getAttribute("id").split("_")[1], 1,
-                            $("annotation_"+path.parentNode.getAttribute("id").split("_")[1]).textContent));
+                            path.getAttribute("id").split("_")[1], 1,
+                            $("annotation_"+path.getAttribute("id").split("_")[1]).textContent));
                 }
         });
         

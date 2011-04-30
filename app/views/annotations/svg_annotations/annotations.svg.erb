@@ -80,9 +80,14 @@
   </g>
   <script>
     //<![CDATA[
-    Handler.queryURI = "<%= url_for(:controller =>"annotations" ,
+    Handler.queryURI = {
+      write_annotations: "<%= url_for(:controller =>"annotations" ,
                                      :action =>"write_annotations",
-                                    :submission_file_id => @submission_file.id) %>";
+                                     :submission_file_id => @submission_file.id) %>",
+      delete_annotation: "<%= url_for(:controller =>"annotations" ,
+                                     :action =>"delete_annotation",
+                                     :submission_file_id => @submission_file.id) %>"
+      };
     //]]>
   </script>
 </svg>
