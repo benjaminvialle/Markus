@@ -49,6 +49,7 @@ var shapeAnnotation = {
         if(points.length < 2) {
             // If there is only one point, don't save it
             oldGroup.parentNode.removeChild(oldGroup);
+            Handler.hideSaveButtonIfNecessary();
             return;
         }
         // Chops the path in 10-node long paths. This is because the
@@ -86,6 +87,7 @@ var shapeAnnotation = {
             Event.observe(path, "click", function(e) {
                 // Remove the g element containing all the paths
                 this.parentNode.parentNode.removeChild(this.parentNode);
+                Handler.hideSaveButtonIfNecessary();
             });
 
         });
@@ -164,12 +166,14 @@ var areaAnnotation = {
         if(selectBox.getAttribute("width") == "0" ||
                     selectBox.getAttribute("height") == "0") {
             selectBox.parentNode.removeChild(selectBox);
+            Handler.hideSaveButtonIfNecessary();
             return;
         }
 
         Event.observe(selectBox, "click", function(e) {
             if(Handler.mode == "delete") {
                 this.parentNode.removeChild(this);
+                Handler.hideSaveButtonIfNecessary();
             }
         });
 
@@ -298,7 +302,29 @@ var Handler = {
         $("button_save").style.display = "inline";
     },
 
-    /* Called when the shapes / areas are saved in the db*/
+    /* Called when the shapes / areas are saved in the db */
+    hideSaveButtonIfNecessary: function() {
+        var newThings = false;
+        $$("#shapes g").each(function(shape) {
+            if(!newThings && ~shape.id.indexOf("new")) {
+                newThings = true;
+            }
+        });
+
+        if(!newThings) {
+            $$("#areas rect").each(function(area) {
+                if(!newThings && ~area.id.indexOf("new")) {
+                newThings = true;
+                }
+            });
+        }
+
+        if(!newThings) {
+            Handler.hideSaveButton();
+        }
+    },
+
+    /* Called when a shape / area is removed */
     hideSaveButton: function() {
         $("button_save").style.display = "none";
     },
