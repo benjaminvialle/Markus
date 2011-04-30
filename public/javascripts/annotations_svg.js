@@ -375,7 +375,7 @@ var Handler = {
             parameters: { annotations: Object.toJSON(annotations) },
             onSuccess: function(transport) {
                 var response = transport.responseText;
-                Handler.processSavedAnnotations(response)
+                Handler.processSavedAnnotations(annotations.annotation_text, response.evalJSON())
                 Handler.hideSaveButton();
                 $("new_annotation_text").clear();
                 Handler.closeSavePopUp();
@@ -407,15 +407,25 @@ var Handler = {
 
     // Processes the saved annotations so that they can be used like the ones
     // included in the SVG
-    processSavedAnnotations: function(db_ids) {
+    processSavedAnnotations: function(text, db_ids) {
         $H(db_ids.shapes).each(function(shape) {
+            // Change the shape id to make it look like an old one
             $('new_shape_' + shape.key).setAttribute("id", "shape_" + shape.value);
+            //Create a text node containing the text
+            var textBox = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textBox.setAttribute("id", "annotation_" + shape.value);
+            textBox.textContent = text;
+            $('annotations').appendChild(textBox);
             // Add a listener to the newly created shape
             Event.observe('shape_'+ shape.value, 'mouseout', Handler.mouseOutPath);
             Event.observe('shape_'+ shape.value, 'mouseover', Handler.mouseOverPath);
         });
 
         $H(db_ids.areas).each(function(area) {
+            var textBox = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            textBox.setAttribute("id", "annotation_" + area.value);
+            textBox.textContent = text;
+            $('annotations').appendChild(textBox);
             $('new_area_' + area.key).setAttribute("id", "area_" + area.value);
         });
 
