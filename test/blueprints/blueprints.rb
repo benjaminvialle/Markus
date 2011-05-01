@@ -214,6 +214,7 @@ ShapeAnnotation.blueprint do
   annotation_text_id {1}
   submission_file_id {submission_file.id}
   annotation_number {rand(1000)}
+end
 
 SectionDueDate.blueprint do
   section {Section.make}
@@ -309,5 +310,4 @@ end
 Token.blueprint do
   grouping_id {Grouping.make.id}
   tokens {5}
-end
 end
