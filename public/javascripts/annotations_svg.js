@@ -244,32 +244,33 @@ var Handler = {
             document.observe("mousemove", Handler.trackMove);
         });
 
-        document.observe("mouseup", function(e) {
-            document.stopObserving("mousemove", Handler.trackMove);
-            if(Handler.mode == "shape") {
-                shapeAnnotation.finalize(e);
-            } else if(Handler.mode == "area") {
-                areaAnnotation.finalize(e);
-            }
-        });
+        if($('modal') !== null && $('toolbar') !== null) {
+            document.observe("mouseup", function(e) {
+                document.stopObserving("mousemove", Handler.trackMove);
+                if(Handler.mode == "shape") {
+                    shapeAnnotation.finalize(e);
+                } else if(Handler.mode == "area") {
+                    areaAnnotation.finalize(e);
+                }
+            });
 
 
-        // Attach controls in the toolbar
-        ["shape", "area", "save", "delete", "view"].each(function(item) {
-                Event.observe($("button_" + item), "click", function(e) {
-                    if(item == "save") {
-                        Handler.setMode("save");
-                        Handler.displaySavePopUp();
-                    } else {
-                        Handler.setMode(item);
-                    }
-                });
-        });
+            // Attach controls in the toolbar
+            ["shape", "area", "save", "delete", "view"].each(function(item) {
+                    Event.observe($("button_" + item), "click", function(e) {
+                        if(item == "save") {
+                            Handler.setMode("save");
+                            Handler.displaySavePopUp();
+                        } else {
+                            Handler.setMode(item);
+                        }
+                    });
+            });
 
-        // Attach controls in the modal window
-        Event.observe($("modal_save"), "click", Handler.save);
-        Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
-
+            // Attach controls in the modal window
+            Event.observe($("modal_save"), "click", Handler.save);
+            Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
+        }
 
         // Looks for path already in the svg and links to the annotation displayer
         // Attach the delete shape listener too
