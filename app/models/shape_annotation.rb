@@ -11,4 +11,8 @@ class ShapeAnnotation < Annotation
   def points
     points = Point.find_all_by_shape_annotation_id(self.id)
   end
+
+  def annotation_list_link_partial
+    return "/annotations/image_annotation_list_link"
+  end
 end
