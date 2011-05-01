@@ -24,7 +24,10 @@
               <%=I18n.t("annotations.select_annotation_text")%>
             </option>
             <% annotation_category.annotation_texts.each do |annotation_text| %>
-              <option value="<%=h(annotation_text.id)%>"><%=h(annotation_text.content)%></option>
+              <option
+                id="annotation_text_<%=h(annotation_text.id)%>"
+                value="<%=h(annotation_text.id)%>"
+                ><%=h(annotation_text.content)%></option>
             <% end %>
           </select>
         <% end %>

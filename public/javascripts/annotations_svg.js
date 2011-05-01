@@ -270,6 +270,16 @@ var Handler = {
             // Attach controls in the modal window
             Event.observe($("modal_save"), "click", Handler.save);
             Event.observe($("modal_close"), "click", Handler.closeSavePopUp);
+
+            Event.observe($("new_annotation_category"),
+                         "change",
+                         Handler.displayAnnotationCategoryTexts);
+
+            $$("#annotation_categories_texts select").each(function(s) {
+                Event.observe(s, "change", function(e) {
+                    Handler.selectAnnotationText(e.currentTarget);
+                });
+            });
         }
 
         // Looks for path already in the svg and links to the annotation displayer
@@ -390,7 +400,7 @@ var Handler = {
         if(annotation_text_id !== "") {
             console.debug(textarea);
             textarea.clear();
-            textarea.value = "kikou";
+            textarea.value = $('annotation_text_'+annotation_text_id).innerHTML;
             textarea.disabled = true;
         } else {
             textarea.clear();
