@@ -2,7 +2,8 @@
   url_for(:controller => "annotations",
   :action => "view_image_annotations",
   :submission_file_id => @submission_file_id)%>
-  width="100%" height="100%"
+  width=<%= size[0] %> height=<%= size[1] %>
+  style="overflow: auto"
   type="image/svg+xml">
   <%=I18n.t("error_svg")%>
 </object>

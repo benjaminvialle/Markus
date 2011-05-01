@@ -93,7 +93,7 @@ class SubmissionFile < ActiveRecord::Base
     end
     return all_annotations
   end
-  
+
   # move images into pdfs dir to have them in cache
   # it is necessary to have them in the disk to catch their size
   def move_to_cache
@@ -109,6 +109,19 @@ class SubmissionFile < ActiveRecord::Base
     else
       m_logger.log("Problem when exporting file to the cache")
     end
+  end
+
+  # returns the size of the image or the pdf in an array
+  def get_size
+    return unless self.is_supported_image? || self.is_pdf?
+    begin
+      size = ImageSize.new(open(File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path, self.filename)).read).size if self.is_supported_image?
+      size = ImageSize.new(open(File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path, self.filename.split('.').first + '.jpg')).read).size if self.is_pdf?
+    rescue Errno::ENOENT
+      raise "File #{self.filename} in #{File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path)} not found - Are you using SQLite3 as database?" if self.is_pdf?
+      raise "File #{self.filename.split('.').first}.jpg in #{File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path)} not found - Are you using SQLite3 as database?" if self.is_supported_image?
+    end
+    return size
   end
 
   def convert_pdf_to_jpg
