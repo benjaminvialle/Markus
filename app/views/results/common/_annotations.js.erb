@@ -10,7 +10,6 @@ var init_code_pane_width = 0;
 var annotation_manager = null;
 var syntax_highlighter_adapter = null;
 
-var image_event_handler = null;
 var annotation_text_manager = null;
 var annotation_text_displayer = null;
 
@@ -38,13 +37,7 @@ function source_code_ready_for_image() {
   if ($('annotation_menu') != null) {
     $('annotation_menu').hide();
   }
-  annotation_manager = null;
 
-  image_event_handler = new ImageEventHandler();
-  annotation_text_manager = new AnnotationTextManager();
-  annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
-
-  
   $('loading_code').hide();
   $('select_file_id').enable();
 }
@@ -52,11 +45,6 @@ function source_code_ready_for_image() {
 function add_annotation_text(annotation_text_id, content) {
   var annotation_text = new AnnotationText(annotation_text_id, 0, content);
   annotation_manager.registerAnnotationText(annotation_text);
-}
-
-//Register an image_annotation with the image annotation_grid
-function add_to_annotation_grid(extracted_coords){
-  annotation_manager.add_to_grid(extracted_coords.evalJSON());
 }
 
 function add_annotation(annotation_id, range, annotation_text_id) {
@@ -152,58 +140,6 @@ function make_new_annotation() {
   $('new_annotation_content').focus();
 
   return false;
-}
-
-// Switch to the shape annotation mode
-function enable_shape_annotation() {
-  annotation_type = "shape";
-  $$('#image_annotation_toolbar img').each(function(e) {
-    e.setStyle({ border: "0" });
-  });
-  $('shape_annotation_button').setStyle({
-    border: "1px solid black"
-  });
-  $('save_shape_annotations_button').show();
-
-  annotation_manager = null; 
-
-
-}
-
-// Switch to the area annotation mode
-function enable_area_annotation() {
-  // Update the toolbar
-  annotation_type = "area";
-  $$('#image_annotation_toolbar img').each(function(e) {
-    e.setStyle({ border: "0" });
-  });
-  $('area_annotation_button').setStyle({
-    border: "1px solid black"
-  });
-  $('save_shape_annotations_button').hide();
-
-  // Attach the ImageAnnotationGrid
-  image_event_handler = new ImageEventHandler();
-  annotation_text_manager = new AnnotationTextManager();
-  annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
-  annotation_manager = new ImageAnnotationGrid(image_event_handler,
-                             annotation_text_manager,
-                             annotation_text_displayer);
-}
-
-// Switch to eraser annotation mode
-function enable_annotation_eraser() {
-  annotation_type = "eraser";
-  $$('#image_annotation_toolbar img').each(function(e) {
-    e.setStyle({ border: "0" });
-  });
-  $('delete_annotation_button').setStyle({
-    border: "1px solid black"
-  });
-  $('save_shape_annotations_button').hide();
-  $('image_preview').setStyle({
-    cursor: 'url("/images/icons/cancel.png")'
-  });
 }
 
 <%#
@@ -302,10 +238,5 @@ function hide_all_annotation_content_editors() {
   });
 }
 
-//Hide all display boxes on the screen.
-function hide_image_annotations() {
-  if(annotation_manager == null){ return;}
-  annotation_manager.getAnnotationTextDisplayer().hideShowing();
-}
 //]]>
 </script>
