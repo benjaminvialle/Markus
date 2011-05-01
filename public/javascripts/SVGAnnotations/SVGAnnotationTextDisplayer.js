@@ -14,7 +14,7 @@ Rules:
 var TEXT_DISPLAY_X_OFFSET = 10;
 var TEXT_DISPLAY_Y_OFFSET = 10;
 
-var AnnotationTextDisplayer = Class.create({
+var SVGAnnotationTextDisplayer = Class.create({
 
     annotationPaths: $A(),
 
@@ -138,7 +138,7 @@ var AnnotationTextDisplayer = Class.create({
     
     // Wraps the text of each annotation. Displays all the annotation in the Displayer rectangle, and sets its position near the mouse.
     updateDisplayNode: function(collection, x, y) {
-    
+
         $('annotation_rect_display').setAttribute("x", x + TEXT_DISPLAY_X_OFFSET);
         $('annotation_rect_display').setAttribute("y", y + TEXT_DISPLAY_Y_OFFSET);
         
@@ -208,6 +208,7 @@ var AnnotationTextDisplayer = Class.create({
     
     //Show the displayer
     show: function() {
+        console.debug(this.display_node);
         this.display_node.style.display ='block';
     },
 

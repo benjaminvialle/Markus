@@ -229,7 +229,7 @@ var Handler = {
     thickness: "2",
     annotation_text_displayer: {},
     init: function() {
-        annotation_text_displayer = new AnnotationTextDisplayer($('annotations'));
+        annotation_text_displayer = new SVGAnnotationTextDisplayer($('annotations'));
         document.observe("mousedown", function(e) {
             // Disable the drag'n'drop feature for images in
             // firefox. As the annotated image *is* the background,
