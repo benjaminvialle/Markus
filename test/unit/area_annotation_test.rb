@@ -17,13 +17,13 @@ class AreaAnnotationTest < ActiveSupport::TestCase
   context "Extract Coords" do
 
     setup do
-      @basic_annot = ImageAnnotation.make(
+      @basic_annot = AreaAnnotation.make(
         {:x1 => 0, :x2 => 10, :y1 => 0, :y2 => 10})
-      @negative_annot = ImageAnnotation.make(
+      @negative_annot = AreaAnnotation.make(
         {:x1 => -1, :x2 => 3, :y1 => -2, :y2 => 5})
-      @spaces_annot = ImageAnnotation.make(
+      @spaces_annot = AreaAnnotation.make(
         {:x1 => -1, :x2 => 3, :y1 => 123, :y2 => 5})
-      @annotation = ImageAnnotation.make
+      @annotation = AreaAnnotation.make
     end
 
     should "put extract Coords" do
