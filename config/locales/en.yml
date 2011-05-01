@@ -695,6 +695,7 @@ en:
 
     annotations:
       annotation_category: "Annotation Category"
+      select_annotation_text: "Select an annotation"
       no_annotation_categories: "There are no annotation categories, yet."
       title: "Annotations: %{assignment_short_identifier}"
       name: "Category name"

@@ -10,13 +10,25 @@
         </p>
         <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
         <select id="new_annotation_category">
-          <option value=""><%=t('annotations.one_time_only')%></option>
+          <option value="" selected="selected"><%=t('annotations.one_time_only')%></option>
           <% @annotation_categories.each do |annotation_category| %>
           <option value="<%=h(annotation_category.id)%>">
             <%=h(annotation_category.annotation_category_name)%>
           </option>
           <% end %>
         </select>
+        <div id="annotation_categories_texts" >
+        <% @annotation_categories.each do |annotation_category| %>
+          <select id="annotations_category_<%=h(annotation_category.id)%>" style="display: none;">
+            <option value="" selected="selected">
+              <%=I18n.t("annotations.select_annotation_text")%>
+            </option>
+            <% annotation_category.annotation_texts.each do |annotation_text| %>
+              <option value="<%=h(annotation_text.id)%>"><%=h(annotation_text.content)%></option>
+            <% end %>
+          </select>
+        <% end %>
+        </div>
         <p style="margin-top: 5px; border-top: 1px solid #000000;
           padding-top: 10px;">
           <button id="modal_save"><%= I18n.t("marker.annotation.new_annotation") %>

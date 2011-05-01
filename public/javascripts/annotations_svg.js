@@ -311,6 +311,23 @@ var Handler = {
     closeSavePopUp: function() {
         $("modal").style.display='none';
         $("new_annotation_text").clear();
+        $$("#new_annotation_category option").each(function(o) {
+            if(o.value === "") {
+                o.selected = true;
+            } else {
+                o.selected = false;
+            }
+        });
+        $$("#annotation_categories_texts option").each(function(o) {
+            if(o.value === "") {
+                o.selected = true;
+            } else {
+                o.selected = false;
+            }
+        });
+        $$("#annotation_categories_texts select").each(function(s) {
+            s.style.display = "none";
+        });
         Handler.setMode("view");
     },
 
@@ -344,6 +361,39 @@ var Handler = {
     /* Called when a shape / area is removed */
     hideSaveButton: function() {
         $("button_save").style.display = "none";
+    },
+    
+    /* Called when the user selects an annotation category */
+    displayAnnotationCategoryTexts: function() {
+        var category_id = $('new_annotation_category').value,
+            textarea = $('new_annotation_text');
+        
+        $$('#annotation_categories_texts select').each(function(s) {
+            s.style.display = "none";
+        });
+
+        textarea.clear();
+        if(category_id !== "") {
+            textarea.disabled = true;
+            $('annotations_category_'+ category_id).style.display = "inline";
+        } else {
+            textarea.disabled = false;
+        }
+    },
+
+    /* Called when the user selects an annotation text from a category */
+    selectAnnotationText: function(category_select) {
+        var annotation_text_id = category_select.value,
+            textarea = $('new_annotation_text');
+
+        if(annotation_text_id !== "") {
+            console.debug(textarea);
+            textarea.clear();
+            textarea.value = "kikou";
+            textarea.disabled = true;
+        } else {
+            textarea.clear();
+        }
     },
 
     /* Change mode */
