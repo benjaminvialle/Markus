@@ -201,7 +201,7 @@ class AnnotationsController < ApplicationController
       @text = @annotation.annotation_text
       @area_sibling = AreaAnnotation.first(:conditions =>  ["annotation_text_id = ?", @text.id])
       @shape_sibling = ShapeAnnotation.first(:conditions =>  ["annotation_text_id = ?", @text.id])
-      if @area_sibling.nil? and @shape_sibling.nil?
+      if @area_sibling.nil? and @shape_sibling.nil? and @text.annotation_category_id.nil?
         @text.destroy
       end
       @old_annotation = @annotation.destroy
