@@ -30,7 +30,7 @@ function source_code_ready() {
   var annotation_text_manager = new AnnotationTextManager();
   var annotation_text_displayer = new AnnotationTextDisplayer($('annotation_holder'));
 
-  annotation_manager = new sourcecodelineannotations(line_manager, annotation_text_manager, annotation_text_displayer);
+  annotation_manager = new SourceCodeLineAnnotations(line_manager, annotation_text_manager, annotation_text_displayer);
 }
 
 //A version of source_code_ready for image files. 
