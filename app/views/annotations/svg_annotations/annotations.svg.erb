@@ -71,13 +71,13 @@
   <% if !@current_user.student? %>
     <!-- this partial is only used to make the code more easy to read : it displays the toolbar -->
     <%= render :partial => 'annotations/svg_annotations/toolbar.svg.erb', :locals => {:annotation_categories => @annotation_categories} %>
-  <% end %>
   <!-- this partial is only used to make the code more easy to read : this one is for popup -->
   <g id="modal">
     <foreignObject width="450" height="300" x="50" y="50">
      <%= render :partial => 'annotations/svg_annotations/save_popup', :locals => {:annotation_categories => @annotation_categories} %>
     </foreignObject>
   </g>
+  <% end %>
   <script>
     //<![CDATA[
     Handler.queryURI = {
