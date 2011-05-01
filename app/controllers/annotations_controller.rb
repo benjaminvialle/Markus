@@ -104,11 +104,11 @@ class AnnotationsController < ApplicationController
     assignment = submission.assignment
     @annotation_categories = assignment.annotation_categories
     begin
-      debugger
       @size = ImageSize.new(open(File.join(MarkusConfigurator.markus_config_pdf_storage, @submission_file.submission.grouping.group.repository_name, @submission_file.path, @submission_file.filename)).read).size if @submission_file.is_supported_image?
       @size = ImageSize.new(open(File.join(MarkusConfigurator.markus_config_pdf_storage, @submission_file.submission.grouping.group.repository_name, @submission_file.path, @submission_file.filename.split('.').first, '.jpg')).read).size if @submission_file.is_pdf?
     rescue Errno::ENOENT
-      raise "File not found - Are you using SQLite3 as database"
+      raise "File #{@submission_file.filename} in #{File.join(MarkusConfigurator.markus_config_pdf_storage, @submission_file.submission.grouping.group.repository_name, @submission_file.path)} not found - Are you using SQLite3 as database" if @submission_file.is_pdf?
+      raise "File #{@submission_file.filename.split('.').first}.jpg in #{File.join(MarkusConfigurator.markus_config_pdf_storage, @submission_file.submission.grouping.group.repository_name, @submission_file.path)} not found - Are you using SQLite3 as database" if @submission_file.is_supported_image?
     end
     if grouping.ensure_can_see?(current_user)
       @annotations = @submission_file.annotations
