@@ -327,7 +327,7 @@ class GroupingTest < ActiveSupport::TestCase
     should "accept to add students in any scenario possible when invoked by
             admin" do
       members = [@student_01.user_name, @student_02.user_name]
-      @grouping.invite(members, 
+      @grouping.invite(members,
                        StudentMembership::STATUSES[:accepted],
                        true)
       assert_equal 2, @grouping.accepted_student_memberships.count
@@ -347,7 +347,7 @@ class GroupingTest < ActiveSupport::TestCase
 
     should "accept to add students to groups without checking their sections" do
       members = [@student_01.user_name, @student_02.user_name]
-      @grouping.invite(members, 
+      @grouping.invite(members,
                        StudentMembership::STATUSES[:accepted],
                        true)
       assert_equal 2, @grouping.accepted_student_memberships.count
