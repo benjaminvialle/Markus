@@ -47,6 +47,7 @@ end
 # Other development related required gems. You don't need them
 # for production.
 group :development, :test do
+  gem "rdoc"
   gem "shoulda"
   gem "selenium-client", "~>1.2.15"
   gem "machinist"
