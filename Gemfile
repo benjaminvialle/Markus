@@ -18,6 +18,7 @@ gem "will_paginate"
 gem "fastercsv"
 gem "mongrel_cluster"
 gem "routing-filter"
+gem "rake", "0.8.7"
 
 # If you are a MarkUs developer and use PostgreSQL, make sure you have
 # PostgreSQL header files installed (e.g. libpq-dev on Debian/Ubuntu).
