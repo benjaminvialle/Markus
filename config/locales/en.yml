@@ -719,6 +719,7 @@ en:
     unhide_students: "Mark as active"
 
     annotations:
+      type_error: "Only an hexadecimal color is accepted."
       annotation_category: "Annotation Category"
       select_annotation_text: "Select an annotation"
       no_annotation_categories: "There are no annotation categories, yet."

@@ -5,7 +5,7 @@
       <div id="create_annotation_dialog"> <!--  style="display:none;"> -->
         <h2><%= I18n.t("marker.annotation.new_annotation") %></h2>
         <p>
-          <textarea id="new_annotation_text" rows="3" cols="42" 
+          <textarea id="new_annotation_text" rows="3" cols="42"
             onclick="this.focus()"></textarea>
         </p>
         <h3><%= I18n.t("marker.annotation.annotation_category") %></h3>
@@ -32,8 +32,7 @@
           </select>
         <% end %>
         </div>
-        <p style="margin-top: 5px; border-top: 1px solid #000000;
-          padding-top: 10px;">
+        <p id="modal_window">
           <button id="modal_save"><%= I18n.t("marker.annotation.new_annotation") %>
           </button>
           <button id="modal_close"><%= I18n.t("cancel") %></button>

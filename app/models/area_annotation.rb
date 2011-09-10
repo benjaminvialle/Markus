@@ -1,8 +1,7 @@
 class AreaAnnotation < Annotation
 
-
-  #(x1, y1) is the top left corner and (x2, y2) is the bottom right corner
-  #of the rectangle containing the annotation.
+  # (x1, y1) is the top left corner and (x2, y2) is the bottom right corner
+  # of the rectangle containing the annotation.
   validates_presence_of :x1, :x2, :y1, :y2
   validates_numericality_of :x1, :x2, :y1, :y2
 

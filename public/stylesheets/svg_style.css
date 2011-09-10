@@ -14,47 +14,53 @@ path {
 
 /* Areas */
 #areas rect {
-    stroke: #FF0000;
-    fill: rgba(33, 33, 33, 0.3);
+  stroke: #FF0000;
+  fill: rgba(33, 33, 33, 0.3);
 }
-  
+
 /* Select box */
 .area_annotation {
-    stroke: #FF0000;
-    fill: rgba(33, 33, 33, 0.3);
+  stroke: #FF0000;
+  fill: rgba(33, 33, 33, 0.3);
 }
 
 /* Hide annotation texts */
 #annotations text {
-	display: none;
+  display: none;
 }
 
 /* But displays annotations when areas or shapes are hovered */
 #display_node text {
-	display: block;
+  display: block;
 }
 
 /* Toolbar */
 #toolbar rect {
-	fill: #ffffff;
-	cursor: auto;
+  fill: #ffffff;
+  cursor: auto;
 }
 
 #toolbar image {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 /* Save button is hidden by default */
 #button_save {
-	display: none;
+  display: none;
 }
 
 /* Annotation Text Displayer */
 #annotation_rect_display {
-    stroke: #FF0000;
-    fill: #F0F8FF;
+  stroke: #FF0000;
+  fill: #F0F8FF;
+}
+
+#modal_window {
+  margin-top: 5px;
+  border-top: 1px solid #000000;
+  padding-top: 10px;
 }
 
 #modal {
-     display: none;
+  display: none;
 }
