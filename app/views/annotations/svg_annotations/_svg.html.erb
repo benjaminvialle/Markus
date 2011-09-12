@@ -1,7 +1,7 @@
 <object data=<%=
   url_for(:controller => "annotations",
-  :action => "view_image_annotations",
-  :submission_file_id => @submission_file_id)%>
+          :action => "view_image_annotations",
+          :submission_file_id => @submission_file_id)%>
   width=<%= size[0] %> height=<%= size[1] %>
   style="overflow: auto"
   type="image/svg+xml">

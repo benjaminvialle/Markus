@@ -716,6 +716,7 @@ fr:
     unhide_students: "Activer les étudiants"
 
     annotations:
+      type_error: "Seule une couleur au format hexadécimal est acceptée."
       annotation_category: "Catégories d'annotations"
       no_annotation_categories: "Il n'y a pas encore de catégories d'annotations."
       title: "Annotations pour le projet %{assignment_short_identifier}"

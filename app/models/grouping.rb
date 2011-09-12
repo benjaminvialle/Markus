@@ -560,21 +560,21 @@ class Grouping < ActiveRecord::Base
   end
 
   # Define if the current user can see the submission or not.
-  def ensure_can_see?(user)
+  def ensure_submission_visible?(user)
     if user.admin?
       return true
     elsif user.student?
       if (self.membership_status(user) == StudentMembership::STATUSES[:rejected] ||
-        self.membership_status(user).nil?)
+          self.membership_status(user).nil?)
         return false
       else
         return true
       end
-      else
-       ta_memberships.find_all_by_grouping_id(self.id).each do |obj|
-         if (user.id == obj.user_id && obj.membership_status != 'rejected')
-           return true
-         end
+    else
+      ta_memberships.find_all_by_grouping_id(self.id).each do |obj|
+        if (user.id == obj.user_id && obj.membership_status != 'rejected')
+          return true
+        end
       end
     end
     return false

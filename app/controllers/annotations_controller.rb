@@ -81,7 +81,7 @@ class AnnotationsController < ApplicationController
     @annotations = @submission.annotations
   end
 
-  #Updates the overall comment from the annotations tab
+  # Updates the overall comment from the annotations tab
   def update_comment
     return unless request.post?
     result = Result.find(params[:result_id])
@@ -91,18 +91,18 @@ class AnnotationsController < ApplicationController
     end
   end
 
-  #Retrieves the annotations associated to an image
+  # Retrieves the annotations associated to an image
   def view_image_annotations
     return unless request.get?
     @submission_file = SubmissionFile.find(params[:submission_file_id])
     submission = Submission.find_by_id(@submission_file.submission_id)
     grouping = Grouping.find_by_id(submission.grouping_id)
 
-    #Catch assignment's categories
+    # Catch assignment's categories
     assignment = submission.assignment
     @annotation_categories = assignment.annotation_categories
     @size = @submission_file.get_size
-    if grouping.ensure_can_see?(current_user)
+    if grouping.ensure_submission_visible?(current_user)
       @annotations = @submission_file.annotations
       render 'annotations/svg_annotations/annotations.svg.erb'
     else
@@ -177,7 +177,7 @@ class AnnotationsController < ApplicationController
 
   def delete_annotation
     return unless request.post?
-    if params.has_key? :shape_id
+    if params.has_key?(:shape_id)
       @annotation = ShapeAnnotation.find(params[:shape_id])
       if !@annotation.nil?
         @points = @annotation.points
@@ -185,24 +185,27 @@ class AnnotationsController < ApplicationController
           point.destroy
         end
       end
-    elsif params.has_key? :area_id
+    elsif params.has_key?(:area_id)
       @annotation = AreaAnnotation.find(params[:area_id])
     end
 
     if !@annotation.nil?
       @text = @annotation.annotation_text
-      @area_sibling = AreaAnnotation.first(:conditions =>  ["annotation_text_id = ?", @text.id])
-      @shape_sibling = ShapeAnnotation.first(:conditions =>  ["annotation_text_id = ?", @text.id])
+      @area_sibling = AreaAnnotation.first(:conditions =>
+                                           ["annotation_text_id = ?", @text.id])
+
+      @shape_sibling = ShapeAnnotation.first(:conditions =>
+                                             ["annotation_text_id = ?", @text.id])
       if @area_sibling.nil? and @shape_sibling.nil? and @text.annotation_category_id.nil?
         @text.destroy
       end
-      @old_annotation = @annotation.destroy
+      old_annotation = @annotation.destroy
       @submission_file_id = params[:submission_file_id]
       @submission_file = SubmissionFile.find(@submission_file_id)
       @submission = @submission_file.submission
       @annotations = @submission.annotations
       @annotations.each do |annot|
-        if annot.annotation_number > @old_annotation.annotation_number
+        if annot.annotation_number > old_annotation.annotation_number
           annot.annotation_number -= 1
           annot.save
         end
