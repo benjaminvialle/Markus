@@ -2,7 +2,6 @@
 
 config/database.yml
 config/local_environment_override.rb
-config/environments/development.rb
 
 # Data, bundle and log folder
 data/
@@ -22,3 +21,6 @@ log/
 
 # Temporary and backup files
 *~
+
+# MarkUs Review poster tool credentials file
+.markusdev-creds

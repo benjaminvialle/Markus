@@ -106,8 +106,8 @@ class SubmissionFile < ActiveRecord::Base
   def move_to_cache
     m_logger = MarkusLogger.instance
     storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
-      self.submission.grouping.group.repository_name,
-      self.path)
+                             self.submission.grouping.group.repository_name,
+                             self.path)
     file_path = File.join(storage_path, self.filename.split('.')[0] + '.jpg')
     FileUtils.remove_file(file_path, true) if File.exists?(file_path)
     self.export_file(storage_path)
@@ -122,11 +122,29 @@ class SubmissionFile < ActiveRecord::Base
   def get_size
     return unless self.is_supported_image? || self.is_pdf?
     begin
-      size = ImageSize.new(open(File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path, self.filename)).read).size if self.is_supported_image?
-      size = ImageSize.new(open(File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path, self.filename.split('.').first + '.jpg')).read).size if self.is_pdf?
+      size =
+        ImageSize.new(
+          open(
+            File.join(
+              MarkusConfigurator.markus_config_pdf_storage,
+              self.submission.grouping.group.repository_name,
+              self.path, self.filename)).read).size if self.is_supported_image?
+      size =
+        ImageSize.new(
+          open(
+            File.join(
+              MarkusConfigurator.markus_config_pdf_storage,
+              self.submission.grouping.group.repository_name,
+              self.path, self.filename.split('.').first+ '.jpg')).read).size if self.is_pdf?
     rescue Errno::ENOENT
-      raise "File #{self.filename} in #{File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path)} not found - Are you using SQLite3 as database?" if self.is_pdf?
-      raise "File #{self.filename.split('.').first}.jpg in #{File.join(MarkusConfigurator.markus_config_pdf_storage, self.submission.grouping.group.repository_name, self.path)} not found - Are you using SQLite3 as database?" if self.is_supported_image?
+      raise "File #{self.filename} in
+      #{File.join(MarkusConfigurator.markus_config_pdf_storage,
+      self.submission.grouping.group.repository_name, self.path)} not found -
+      Are you using SQLite3 as database?" if self.is_pdf?
+      raise "File #{self.filename.split('.').first}.jpg in
+      #{File.join(MarkusConfigurator.markus_config_pdf_storage,
+      self.submission.grouping.group.repository_name, self.path)} not found -
+      Are you using SQLite3 as database?" if self.is_supported_image?
     end
     return size
   end

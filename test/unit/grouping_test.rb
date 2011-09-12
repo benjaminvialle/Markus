@@ -7,10 +7,6 @@ require 'mocha'
 
 class GroupingTest < ActiveSupport::TestCase
 
-  def setup
-    clear_fixtures
-  end
-
   should belong_to :grouping_queue
   should belong_to :group
   should belong_to :assignment
@@ -55,6 +51,7 @@ class GroupingTest < ActiveSupport::TestCase
       assert_not_nil(last_modified)
       assert_instance_of(Time, last_modified)
       # This is not exactly accurate, but it's sufficient
+      # FIXME actually, it sometimes isn't sufficient...
       assert_equal(Time.now.min, last_modified.min)
     end
 
@@ -403,7 +400,7 @@ class GroupingTest < ActiveSupport::TestCase
         @membership = StudentMembership.make(:grouping => @grouping,:user => @student)
       end
       should " allow him to see the file" do
-        assert @grouping.ensure_can_see?(@student)
+        assert @grouping.ensure_submission_visible?(@student)
       end
     end
     
@@ -416,7 +413,7 @@ class GroupingTest < ActiveSupport::TestCase
         @membership = StudentMembership.make(:grouping => @grouping,:user => @student, :membership_status => StudentMembership::STATUSES[:rejected])
       end
       should "not allow it's members to see the submission file" do
-        assert  !@grouping.ensure_can_see?(@student)
+        assert  !@grouping.ensure_submission_visible?(@student)
       end
     end
 
@@ -429,7 +426,7 @@ class GroupingTest < ActiveSupport::TestCase
 	@admin = Admin.make
       end
       should "allow the admin to see the submission file" do
-        assert @grouping.ensure_can_see?(@admin)
+        assert @grouping.ensure_submission_visible?(@admin)
       end
     end
 
@@ -443,7 +440,7 @@ class GroupingTest < ActiveSupport::TestCase
 	@tamembership = TaMembership.make(:grouping => @grouping,:user => @ta,:membership_status => 'accepted')
       end
       should " allow it's grader to see the submission file" do
-        assert @grouping.ensure_can_see?(@ta)
+        assert @grouping.ensure_submission_visible?(@ta)
       end
     end
 
@@ -457,7 +454,7 @@ class GroupingTest < ActiveSupport::TestCase
 	@tamembership = TaMembership.make(:grouping => @grouping,:user => @ta,:membership_status => 'rejected')
       end
       should " not allow this grader to see the submission file" do
-        assert !@grouping.ensure_can_see?(@ta)
+        assert !@grouping.ensure_submission_visible?(@ta)
       end
     end
 
