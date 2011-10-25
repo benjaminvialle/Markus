@@ -135,7 +135,7 @@ DEPENDENCIES
   pg
   prototype_legacy_helper (= 0.0.0)!
   railroady
-  rails (= 3.0.10)
+  rails
   rcov
   rdoc
   routing-filter
