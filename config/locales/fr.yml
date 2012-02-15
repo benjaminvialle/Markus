@@ -16,6 +16,7 @@ fr:
     logging_in:         "Connexion"
     login:              "Identifiant"
     login_failed:       "L'établissement de la connexion a échoué."
+    cookies_off:        "Veuillez configurer votre navigateur afin d'accepter les cookies."
     password_not_blank: "Veuillez entrer votre mot de passe."
     username_not_blank: "Veuillez entrer votre nom d'utilisateur."
     username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
@@ -1079,7 +1080,7 @@ fr:
     account_disabled: "Ce compte a été désactivé"
 
     #app/views/main/_assignment_info_summary.erb
-    assignment_average:        "Moyenne :"
+    assignment_average:        "Moyenne : %{results_average} %"
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"
     refresh_graph:             "Actualiser le graphique"
