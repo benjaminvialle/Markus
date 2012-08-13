@@ -1,5 +1,5 @@
+include CsvHelper
 require 'iconv'
-require 'fastercsv'
 require 'auto_complete'
 require 'csv_invalid_line_error'
 
@@ -67,13 +67,15 @@ class GroupsController < ApplicationController
 
   def rename_group_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping_id = params[:grouping_id]
+    # id is really the grouping_id, this is due to rails routing
+    @grouping_id = params[:id]
     render :partial => "groups/modal_dialogs/rename_group_dialog.rjs"
   end
 
   def rename_group
     @assignment = Assignment.find(params[:assignment_id])
-    @grouping = Grouping.find(params[:grouping_id])
+    # group_id is really the grouping_id, this is due to rails routing
+    @grouping = Grouping.find(params[:id])
     @group = @grouping.group
 
     # Checking if a group with this name already exists
@@ -173,7 +175,7 @@ class GroupsController < ApplicationController
         flash[:invalid_lines] = [] # Store errors of lines in CSV file
         begin
           # Loop over each row, which lists the members to be added to the group.
-          FasterCSV.parse(file.read).each_with_index do |row, line_nr|
+          CsvHelper::Csv.parse(file.read).each_with_index do |row, line_nr|
             begin
               # Potentially raises CSVInvalidLineError
               collision_error = @assignment.add_csv_group(row)
@@ -219,7 +221,7 @@ class GroupsController < ApplicationController
     #get all the groups
     groupings = assignment.groupings #FIXME: optimize with eager loading
 
-    file_out = FasterCSV.generate do |csv|
+    file_out = CsvHelper::Csv.generate do |csv|
        groupings.each do |grouping|
          group_array = [grouping.group.group_name, grouping.group.repo_name]
          # csv format is group_name, repo_name, user1_name, user2_name, ... etc

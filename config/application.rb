@@ -22,7 +22,7 @@ module Markus
   config.plugins = [ :ssl_requirement, :auto_complete, :calendar_date_select ]
 
   # Javascripts files always loaded in views
-  config.action_view.javascript_expansions[:defaults] = %w(rails application prototype)
+  config.action_view.javascript_expansions[:defaults] = %w(prototype rails application )
 
   # Set this if MarkUs is not hosted under / of your Web-host.
   # E.g. if MarkUs should be accessible by http://yourhost.com/markus/instance0
@@ -40,10 +40,10 @@ module Markus
   # We need some additional load paths (e.g. for the API)
   # Note for developers: in Ruby %W( a b c ) is equivalent to [ 'a', 'b', 'c' ]
   config.autoload_paths += %W(
-                              app
-                              app/controllers/api
-                              lib
-                              lib/classes
+                              #{::Rails.root}/lib
+                              #{::Rails.root}/app
+                              #{::Rails.root}/controllers/api
+                              #{::Rails.root}/lib/classes
                               )
   # Load any local configuration that is kept out of source control
   # (e.g. gems, patches).
@@ -55,5 +55,6 @@ module Markus
 
   # Configure sensitive parameters which will be filtered from the log file.
   config.filter_parameters += [:password]
+  
   end
 end

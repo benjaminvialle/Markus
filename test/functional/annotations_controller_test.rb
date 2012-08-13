@@ -1,6 +1,6 @@
-require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'blueprints'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 
 require 'shoulda'
 require 'machinist'
@@ -114,7 +114,8 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       post_as @user, :create, {:content => @annotation_text.content,
         :category_id => @category.id,
         :submission_file_id => @submission_file.id,
-        :coords => "0,0,1,1", :annotation_type => 'image'}
+        :x1 => 0, :x2 => 1, :y1 => 0, :y2 => 1,
+        :annotation_type => 'image'}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -138,7 +139,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-      post_as @user, :update_annotation, :annotation_text => {
+      put_as @user, :update_annotation, :annotation_text => {
         :id => @annotation_text.id, :content => @annotation_text.content,
         :submission_file_id =>@submission_file.id}
       assert_response :success
@@ -185,11 +186,12 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       assert render_template 'create'
     end # End context :create text
 
-    should "on :create to make an image annotation" do
+    should "create an image annotation" do
       post_as @user, :create, {:content => @annotation_text.content,
         :category_id => @category.id,
         :submission_file_id => @submission_file.id,
-        :coords => "0,0,1,1", :annotation_type => 'image'}
+        :x1 => 0, :x2 => 1, :y1 => 0, :y2 => 1,
+        :annotation_type => 'image'}
       assert_response :success
       assert_not_nil assigns :submission_file
       assert_not_nil assigns :annotation
@@ -213,7 +215,7 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
         :line_start => 1, :line_end => 1,
         :annotation_text_id => @annotation_text.id,
         :submission_file_id =>  @submission_file.id})
-      post_as @user, :update_annotation, :annotation_text => {
+      put_as @user, :update_annotation, :annotation_text => {
         :id => @annotation_text.id, :content => @annotation_text.content,
           :submission_file_id =>@submission_file.id}
       assert_response :success
@@ -288,4 +290,14 @@ class AnnotationsControllerTest < AuthenticatedControllerTest
       assert_response :not_found
     end # End context :update_comment
   end # End context Student POST
+
+  should "recognize action to update_annotation" do
+    assert_recognizes( {:action => "update_annotation", :controller => "annotations"},
+                       {:path => "annotations/update_annotation", :method => "put"} )
+  end
+
+  should "recognize action to destroy" do
+    assert_recognizes( {:action => "destroy", :controller => "annotations"},
+                       {:path => "annotations", :method => "delete"} )
+  end
 end

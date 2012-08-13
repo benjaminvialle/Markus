@@ -21,20 +21,16 @@
         </div>
 
         <div class="float_right">
-            <%= form_tag :url => {
-			    :action => 'add_note',
-			    :id => @return_id,
-			    :noteable_id => @noteable,
-			    :noteable_type => @cls,
-			    :user => @current_user,
-			    :action_to => @action,
-			    :controller_to => @cont,
-			    :highlight_field => @highlight_field,
-			    :number_of_notes_field => @number_of_notes_field},
-			  :complete => "$('notes_submit').setValue(
-					    '#{I18n.t('notes.save')}');
-					$('notes_submit').enable();",
-			  :remote => true do %>
+            <%= form_tag(
+			        add_note_notes_path(:id => @return_id,
+			        :noteable_id => @noteable,
+			        :noteable_type => @cls,
+			        :user => @current_user,
+			        :action_to => @action,
+			        :controller_to => @cont,
+			        :highlight_field => @highlight_field,
+			        :number_of_notes_field => @number_of_notes_field ),
+			        :remote => true ) do %>
             <%= text_area_tag(:new_notes, nil, :rows => 15, :cols=>30) %>
             <p class="p_margin">
 
@@ -43,15 +39,8 @@
                   <div id="notes_error_list">
                   </div>
                 </div>
-<%
 
-  # Notice that I'm using the onclick event to reset the value
-  # of the submit tag, and disable it.  I'd normally use :disable_with,
-  # but this doesn't work with the form_remote_tag.
-  # See:  http://awesomerails.wordpress.com/2007/11/08/disable_with-kills-form_remote_tags-ajaxiness/
-
-%>
-                <%= submit_tag I18n.t('notes.save'), :onclick => "$('notes_error').hide();$(this).setValue('#{I18n.t('working')}');$(this).disable();", :id => "notes_submit" %>
+                <%= submit_tag I18n.t('notes.save'), :disable_with => I18n.t('working'), :id => "notes_submit" %>
                 <button onclick="modalNotesGroup.close(); return false;">
                     <%=h I18n.t(:cancel) %>
                 </button>

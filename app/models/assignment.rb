@@ -1,3 +1,4 @@
+include CsvHelper
 require 'csv_invalid_line_error'
 class Assignment < ActiveRecord::Base
 
@@ -122,11 +123,11 @@ class Assignment < ActiveRecord::Base
   def past_due_date?
     # If no section due dates
     if !self.section_due_dates_type && self.section_due_dates.empty?
-      return !due_date.nil? && Time.now > due_date
+      return !due_date.nil? && Time.zone.now > due_date
     # If section due dates
     else
       self.section_due_dates.each do |d|
-        if !d.due_date.nil? && Time.now > d.due_date
+        if !d.due_date.nil? && Time.zone.now > d.due_date
           return true
         end
       end
@@ -139,7 +140,7 @@ class Assignment < ActiveRecord::Base
     if self.section_due_dates_type and !grouping.inviter.section.nil?
         section_due_date =
     SectionDueDate.due_date_for(grouping.inviter.section, self)
-        return !section_due_date.nil? && Time.now > section_due_date
+        return !section_due_date.nil? && Time.zone.now > section_due_date
     else
       self.past_due_date?
     end
@@ -171,11 +172,11 @@ class Assignment < ActiveRecord::Base
   end
 
   def past_collection_date?
-    return Time.now > submission_rule.calculate_collection_time
+    return Time.zone.now > submission_rule.calculate_collection_time
   end
 
   def past_remark_due_date?
-    return !remark_due_date.nil? && Time.now > remark_due_date
+    return !remark_due_date.nil? && Time.zone.now > remark_due_date
   end
 
   # Returns a Submission instance for this user depending on whether this
@@ -498,16 +499,19 @@ class Assignment < ActiveRecord::Base
   # Get a list of subversion client commands to be used for scripting
   def get_svn_export_commands
     svn_commands = [] # the commands to be exported
-    self.submissions.each do |submission|
-      grouping = submission.grouping
-      svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"#{grouping.group.group_name}\"")
+    
+    self.groupings.each do |grouping|
+      submission = grouping.current_submission_used
+      if !submission.nil?
+        svn_commands.push("svn export -r #{submission.revision_number} #{grouping.group.repository_external_access_url}/#{self.repository_folder} \"#{grouping.group.group_name}\"")
+      end
     end
     return svn_commands
   end
 
   # Get a list of group_name, repo-url pairs
   def get_svn_repo_list
-    string = FasterCSV.generate do |csv|
+    string = CsvHelper::Csv.generate do |csv|
       self.groupings.each do |grouping|
         group = grouping.group
         csv << [group.group_name,group.repository_external_access_url]
@@ -520,7 +524,7 @@ class Assignment < ActiveRecord::Base
   def get_simple_csv_report
     students = Student.all
     out_of = self.total_mark
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
        students.each do |student|
          final_result = []
          final_result.push(student.user_name)
@@ -561,7 +565,7 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     rubric_criteria = self.rubric_criteria
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)
@@ -610,7 +614,7 @@ class Assignment < ActiveRecord::Base
     out_of = self.total_mark
     students = Student.all
     flexible_criteria = self.flexible_criteria
-    csv_string = FasterCSV.generate do |csv|
+    csv_string = CsvHelper::Csv.generate do |csv|
       students.each do |student|
         final_result = []
         final_result.push(student.user_name)

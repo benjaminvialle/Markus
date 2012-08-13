@@ -1,6 +1,6 @@
-require File.join(File.dirname(__FILE__), 'authenticated_controller_test')
-require File.join(File.dirname(__FILE__), '..', 'test_helper')
-require File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper')
+require File.expand_path(File.join(File.dirname(__FILE__), 'authenticated_controller_test'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'test_helper'))
+require File.expand_path(File.join(File.dirname(__FILE__), '..', 'blueprints', 'helper'))
 require 'shoulda'
 require 'mocha'
 
@@ -15,6 +15,23 @@ class ResultsControllerTest < AuthenticatedControllerTest
   end
 
   SAMPLE_ERR_MSG = "sample error message"
+
+  should "recognize routes" do
+    assert_recognizes({:controller => "results",
+                       :action => "update_mark",
+                       :assignment_id => '1',
+                       :submission_id => '1'},
+                      {:path => 'assignments/1/submissions/1/results/update_mark',
+                       :method => :get})
+
+    assert_recognizes({:controller => "results",
+                       :action => "expand_criteria",
+                       :assignment_id => '1',
+                       :submission_id => '1'},
+                      {:path => 'assignments/1/submissions/1/results/expand_criteria',
+                       :method => :get})
+
+  end
 
   context "A user" do
 
@@ -551,7 +568,7 @@ class ResultsControllerTest < AuthenticatedControllerTest
             assert assign_to :files
             assert assign_to :first_file
             assert assign_to :extra_marks_points
-            assert assign_to:extra_marks_percentage
+            assert assign_to :extra_marks_percentage
             assert assign_to :marks_map
             assert_response :success
             assert render_template :view_marks

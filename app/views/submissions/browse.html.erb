@@ -2,7 +2,7 @@
 <%= javascript_include_tag "ajax_paginate" %>
 
 <div class="notice">
-  <% if Time.now >= @assignment.submission_rule.calculate_collection_time %>
+  <% if Time.zone.now >= @assignment.submission_rule.calculate_collection_time %>
      <%=h I18n.t("browse_submissions.grading_can_begin") %>
   <% else %>
      <%=h I18n.t("browse_submissions.grading_can_begin_after",
@@ -17,7 +17,7 @@
   <% if @current_user.admin? %>
   <%= link_to I18n.t("collect_submissions.collect_all"),
               collect_all_submissions_assignment_submissions_path(
-                  @assignment.id),
+                  @assignment.id), 
               :confirm => I18n.t("collect_submissions.results_loss_warning") %>
   <span class="menu_bar">|</span>
   <%= link_to I18n.t("browse_submissions.csv_report"),
@@ -40,7 +40,7 @@
   <% if @current_user.ta? and @assignment.past_collection_date? %>
   <%= link_to I18n.t("collect_submissions.collect_ta"),
               collect_ta_submissions_assignment_submissions_path(
-                  @assignment),
+                  @assignment), 
               :confirm => I18n.t("collect_submissions.results_loss_warning") %>
  <% end %>
 

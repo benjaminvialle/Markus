@@ -95,6 +95,12 @@ class StudentsController < ApplicationController
     end
   end
 
+  # dummy action for remote rjs calls
+  # triggered by clicking on the "add a new section" link in the new student page
+  # please keep.
+  def add_new_section
+     @section = Section.new
+  end
 
   #downloads users with the given role as a csv list
   def download_student_list
@@ -132,7 +138,7 @@ class StudentsController < ApplicationController
   end
 
   def delete_grace_period_deduction
-    grace_deduction = GracePeriodDeduction.find(params[:id])
+    grace_deduction = GracePeriodDeduction.find(params[:deduction_id])
     student_id = grace_deduction.membership.user.id
     grace_deduction.destroy
     student = Student.find(student_id)

@@ -1,5 +1,5 @@
 # we need repository permission constants
-require 'repo/repository'
+require File.join(File.dirname(__FILE__),'..', '..', 'lib', 'repo', 'repository')
 
 # Represents a collection of students working together on an assignment in a group
 class Grouping < ActiveRecord::Base
@@ -285,12 +285,17 @@ class Grouping < ActiveRecord::Base
     return total.min
   end
 
-  def grace_period_deduction_sum
-    total = 0
-    grace_period_deductions.each do |grace_period_deduction|
-      total += grace_period_deduction.deduction
+  # The grace credits deducted (of one student) for this specific submission
+  # in the grouping
+  def grace_period_deduction_single
+    single = 0
+    # Since for an instance of a grouping all members of the group will get
+    # deducted the same amount (for a specific assignment), it is safe to pick
+    # any deduction
+    if !grace_period_deductions.nil? && !grace_period_deductions.first.nil?
+      single = grace_period_deductions.first.deduction
     end
-    return total
+    return single
   end
 
   # Submission Functions
@@ -476,7 +481,7 @@ class Grouping < ActiveRecord::Base
     if encoding != nil
       csv_file_contents = StringIO.new(Iconv.iconv('UTF-8', encoding, csv_file_contents).join)
     end
-    FasterCSV.parse(csv_file_contents) do |row|
+    CsvHelper::Csv.parse(csv_file_contents) do |row|
       group_name = row.shift # Knocks the first item from array
       group = Group.find_by_group_name(group_name)
       if group.nil?

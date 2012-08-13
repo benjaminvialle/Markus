@@ -295,7 +295,8 @@ en:
       submission_file: "Submission File:"
       test_results: "Test Results:"
       no_file_in_repository: "[No files in repository]"
-      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file its probably too big to display or you have turned off pdf support. Click on the Download button to download the file instead"
+      cant_display_image: "Image cannot be displayed. If you are trying to view a pdf file, please check if you have turned on pdf support. Click on the Download button to download the file instead"
+      image_downloading: "Pdf page downloading. Please wait."
       test_code: "Test Code"
       criterion_incomplete_error: "Mark unfilled but marking state was set to complete"
 
@@ -319,12 +320,10 @@ en:
       group_to_grader: "You must supply a CSV file for group to grader mapping"
 
     pagination:
-      first: "First"
-      prev: "Prev"
-      no_prev: "< Prev"
-      next: "Next"
-      no_next: "Next >"
-      last: "Last"
+      first: "<< First"
+      prev: "< Prev"
+      next: "Next >"
+      last: "Last >>"
       per_page: "per page"
       jump_to: "Jump to:"
       show: "Show"
@@ -1109,6 +1108,10 @@ en:
     locale_not_available: "%{locale} translation not available!"
     external_authentication_not_supported: "External authentication not supported on your platform!"
     account_disabled: "This account has been disabled"
+
+    #app/views/main/_assignment_summary.html.erb
+
+    assignment_link:           "%{short_id}: %{description}"
 
     #app/views/main/_assignment_info_summary.erb
 

@@ -1,4 +1,5 @@
-require 'fastercsv'
+include CsvHelper
+
 
 class SubmissionsController < ApplicationController
   include SubmissionsHelper
@@ -78,7 +79,7 @@ class SubmissionsController < ApplicationController
         return a.current_submission_used.result.total_mark <=> b.current_submission_used.result.total_mark
       },
       'grace_credits_used' => lambda { |a,b|
-        return a.grace_period_deduction_sum <=> b.grace_period_deduction_sum
+        return a.grace_period_deduction_single <=> b.grace_period_deduction_single
       },
       'section' => lambda { |a,b|
         return -1 if !a.section
@@ -222,7 +223,8 @@ class SubmissionsController < ApplicationController
       flash[:success] = I18n.t("collect_submissions.collection_job_started",
         :assignment_identifier => assignment.short_identifier)
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to :action => 'browse', 
+                :id => assignment.id
   end
 
   def collect_ta_submissions
@@ -237,7 +239,8 @@ class SubmissionsController < ApplicationController
       flash[:success] = I18n.t("collect_submissions.collection_job_started",
         :assignment_identifier => assignment.short_identifier)
     end
-    redirect_to :action => 'browse', :id => assignment.id
+    redirect_to :action => 'browse',
+                :id => assignment.id
   end
 
   def update_converted_pdfs
@@ -457,7 +460,7 @@ class SubmissionsController < ApplicationController
 
   def update_submissions
     return unless request.post?
-    assignment = Assignment.find(params[:id])
+    assignment = Assignment.find(params[:assignment_id])
     errors = []
     groupings = []
     if params[:ap_select_full] == 'true'
