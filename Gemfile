@@ -60,6 +60,7 @@ group :development, :test do
   gem 'ruby-debug', :platforms => :mri_18
   gem 'debugger', :platforms => :mri_19
   gem 'mocha', :require => false
+  gem 'rubocop'
 end
 
 # If you  plan to use unicorn servers for production
