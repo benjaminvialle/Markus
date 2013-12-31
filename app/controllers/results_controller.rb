@@ -146,6 +146,8 @@ class ResultsController < ApplicationController
       m_logger.log("Marks unreleased for assignment '#{assignment.short_identifier}', ID: '" +
                    "#{assignment.id}' (for 1 group).")
     end
+    render :template => 'results/set_released_to_students', :locals => { :result => @result, :old_result => @old_result },
+      :formats => [:js], :handlers => [:erb]
   end
 
   #Updates the marking state
@@ -158,7 +160,7 @@ class ResultsController < ApplicationController
         @result.submission.assignment.assignment_stat.refresh_grade_distribution
         @result.submission.assignment.set_results_statistics
       end
-      render :template => 'results/update_marking_state'
+      render :template => 'results/update_marking_state', :formats => [:js], :handlers => [:erb]
     else # Failed to pass validations
       # Show error message
       render :template => 'results/marker/show_result_error'
