@@ -1,4 +1,6 @@
 # Files ignored by git
+# Ignore nncessary mac files
+.DS_Store
 
 config/database.yml
 config/local_environment_override.rb
@@ -8,6 +10,16 @@ data/
 log/
 doc/app/
 .bundle/
+
+# Files created by sass
+.sass-cache
+
+# Files created by rcov/simplecov
+test/coverage
+test/coverage.data
+
+# Files created by tests
+lib/repo/test/svn_repos/svn_authz
 
 # Patch
 *.diff

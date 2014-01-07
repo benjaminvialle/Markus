@@ -68,8 +68,6 @@ class Api::GroupsControllerTest < ActionController::TestCase
   # Testing authenticated requests
   context 'An authenticated request to api/assignments/id/groups' do
     setup do
-      # Fixtures have manipulated the DB, clear them off.
-      clear_fixtures
 
       # Create admin from blueprints
       @admin = Admin.make
@@ -89,12 +87,18 @@ class Api::GroupsControllerTest < ActionController::TestCase
     context 'getting a json response' do
       setup do
         @request.env['HTTP_ACCEPT'] = 'application/json'
-        get 'show', :assignment_id => 'garbage', :id => 'garbage'
       end
 
       should 'be successful' do
+        get 'show', :assignment_id => 'garbage', :id => 'garbage'
         assert_template 'shared/http_status'
         assert_equal @response.content_type, 'application/json'
+      end
+
+      should 'not use the ActiveRecord class name as the root' do
+        grouping = Grouping.make
+        get 'index', :assignment_id => grouping.assignment.id.to_s
+        assert !@response.body.include?('{"group":')
       end
     end
 
@@ -133,7 +137,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
         @membership1 = StudentMembership.make(:user => Student.make())
         @membership2 = StudentMembership.make(:user => Student.make())
 
-        @grouping1   = Grouping.make(:assignment => @assignment1, 
+        @grouping1   = Grouping.make(:assignment => @assignment1,
                                      :student_memberships => [@membership1])
         @grouping2   = Grouping.make(:assignment => @assignment1,
                                      :student_memberships => [@membership2])
@@ -172,7 +176,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'get only matching groups if a valid filter is used' do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :filter => "group_name:#{@group1.group_name}"
         assert_response :success
         assert_select 'group', 1
@@ -180,7 +184,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should "not return matching groups that don't belong to this assignment" do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :filter => "group_name:#{@group4.group_name}"
         assert_response :success
         assert_select 'group', 0
@@ -188,9 +192,17 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'ignore invalid filters' do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :filter => "group_name:#{@group1.group_name},badfilter:invalid"
         assert_response :success
+        assert_response :success
+        assert_select 'group', 1
+        assert @response.body.include?(@group1.group_name)
+      end
+
+      should 'use case-insensitive matching with filters' do
+        get 'index', :assignment_id => @assignment1.id.to_s,
+          :filter => "group_name:#{@group1.group_name.swapcase}"
         assert_response :success
         assert_select 'group', 1
         assert @response.body.include?(@group1.group_name)
@@ -205,7 +217,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'only display specified fields if the fields parameter is used' do
-        get 'index', :assignment_id => @assignment1.id.to_s, 
+        get 'index', :assignment_id => @assignment1.id.to_s,
           :fields => 'group_name,id'
         assert_response :success
         assert_select 'group-name', {:minimum => 1}
@@ -219,7 +231,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'ignore invalid fields provided in the fields parameter' do
-        get 'index', :assignment_id => @assignment2.id.to_s, 
+        get 'index', :assignment_id => @assignment2.id.to_s,
           :fields => 'group_name,invalid_field_name'
         assert_response :success
         assert_select 'group-name', {:minimum => 1}
@@ -241,7 +253,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
         @membership1 = StudentMembership.make(:user => Student.make())
         @membership2 = StudentMembership.make(:user => Student.make())
 
-        @grouping1   = Grouping.make(:assignment => @assignment1, 
+        @grouping1   = Grouping.make(:assignment => @assignment1,
                                      :student_memberships => [@membership1])
         @grouping2   = Grouping.make(:assignment => @assignment2,
                                      :student_memberships => [@membership2])
@@ -251,7 +263,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'return only that group and default attributes if valid id' do
-        get 'show', :assignment_id => @assignment1.id.to_s, 
+        get 'show', :assignment_id => @assignment1.id.to_s,
           :id => @group1.id.to_s
         assert_response :success
         assert @response.body.include?(@group1.group_name)
@@ -262,7 +274,7 @@ class Api::GroupsControllerTest < ActionController::TestCase
       end
 
       should 'return only that group and specified fields if provided' do
-        get 'show', :assignment_id => @assignment2.id.to_s, :id => @group2.id.to_s, 
+        get 'show', :assignment_id => @assignment2.id.to_s, :id => @group2.id.to_s,
           :fields => 'group_name,invalid_field_name'
         assert_response :success
         assert @response.body.include?(@group2.group_name)

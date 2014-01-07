@@ -22,7 +22,6 @@ fr:
     username_and_password_not_blank: "Veuillez entrer vos nom d'utilisateur et mot de passe."
     session_expired:     "Votre session a expiré. Merci de vous reconnecter."
     please_log_in:       "Merci de vous connecter."
-    ie_warning: "Il semble que vous utilisez Internet Explorer. Veuillez noter que certaines fonctionnalités de MarkUs ne peuvent pas fonctionner comme prévu dans votre navigateur. Pour une meilleure expérience, nous vous suggérons de considerer: "
 
     # app/views/layouts/_header.html.erb
     log_out:            "Déconnexion"
@@ -65,7 +64,6 @@ fr:
       format_of_assignment_file: "doit être un caractère alphanumérique, « . », « - » ou « _ » uniquement."
 
     # app/views/main/index.html.erb
-    firefox_warning:    "Certaines fonctionnalités ne fonctionnent qu'avec Mozilla Firefox."
     switch_role:         "Changer d'utilisateur"
     admin_password:      "Mot de passe Administrateur"
     cannot_login_as_another_admin: "Vous ne pouvez vous connecter à la place d'un autre administrateur."
@@ -78,7 +76,7 @@ fr:
     due:                       "à rendre pour le :"
     no_assignments:            "Aucun devoir pour le moment."
     class_average:             "Moyenne : %{results_average}"
-    submissions_collected: "%{count}/%{size} Envois récupérés"
+    submissions_collected:     "%{count}/%{size} Envois récupérés"
 
     # app/views/assignments/
     name: "Nom "
@@ -97,6 +95,7 @@ fr:
     create_new_assignment:      "Créer un nouveau projet"
     manage_course_work: "Gestion du cours"
     repository_folder:  "Dossier du projet<span class='required_field'>*</span>"
+    incorrect_format:   "Le format est incorrect"
     marking_state:
       not_collected: "Pas récupéré"
       in_progress: "En cours"
@@ -104,6 +103,7 @@ fr:
       released: "Affiché"
       remark_requested: "Réévaluation demandée"
       not_complete: "La note du groupe %{group_name} ne peut pas être publiée : l'évalutation n'est pas indiquée comme étant terminée."
+      not_complete_unrelease: "La note du groupe %{group_name} ne peut pas être masquée : l'évalutation n'est pas indiquée comme étant terminée."
       no_submission: "%{group_name} n'a pas d'envoi"
       no_result: "%{group_name} n'a pas de résultat"
       result_not_saved: "Le résultat du groupe %{group_name} n'a pas pu être sauvegardé."
@@ -120,10 +120,12 @@ fr:
       could_not_collect_section: "Les envois de la section %{section_name} pour le projet %{assignment_identifier} ne peuvent pas être récupérés : la date de récupération pour cette section n'est pas encore passée."
       no_submission_for_section: "Il n'y a ancun envoi à récupérer pour la section %{section_name}."
       successfully_collected: "Récupération de %{collected} envoi(s)."
+      marking_incomplete_warning: "Attention: Certains rendus n'ont pas été complètement évalués.\n\nÊtes-vous sûr de vouloir continuer?"
     assignment:
         assignment: "Projet %{short_identifier}"
         required_fields: "Champs obligatoires <span class='required_field'>*</span>"
-        name:           "Nom du projet"
+        short_identifier:   "Identifiant du projet<span class='required_field'>*</span>"
+        name:           "Nom du projet<span class='required_field'>*</span>"
         update_success: "Projet mis à jour"
         create_success:        "Projet créé"
         error: "La règle d'envoi n'a pas pu être mise en place : #%{message}"
@@ -226,6 +228,10 @@ fr:
     invalid_grouping:   "(invalide)"
     validate:           "Valider"
     encoding:           "Codage"
+    assignment_format:  "Téléchargement au format %{file}"
+    upload_assignment_format: "Envoi au format %{file}"
+    select_csv_file:    "Sélectionner un fichier CSV formaté comme suit : <code>%{code}</code>"
+    all_csv_file:       "Tous les champs : "
 
     marks_released_notice:  "Les notes sont maintenant affichées. Vous ne pouvez plus les changer."
     commit_after_due_date: "Ce commit est postérieur à la date de rendu."
@@ -328,6 +334,8 @@ fr:
       repo_collision_warning: "Attention : le répertoire '%{repo_name}' existe déjà. Le nom du groupe était '%{group_name}'."
       line_nr_csv_file_prefix: "ligne %{line_number} du fichier CSV :"
       group_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux groupes."
+      student_to_grader: "Vous devez envoyer un fichier CSV pour attribuer des correcteurs aux étudiants."
+      invalid_csv: "Le format du fichier CSV n'a pas été reconnu"
 
     pagination:
       first: "<< Première"
@@ -391,7 +399,9 @@ fr:
       can_begin_grading:    "Peut être évaluée"
       section:              "Section"
       collect_work_for_section: "Récupérer les envois pour la section :"
+      download_groupings_files: "Télécharger tous les envois"
       sections:             "Section :"
+      revision_history:     "%{num} : "
 
     grade_entry_forms:
       blank_field: "doit être rempli(e)"
@@ -409,6 +419,7 @@ fr:
       toggle_column: "cacher/montrer"
       properties: "Propriétés de la feuille de note"
       required_fields: "Champs obligatoires <span class='required_field'>*</span>"
+      show_total: "Total"
       create:
         success: "Feuille de notes créée"
         title: "Créer une nouvelle feuille de notes"
@@ -430,6 +441,7 @@ fr:
       students:
         title: "Vos feuilles de notes"
         no_results: "Il n'y a pas encore de résultats pour cette feuille de notes."
+        detailed_marks_message: "Les notes détaillées sont disponibles."
       csv:
         incomplete_header: "Totaux ou noms manquants."
         incomplete_row: "Ne contient pas assez d'informations."
@@ -629,6 +641,7 @@ fr:
         invalid_file_name: "Le nom du fichier envoyé est invalide"
         missing_file: "%{file_name} n'a pas pu être téléchargé : %{message}. Le fichier est sans doute manquant."
         no_files_available: "Aucun fichier disponible"
+        no_groupings_available: "Aucun groupe disponible"
         no_revision_available: "Aucune révision disponible"
         expect_filter: "Un filtre sur la sélection est attendu."
         # DO NOT change 'file_name' and 'sanitized_filename' in the following message.
@@ -660,6 +673,7 @@ fr:
       covered:            "Couvert"
       coverage: "Couverture"
       assign_to_criteria: "Attribuer les correcteurs aux critères"
+      lines_not_processed: "Les lignes suivantes n'ont pas pu être traitées : "
       upload:
         select_csv_file: "Sélectionner un fichier CSV formaté comme suit : <code>user_name,last_name,first_name</code>"
         grader_same_user: "Si un correcteur avec le même nom d'utilisateur existe, ses informations seront mises à jour."
@@ -673,6 +687,16 @@ fr:
         download_list: "Télécharger la liste des correcteurs au format CSV"
         begin_annotation: "%{comment_start} ANNOTATION %{id}: %{text} %{comment_end}"
         end_annotation: "%{comment_start} FIN ANNOTATION %{id} %{comment_end}"
+
+    #Grade Entry Forms Graders' View
+    marks_graders:
+      #upload:
+      download:
+        download_grader_students_csv: "Étudiants / attribution des correcteurs CSV"
+      upload: 
+        upload_grader_map: "Envoi de étudiants / Attribution des correcteurs"
+        description_grader_map: "Format du fichier CSV : <br />
+            <code>student_user_name,grader_user_name,grader_user_name,... </code><br />"
 
     #Admins' View
     admins:
@@ -760,6 +784,8 @@ fr:
       help_message: "Cliquer sur les catégories d'annotations pour créer des annotations."
       add_annotation_category: "Ajouter une catégorie d'annotations"
       annotations: "Annotations"
+      created_by: "Créée par :"
+      last_edited_by: "Dernière édition par :"
       update:
         annotation_category_success: "La catégorie d'annotations a bien été créée ou mise à jour."
         annotation_category_error: "Erreur dans la mise à jour ou la création de la catégorie d'annotations : "
@@ -840,7 +866,7 @@ fr:
         to: "au"
         hours: "heure(s)…"
         after: "Après"
-        each: "chaque"
+        every: "chaque"
         deduct: "déduction"
         for: "pour"
 
@@ -1092,7 +1118,7 @@ fr:
 
     #app/views/main/_assignment_info_summary.erb
     percentage:                "%{percentage} %"
-    assignment_average:        "Moyenne :"
+    assignment_average:        "Classe Moyenne :"
     assignment_median:        "Médiane :"
     assignments_submitted:     "Projets envoyés :"
     assignments_graded:        "Projets corrigés :"

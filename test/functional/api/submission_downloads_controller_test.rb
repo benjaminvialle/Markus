@@ -71,8 +71,6 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
   # Testing authenticated requests
   context 'An authenticated request to submission_downloads' do
     setup do
-      # Fixtures have manipulated the DB, clear them off.
-      clear_fixtures
 
       # Create admin from blueprints
       @admin = Admin.make
@@ -107,8 +105,8 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
         @file1_name = 'Shapes.java'
         @file2_name = 'TestShapes.java'
 
-        file1 = fixture_file_upload(File.join('..', 'files', @file1_name), 'text/java')
-        file2 = fixture_file_upload(File.join('..', 'files', @file2_name), 'text/java')
+        file1 = fixture_file_upload(File.join('files', @file1_name), 'text/java')
+        file2 = fixture_file_upload(File.join('files', @file2_name), 'text/java')
 
         @file1_content = IO.read(file1.path)
         @file2_content = IO.read(file2.path)
@@ -124,8 +122,8 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
           txn = repo.get_transaction(@student.user_name)
           new_files.each do |file_object|
             file_object.rewind
-            txn.add(File.join(assignment_folder, 
-              file_object.original_filename), 
+            txn.add(File.join(assignment_folder,
+              file_object.original_filename),
               file_object.read, file_object.content_type)
           end
           repo.commit(txn)
@@ -136,7 +134,7 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
 
       context '/index' do
         should "return a zip containing the two files if filename isn't used" do
-          get 'index', :assignment_id => @assignment.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment.id.to_s, :group_id =>
             @group.id.to_s
           output = StringIO.new
           output.binmode
@@ -151,14 +149,14 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
         end
 
         should 'return the requested file if filename is used' do
-          get 'index', :assignment_id => @assignment.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment.id.to_s, :group_id =>
             @group.id.to_s, :filename => @file1_name
           assert_response(:success)
           assert_equal(@file1_content, @response.body)
         end
 
         should "return a 422 if the file doesn't exist" do
-          get 'index', :assignment_id => @assignment.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment.id.to_s, :group_id =>
             @group.id.to_s, :filename => 'invalid_file_name'
           assert_response 422
         end
@@ -174,7 +172,7 @@ class Api::SubmissionDownloadsControllerTest < ActionController::TestCase
         end
 
         should "return a 404 if a submission doesn't exist" do
-          get 'index', :assignment_id => @assignment2.id.to_s, :group_id => 
+          get 'index', :assignment_id => @assignment2.id.to_s, :group_id =>
             @group.id.to_s
           assert_response 404
         end

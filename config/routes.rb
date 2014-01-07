@@ -31,6 +31,8 @@ Markus::Application.routes.draw do
       post 'update_group_properties_on_persist'
       get 'delete_rejected'
       post 'update_collected_submissions'
+      get 'download_assignment_list'
+      post 'upload_assignment_list'
     end
 
     member do
@@ -134,6 +136,7 @@ Markus::Application.routes.draw do
         post 'update_files'
         post 'server_time'
         get 'download'
+        get 'download_groupings_files'
       end
 
       member do
@@ -245,6 +248,30 @@ Markus::Application.routes.draw do
       post 'update_grade_entry_students'
       get 'student_interface'
     end
+
+    resources :marks_graders do
+      collection do
+        get 'add_grader_to_grouping'
+        post 'csv_upload_grader_groups_mapping'
+        post 'csv_upload_grader_criteria_mapping'
+        get 'download_grader_students_mapping'
+        get 'download_grader_criteria_mapping'
+        get 'download_dialog'
+        get 'download_grouplist'
+        get 'grader_criteria_dialog'
+        get 'global_actions'
+        get 'groups_coverage_dialog'
+        post 'populate_graders'
+        post 'populate'
+        post 'populate_criteria'
+        post 'set_assign_criteria'
+        get 'random_assign'
+        get 'upload_dialog'
+        get 'unassign'
+        post 'global_actions'
+      end
+    end
+
   end
 
   resources :notes do
@@ -303,6 +330,7 @@ Markus::Application.routes.draw do
       get 'about'
       post 'login_as'
       get 'role_switch'
+      get 'redirect'
       get 'clear_role_switch_session'
       post 'reset_api_key'
     end

@@ -9,24 +9,28 @@ class GradersController < ApplicationController
 
   def upload_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    render :partial => 'graders/modal_dialogs/upload_dialog.rjs'
+    render :partial => 'graders/modal_dialogs/upload_dialog',
+           :handlers => [:rjs]
   end
 
   def download_dialog
     @assignment = Assignment.find(params[:assignment_id])
-    render :partial => 'graders/modal_dialogs/download_dialog.rjs'
+    render :partial => 'graders/modal_dialogs/download_dialog',
+           :handlers => [:rjs]
   end
 
   def groups_coverage_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grouping = Grouping.find(params[:grouping])
-    render :partial => 'graders/modal_dialogs/groups_coverage_dialog.rjs'
+    render :partial => 'graders/modal_dialogs/groups_coverage_dialog',
+           :handlers => [:rjs]
   end
 
   def grader_criteria_dialog
     @assignment = Assignment.find(params[:assignment_id])
     @grader = Ta.find(params[:grader])
-    render :partial => 'graders/modal_dialogs/grader_criteria_dialog.rjs'
+    render :partial => 'graders/modal_dialogs/grader_criteria_dialog',
+           :handlers => [:rjs]
   end
 
 
@@ -83,7 +87,7 @@ class GradersController < ApplicationController
     invalid_lines = Grouping.assign_tas_by_csv(params[:grader_mapping].read,
                                                params[:assignment_id], params[:encoding])
     if invalid_lines.size > 0
-      flash[:invalid_lines] = invalid_lines
+      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
     end
     redirect_to :action => 'index', :assignment_id => params[:assignment_id]
   end
@@ -105,7 +109,7 @@ class GradersController < ApplicationController
       params[:grader_criteria_mapping].read, params[:assignment_id], params[:encoding])
     end
     if invalid_lines.size > 0
-      flash[:invalid_lines] = invalid_lines
+      flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
     end
     redirect_to :action => 'index', :assignment_id => params[:assignment_id]
   end
@@ -180,7 +184,7 @@ class GradersController < ApplicationController
          #if there is a global action than there should be a group selected
           if params[:global_actions]
               @global_action_warning = I18n.t('assignment.group.select_a_group')
-              render :partial => 'shared/global_action_warning.rjs'
+              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
               return
           end
         end
@@ -192,7 +196,7 @@ class GradersController < ApplicationController
           when 'assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning.rjs'
+              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
               return
             end
             add_graders(groupings, grader_ids)
@@ -203,7 +207,7 @@ class GradersController < ApplicationController
           when 'random_assign'
             if params[:graders].nil? or params[:graders].size ==  0
               @global_action_warning = I18n.t('assignment.group.select_a_grader')
-              render :partial => 'shared/global_action_warning.rjs'
+              render :partial => 'shared/global_action_warning', :handlers => [:rjs]
               return
             end
             randomly_assign_graders(groupings, grader_ids)
@@ -267,6 +271,11 @@ class GradersController < ApplicationController
       groupings.concat(grader.get_groupings_by_assignment(@assignment))
     end
     groupings = groupings.uniq
+    groupings.each do |grouping|
+      covered_criteria = grouping.all_assigned_criteria(grouping.tas)
+      grouping.criteria_coverage_count = covered_criteria.length
+      grouping.save
+    end
     construct_all_rows(groupings, graders, criteria)
     render :modify_criteria
   end

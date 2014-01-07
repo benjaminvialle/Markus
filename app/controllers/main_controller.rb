@@ -3,8 +3,7 @@
 # as well as displaying main page
 class MainController < ApplicationController
 
-  include MainHelper
-  include CookieDetection
+  include ApplicationHelper, MainHelper, CookieDetection
 
   protect_from_forgery :except => [:login, :page_not_found]
 
@@ -13,6 +12,8 @@ class MainController < ApplicationController
                      :except => [:login,
                                  :page_not_found]
   before_filter :authorize_only_for_admin, :only => [:login_as]
+
+  layout 'main'
 
   #########################################################################
   # Authentication
@@ -26,7 +27,7 @@ class MainController < ApplicationController
     # external auth has been done, skip markus authorization
     if MarkusConfigurator.markus_config_remote_user_auth
       if @markus_auth_remote_user.nil?
-        render 'shared/http_status.html', :locals => { :code => '403', :message => HttpStatusHelper::ERROR_CODE['message']['403'] }, :status => 403, :layout => false
+        render 'shared/http_status', :formats => [:html], :locals => { :code => '403', :message => HttpStatusHelper::ERROR_CODE['message']['403'] }, :status => 403, :layout => false
         return
       else
         login_success = login_without_authentication(@markus_auth_remote_user)
@@ -39,7 +40,7 @@ class MainController < ApplicationController
           redirect_to( uri || { :action => 'index' } )
           return
         else
-          @login_error = flash[:login_notice]
+          @login_error = flash[:error][0]
           render :remote_user_auth_login_fail
           return
         end
@@ -53,7 +54,7 @@ class MainController < ApplicationController
         redirect_to :controller => 'main', :action => 'login'
       end
     else
-      flash[:login_notice] = I18n.t(:cookies_off)
+      flash_message(:error, I18n.t(:cookies_off))
       return
 
     end
@@ -84,7 +85,7 @@ class MainController < ApplicationController
     # authentication is valid
     validation_result = validate_user(params[:user_login], params[:user_login], params[:user_password])
     unless validation_result[:error].nil?
-      flash[:login_notice] = validation_result[:error]
+      flash_message(:error, validation_result[:error])
       redirect_to :action => 'login'
       return
     end
@@ -96,7 +97,7 @@ class MainController < ApplicationController
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = I18n.t('account_disabled')
+      flash_message(:error, I18n.t('account_disabled'))
       redirect_to(:action => 'login') && return
     end
 
@@ -110,7 +111,7 @@ class MainController < ApplicationController
       # redirect to last visited page or to main page
       redirect_to( uri || { :action => 'index' } )
     else
-      flash[:login_notice] = I18n.t(:login_failed)
+      flash_message(:error, I18n.t(:login_failed))
     end
   end
 
@@ -159,21 +160,22 @@ class MainController < ApplicationController
   end
 
   def reset_api_key
-    render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return unless request.post?
+    render 'shared/http_status', :formats => [:html], :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return unless request.post?
     # Students shouldn't be able to change their API key
     unless @current_user.student?
       @current_user.reset_api_key
       @current_user.save
     else
-      render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return
+      render 'shared/http_status', :formats => [:html], :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false and return
     end
-    render :api_key_replace, :locals => {:user => @current_user }
+    render 'api_key_replace', :locals => {:user => @current_user },
+      :formats => [:js], :handlers => [:erb]
   end
 
   # Render 404 error (page not found) if no other route matches.
   # See config/routes.rb
   def page_not_found
-    render 'shared/http_status.html', :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
+    render 'shared/http_status', :formats => [:html], :locals => { :code => '404', :message => HttpStatusHelper::ERROR_CODE['message']['404'] }, :status => 404, :layout => false
   end
 
   # Authenticates the admin (i.e. validates her password). Given the user, that
@@ -202,7 +204,8 @@ class MainController < ApplicationController
     unless validation_result[:error].nil?
       # There were validation errors
       render :partial => 'role_switch_handler',
-        :locals => { :error => validation_result[:error], :success => false }
+        :formats => [:js], :handlers => [:erb],
+        :locals => { :error => validation_result[:error] }
       return
     end
 
@@ -214,8 +217,9 @@ class MainController < ApplicationController
     # Check if an admin is trying to login as another admin. Should not be allowed
     if found_user.admin?
       # error
-      render :partial => 'role_switch_handler', :locals =>
-            { :error => I18n.t(:cannot_login_as_another_admin), :success => false }
+      render :partial => 'role_switch_handler',
+        :formats => [:js], :handlers => [:erb],
+        :locals => { :error => I18n.t(:cannot_login_as_another_admin) }
       return
     end
 
@@ -236,11 +240,13 @@ class MainController < ApplicationController
       current_user.set_api_key # set api key in DB for user if not yet set
       # All good, redirect to the main page of the viewer, discard
       # role switch modal
-      render :partial => 'role_switch_handler', :locals =>
-            { :success => true }
+      render :partial => 'role_switch_handler',
+        :formats => [:js], :handlers => [:erb],
+        :locals => { :error => nil }
     else
-      render :partial => 'role_switch_handler', :locals =>
-            { :error => I18n.t(:login_failed), :success => false }
+      render :partial => 'role_switch_handler',
+        :formats => [:js], :handlers => [:erb],
+        :locals => { :error => I18n.t(:login_failed) }
     end
   end
 
@@ -283,13 +289,13 @@ private
       # not a good idea to report this to the outside world. It makes it
       # easier for attempted break-ins
       # if one can distinguish between existent and non-existent users.
-      flash[:login_notice] = I18n.t(:login_failed)
+      flash_message(:error, I18n.t(:login_failed))
       return false
     end
 
     # Has this student been hidden?
     if found_user.student? && found_user.hidden
-      flash[:login_notice] = I18n.t('account_disabled')
+      flash_message(:error, I18n.t('account_disabled'))
       return false
     end
 
@@ -307,7 +313,7 @@ private
     if logged_in?
       true
     else
-      flash[:login_notice] = I18n.t(:login_failed)
+      flash_message(:error, I18n.t(:login_failed))
       false
     end
   end

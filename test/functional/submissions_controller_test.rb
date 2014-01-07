@@ -7,9 +7,6 @@ require 'shoulda'
 require 'mocha/setup'
 
 class SubmissionsControllerTest < AuthenticatedControllerTest
-  def setup
-    clear_fixtures
-  end
 
   context 'I am a student trying working alone on an assignment' do
     setup do
@@ -26,12 +23,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       assert_response :success
       # file_manager action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
     end
 
     should 'and I should be able to populate file' do
@@ -41,8 +38,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     #TODO Figure out how to remove fixture_file_upload
     should 'and I should be able to add files' do
-      file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
-      file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
+      file_1 = fixture_file_upload(File.join('files', 'Shapes.java'), 'text/java')
+      file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
       assert @student.has_accepted_grouping_for?(@assignment.id)
       post_as @student,
               :update_files,
@@ -55,12 +52,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
 
       # Check to see if the file was added
       @grouping.group.access_repo do |repo|
@@ -87,16 +84,15 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         old_file_1 = old_files['Shapes.java']
         old_file_2 = old_files['TestShapes.java']
 
-        @file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
-        @file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
+        @file_1 = fixture_file_upload(File.join('files', 'Shapes.java'), 'text/java')
+        @file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
 
         post_as @student,
-                :update_files, :assignment_id => @assignment.id,
-          :replace_files => { 'Shapes.java' =>      @file_1,
-                              'TestShapes.java' =>  @file_2},
-          :file_revisions => {'Shapes.java' =>      old_file_1.from_revision,
-                              'TestShapes.java' =>  old_file_2.from_revision}
-
+          :update_files, :assignment_id => @assignment.id,
+          :replace_files  => { 'Shapes.java'     => @file_1,
+                               'TestShapes.java' => @file_2 },
+          :file_revisions => { 'Shapes.java'     => old_file_1.from_revision,
+                               'TestShapes.java' => old_file_2.from_revision }
       end
 
       # must not respond with redirect_to (see comment in
@@ -105,12 +101,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
@@ -154,12 +150,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action assert assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
 
       @grouping.group.access_repo do |repo|
         revision = repo.get_latest_revision
@@ -178,8 +174,8 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
         txn.add(File.join(@assignment.repository_folder, 'TestShapes.java'), 'Content of TestShapes.java')
         repo.commit(txn)
 
-        file_1 = fixture_file_upload(File.join('..', 'files', 'Shapes.java'), 'text/java')
-        file_2 = fixture_file_upload(File.join('..', 'files', 'TestShapes.java'), 'text/java')
+        file_1 = fixture_file_upload(File.join('files', 'Shapes.java'), 'text/java')
+        file_2 = fixture_file_upload(File.join('files', 'TestShapes.java'), 'text/java')
         assert @student.has_accepted_grouping_for?(@assignment.id)
         post_as(@student, :update_files, {:assignment_id => @assignment.id, :new_files => [file_1, file_2]})
       end
@@ -190,13 +186,13 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
       # update_files action should assign to various instance variables.
       # These are crucial for the file_manager view to work properly.
-      assert assign_to :assignment
-      assert assign_to :grouping
-      assert assign_to :path
-      assert assign_to :revision
-      assert assign_to :files
-      assert assign_to :missing_assignment_files
-      assert assign_to :file_manager_errors
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :grouping
+      assert_not_nil assigns :path
+      assert_not_nil assigns :revision
+      assert_not_nil assigns :files
+      assert_not_nil assigns :missing_assignment_files
+      assert_not_nil assigns :file_manager_errors
 
       file_manager_errors = assigns['file_manager_errors']
       @grouping.group.access_repo do |repo|
@@ -259,6 +255,17 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
     context 'and I have a grader. My grade should be able to' do
       setup do
+	@grouping1 = Grouping.make(:assignment => @assignment)
+	@grouping1.group.access_repo do |repo|
+          txn = repo.get_transaction('test')
+          path = File.join(@assignment.repository_folder, 'file1_name')
+          txn.add(path, 'file1 content', '')
+          repo.commit(txn)
+
+          # Generate submission
+          Submission.generate_new_submission(Grouping.last, repo.get_latest_revision)
+        end
+
         @ta_membership = TaMembership.make(:membership_status => :accepted, :grouping => @grouping)
         @grader = @ta_membership.user
       end
@@ -274,8 +281,9 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
       should 'access the populate repository browser.' do
         get_as @grader,
                :populate_repo_browser,
-               :assignment_id => 1,
-               :id => Grouping.first.id
+               :assignment_id => @assignment.id,
+               :id => Grouping.last.id,
+               :revision_number => Grouping.last.group.repo.get_latest_revision.revision_number
         assert_response :success
       end
 
@@ -308,10 +316,10 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).once.returns('a1')
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(false)
-          get_as @grader, 
-                 :collect_ta_submissions, 
-                 :assignment_id => 1, 
-                 :id => 1 
+          get_as @grader,
+                 :collect_ta_submissions,
+                 :assignment_id => 1,
+                 :id => 1
           assert_equal flash[:error], I18n.t('collect_submissions.could_not_collect',
               :assignment_identifier => 'a1')
           assert_response :redirect
@@ -325,15 +333,15 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
           @submission_collector.expects(:push_groupings_to_queue).once
           get_as @grader,
-                 :collect_ta_submissions, 
+                 :collect_ta_submissions,
                  :assignment_id => 1,
                  :id => 1
-                  
+
           assert_equal flash[:success], I18n.t('collect_submissions.collection_job_started',
               :assignment_identifier => 'a1')
-          assert_response :redirect 
-        end 
-       
+          assert_response :redirect
+        end
+
         should 'per_page and sort_by not defined so cookies are set to default' do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).twice.returns('a1')
@@ -341,24 +349,24 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
 
           @c_per_page = @grader.id.to_s + '_' + @assignment.id.to_s + '_per_page'
           @c_sort_by = @grader.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
-          
+
           get_as @grader,
                  :browse,
                  :assignment_id => 1,
                  :id => 1
           assert_response :success
-          assert_equal '30', cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal 'group_name', cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"
         end
-        
+
         should 'per_page and sort_by defined so cookies are set to their values' do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.expects(:short_identifier).twice.returns('a1')
-          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true) 
+          @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
 
           @c_per_page = @grader.id.to_s + '_' + @assignment.id.to_s + '_per_page'
           @c_sort_by = @grader.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
-          
+
           get_as @grader,
                  :browse,
                  {
@@ -366,12 +374,12 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                     :id => 1,
                     :per_page => 15,
                     :sort_by  => 'revision_timestamp'
-                 } 
+                 }
           assert_response :success
           assert_equal '15', cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal 'revision_timestamp', cookies[@c_sort_by], "Debug: Cookies=#{cookies.inspect}"
         end
- 
+
       end
 
     end
@@ -446,23 +454,23 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_equal flash[:success], I18n.t('collect_submissions.collection_job_started',
               :assignment_identifier => 'a1')
           assert_response :redirect
- 
+
         end
 
         should 'per_page and sort_by not defined so set cookies to default' do
           Assignment.stubs(:find).returns(@assignment)
           @assignment.submission_rule.expects(:can_collect_now?).once.returns(true)
-         
+
           @c_per_page = @admin.id.to_s + '_' + @assignment.id.to_s + '_per_page'
           @c_sort_by = @admin.id.to_s + '_' + @assignment.id.to_s + '_sort_by'
-          
+
           get_as @admin,
                  :browse,
                  :assignment_id => 1,
                  :id => 1
 
           assert_response :success
-          assert_equal '30', cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
+          assert_equal 30, cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal 'group_name', cookies[@c_sort_by]
         end
 
@@ -477,18 +485,18 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :browse,
                  {
                     :assignment_id => 1,
-                    :id => 1, 
+                    :id => 1,
                     :per_page => 15,
                     :sort_by  => 'revision_timestamp'
                  }
- 
+
           assert_response :success
           assert_equal '15', cookies[@c_per_page], "Debug: Cookies=#{cookies.inspect}"
           assert_equal 'revision_timestamp', cookies[@c_sort_by]
         end
 
       end
- 
+
       should 'instructor tries to release submissions' do
 
         Assignment.stubs(:find).returns(@assignment)
@@ -538,7 +546,7 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
                  :id => @submission.id,
                  :grouping_id => @grouping.id
 
-          assert respond_with_content_type 'application/octet-stream'
+          assert_equal 'application/zip', response.header['Content-Type']
           assert_response :success
           zip_path = "tmp/#{@assignment.short_identifier}_" +
               "#{@grouping.group.group_name}_r#{@grouping.group.repo.
@@ -591,6 +599,67 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
           assert_response :success
         end
       end
+
+      context 'download_groupings_files' do
+
+        setup do
+          @assignment = Assignment.make
+          (1..3).to_a.each do |i|
+            instance_variable_set(:"@student#{i}", Student.make)
+            instance_variable_set(:"@grouping#{i}",
+                                  Grouping.make(:assignment => @assignment))
+            StudentMembership.make(
+                :user => instance_variable_get(:"@student#{i}"),
+                :membership_status => 'inviter',
+                :grouping => instance_variable_get(:"@grouping#{i}"))
+            submit_file(@assignment, instance_variable_get(:"@grouping#{i}"),
+                        "file#{i}", "file#{i}'s content\n")
+          end
+        end
+
+        should 'be able to download all submissions from all groups' do
+          get_as @admin, :download_groupings_files,
+                 :assignment_id => @assignment.id,
+                 :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]
+          assert_response :success
+          zip_path = "tmp/#{@assignment.short_identifier}_" +
+              "#{@admin.user_name}.zip"
+          Zip::ZipFile.open(zip_path) do |zip_file|
+            (1..3).to_a.each do |i|
+              instance_variable_set(:"@file#{i}_path", File.join(
+                  "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+                  "file#{i}"))
+              assert_not_nil zip_file.find_entry(
+                                 instance_variable_get(:"@file#{i}_path"))
+              assert_equal("file#{i}'s content\n", zip_file.read(
+                  instance_variable_get(:"@file#{i}_path")))
+            end
+          end
+        end
+
+        should '- as Ta - be able to download all submissions from all groups' do
+          @ta = Ta.make
+          get_as @ta, :download_groupings_files,
+                 :assignment_id => @assignment.id,
+                 :groupings => [@grouping1.id, @grouping2.id, @grouping3.id]
+          assert_response :success
+          zip_path = "tmp/#{@assignment.short_identifier}_" +
+              "#{@ta.user_name}.zip"
+          Zip::ZipFile.open(zip_path) do |zip_file|
+            (1..3).to_a.each do |i|
+              instance_variable_set(:"@file#{i}_path", File.join(
+                  "#{instance_variable_get(:"@grouping#{i}").group.repo_name}/",
+                  "file#{i}"))
+              assert_not_nil zip_file.find_entry(
+                                 instance_variable_get(:"@file#{i}_path"))
+              assert_equal("file#{i}'s content\n", zip_file.read(
+                  instance_variable_get(:"@file#{i}_path")))
+            end
+          end
+        end
+
+      end
+
     end
 
   end
@@ -621,4 +690,19 @@ class SubmissionsControllerTest < AuthenticatedControllerTest
     destroy_repos
   end
 
+end
+
+private
+
+def submit_file(assignment, grouping, filename = 'file', content = 'content')
+  grouping.group.access_repo do |repo|
+    txn = repo.get_transaction('test')
+    path = File.join(assignment.repository_folder, filename)
+    txn.add(path, content, '')
+    repo.commit(txn)
+
+    # Generate submission
+    Submission.generate_new_submission(
+        grouping, repo.get_latest_revision)
+  end
 end

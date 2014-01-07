@@ -14,7 +14,6 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
     @controller = AssignmentsController.new
     @request = ActionController::TestRequest.new
     @response = ActionController::TestResponse.new
-    clear_fixtures
   end
 
   def teardown
@@ -28,8 +27,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
     should 'be able to get new' do
       get_as @admin, :new
-      assert assign_to :assignment
-      assert assign_to :assignments
+      assert_not_nil assigns :assignment
+      assert_not_nil assigns :assignments
       assert_response :success
     end
 
@@ -85,10 +84,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         should 'be able to create assignment with section due dates' do
           @attributes['section_due_dates_type'] = '1'
           due_date_attributes = {
-              '0' => { 'section_id' => "#{@section1.id}",
-                       'due_date'   => '2011-10-27 00:00' },
-              '1' => { 'section_id' => "#{@section2.id}",
-                       'due_date'   => '2011-10-29 00:00' }
+              0 => { 'section_id' => "#{@section1.id}",
+                     'due_date'   => '2011-10-27 00:00' },
+              1 => { 'section_id' => "#{@section2.id}",
+                     'due_date'   => '2011-10-29 00:00' }
           }
           @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
 
@@ -97,8 +96,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           due_date_attributes.each do |key, value|
-            assert new_assignment.section_due_dates[Integer(
-                      key)].due_date.to_s.include?(value['due_date'])
+            assert new_assignment.section_due_dates[key].
+                       due_date.to_s.include?(value['due_date'])
           end
           assert redirect_to(:action => 'edit', :id => new_assignment)
         end
@@ -108,10 +107,10 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           # That section then uses the main due_date
           @attributes['section_due_dates_type'] = '1'
           due_date_attributes = {
-              '0' => { 'section_id' => "#{@section1.id}",
-                       'due_date'   => nil },
-              '1' => { 'section_id' => "#{@section2.id}",
-                       'due_date'   => '2011-10-29 00:00' }
+              0 => { 'section_id' => "#{@section1.id}",
+                     'due_date'   => nil },
+              1 => { 'section_id' => "#{@section2.id}",
+                     'due_date'   => '2011-10-29 00:00' }
           }
           @attributes['assignment']['section_due_dates_attributes'] = due_date_attributes
 
@@ -120,7 +119,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_not_nil new_assignment
           assert_equal true, new_assignment.section_due_dates_type
           assert_nil new_assignment.section_due_dates[0].due_date
-          assert new_assignment.section_due_dates[1].due_date.to_s.include? due_date_attributes['1']['due_date']
+          assert new_assignment.section_due_dates[1].
+                     due_date.to_s.include? due_date_attributes[1]['due_date']
           assert redirect_to(:action => 'edit', :id => new_assignment)
         end
       end  # With some sections
@@ -302,7 +302,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
 
         @assignment.reload
         # note that a div with this id is only displayed when we have an error on a page
-        assert_select 'div#errorExplanation'
+        assert_select 'div.error'
       end
 
       # Regression test for Github issue #568
@@ -463,7 +463,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
           assert_equal @file_1, @assignment.assignment_files.first
         end
       end  # -- with required files
-    
+
       should 'be able to add section due dates' do
         put_as @admin,
                   :update,
@@ -481,13 +481,13 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                     :section_due_dates_attributes => {
                       '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
                       '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
-                    } 
+                    }
                   }
         @assignment.reload
         assert_equal true, @assignment.section_due_dates_type
         assert_equal 2, @assignment.section_due_dates.size
       end
-      
+
       should 'be able to remove section due dates after adding them' do
         put_as @admin,
                   :update,
@@ -505,7 +505,7 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
                     :section_due_dates_attributes => {
                       '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
                       '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
-                    } 
+                    }
                   }
         put_as @admin,
           :update,
@@ -523,15 +523,89 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
             :section_due_dates_attributes => {
               '0' => { 'section_id' => '2', 'due_date' => '2011-10-27 00:00' },
               '1' => { 'section_id' => '3', 'due_date' => '2011-10-27 00:00' }
-            } 
+            }
           }
-          
+
         @assignment.reload
         assert_equal false, @assignment.section_due_dates_type
         assert_equal 0, @assignment.section_due_dates.size
         assert_equal 0, SectionDueDate.all.size
       end
     end  # -- with an assignment
+
+    context ', on :download_assignment_list,' do
+
+      should 'be able to download a csv file' do
+        get_as @admin, :download_assignment_list, :file_format => 'csv'
+        assert_response :success
+        assert_equal 'text/csv', response.header['Content-Type']
+      end
+
+      should 'be able to download a yml file' do
+        get_as @admin, :download_assignment_list, :file_format => 'yml'
+        assert_response :success
+        assert_equal 'text/yml', response.header['Content-Type']
+      end
+
+      should 'not be able to download an xml file' do
+        get_as @admin, :download_assignment_list, :file_format => 'xml'
+        assert_response :redirect
+        assert set_the_flash.to((I18n.t(:incorrect_format)))
+      end
+    end
+
+    context ', on :upload_assignment_list,' do
+
+      should 'be able to upload a csv file' do
+        post_as @admin,
+                :upload_assignment_list,
+                :assignment_list => fixture_file_upload('../files/new_assignments.csv'),
+                :file_format => 'csv'
+        assert_response :redirect
+        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_equal flash[:success], I18n.t('assignment.create_success')
+        assert_equal flash[:error], nil
+        test1 = Assignment.find_by_short_identifier('ATest1')
+        assert_not_nil test1
+        test2 = Assignment.find_by_short_identifier('ATest2')
+        assert_not_nil test2
+        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
+                          {:path => 'assignments/upload_assignment_list', :method => :post})
+      end
+
+      should 'be able to upload a yml file' do
+        post_as @admin,
+                :upload_assignment_list,
+                :assignment_list => fixture_file_upload('../files/new_assignments.yml'),
+                :file_format => 'yml', :encoding => 'UTF-8'
+        assert_response :redirect
+        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_equal flash[:success], I18n.t('assignment.create_success')
+        assert_equal flash[:error], nil
+        test1 = Assignment.find_by_short_identifier('ATest3')
+        assert_not_nil test1
+        test2 = Assignment.find_by_short_identifier('ATest4')
+        assert_not_nil test2
+        assert_generates '/en/assignments/upload_assignment_list', :controller => 'assignments', :action => 'upload_assignment_list'
+        assert_recognizes({:controller => 'assignments', :action => 'upload_assignment_list' },
+                          {:path => 'assignments/upload_assignment_list', :method => :post})
+      end
+
+      should 'not be able to upload a file without require fields' do
+        post_as @admin,
+                :upload_assignment_list,
+                :assignment_list => fixture_file_upload('../files/new_assignments.yml'),
+                :file_format => 'csv'
+        assert_response :redirect
+        assert_redirected_to(:controller => 'assignments', :action => 'index')
+        assert_equal flash[:success], nil
+        assert_not_equal flash[:error], nil
+        test1 = Assignment.find_by_short_identifier('ATest5')
+        assert_nil test1
+      end
+    end
+
   end  # -- an Admin
 
   context 'A grader' do
@@ -1113,8 +1187,8 @@ class AssignmentsControllerTest < AuthenticatedControllerTest
         grace_period_submission_rule = GracePeriodSubmissionRule.new
         @assignment.replace_submission_rule(grace_period_submission_rule)
         @assignment.save
-        period = Period.make(:submission_rule => @assignment.submission_rule,
-                             :hours => 62)
+        Period.make(:submission_rule_id => @assignment.submission_rule.id,
+                    :hours => 62)
       end
 
       should 'have the create group link available' do

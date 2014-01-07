@@ -1,3 +1,4 @@
+# encoding: utf-8
 # Settings specified here will take precedence over those in config/environment.rb
 Markus::Application.configure do
   # rails will fallback to en, no matter what is set as config.i18n.default_locale
@@ -18,6 +19,10 @@ Markus::Application.configure do
   #
   config.log_level = :info
   # set log-level (:debug, :info, :warn, :error, :fatal)
+
+  # Compress both stylesheets and JavaScripts
+  config.assets.js_compressor  = :uglifier
+  config.assets.css_compressor = :scss
 
   # Full error reports are disabled and caching is turned on
   config.consider_all_requests_local = true

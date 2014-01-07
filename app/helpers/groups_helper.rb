@@ -35,7 +35,13 @@ module GroupsHelper
       table_row = {}
 
       table_row[:id] = grouping.id
-      table_row[:filter_table_row_contents] = render_to_string :partial => 'groups/table_row/filter_table_row', :locals => {:grouping => grouping, :assignment => assignment}
+      table_row[:filter_table_row_contents] =
+          render_to_string :partial => 'groups/table_row/filter_table_row',
+                           :formats => [:html],
+                           :handlers => [:erb],
+                           :locals => {
+                               :grouping => grouping,
+                               :assignment => assignment }
 
       table_row[:name] = grouping.group.group_name
 

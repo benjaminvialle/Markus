@@ -24,26 +24,32 @@ class GradeEntryFormsController < ApplicationController
   # Show All,...)
   G_TABLE_PARAMS = {:model => GradeEntryStudent,
                     :per_pages => [15, 30, 50, 100, 150],
-                    :filters => {'none' => {
-                                     :display => 'Show All',
-                                     :proc => lambda { |sort_by, order|
-                                          if sort_by.present?
-                                            if sort_by == 'section'
-                                              Student.joins(:section).all(:conditions => {
-                                                  :hidden => false},
-                                                  :order => 'sections.name ' + order)
-                                            else
-                                              Student.all(:conditions => {
-                                                :hidden => false},
-                                                :order => sort_by + ' ' + order)
-                                            end
-                                          else
-                                            Student.all(:conditions => {
-                                              :hidden => false},
-                                              :order => 'user_name ' + order)
-                                          end
-                                          }}}
-                        }
+                    :filters => {
+                      'none' => {
+                        :display => 'Show All',
+                        :proc => lambda { |sort_by, order, user|
+                          if user.instance_of? Admin
+                            conditions = {:hidden => false}
+                          else
+                            #Display only students to which the TA has been assigned
+                            conditions = {:hidden => false, :id =>
+                              Ta.find(user.id).grade_entry_students.all(:select => :user_id).collect(&:user_id)}
+                          end
+
+                          if sort_by.present?
+                            if sort_by == 'section'
+                              Student.joins(:section).all(:conditions => conditions,
+                                  :order => 'sections.name ' + order)
+                            else
+                              Student.all(:conditions => conditions,
+                                :order => sort_by + ' ' + order)
+                            end
+                          else
+                            Student.all(:conditions => conditions,
+                              :order => 'user_name ' + order)
+                          end
+                      }}}
+                    }
 
   # Create a new grade entry form
   def new
@@ -55,7 +61,9 @@ class GradeEntryFormsController < ApplicationController
 
     # Process input properties
     @grade_entry_form.transaction do
-      if @grade_entry_form.update_attributes(params[:grade_entry_form])
+      # Edit params before updating model
+      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.create.success')
         redirect_to :action => 'edit', :id => @grade_entry_form.id
@@ -72,9 +80,13 @@ class GradeEntryFormsController < ApplicationController
 
   def update
     @grade_entry_form = GradeEntryForm.find(params[:id])
+
     # Process changes to input properties
     @grade_entry_form.transaction do
-      if @grade_entry_form.update_attributes(params[:grade_entry_form])
+
+      # Edit params before updating model
+      new_params = update_grade_entry_form_params params[:grade_entry_form]
+      if @grade_entry_form.update_attributes(new_params)
         # Success message
         flash[:success] = I18n.t('grade_entry_forms.edit.success')
         redirect_to :action => 'edit', :id => @grade_entry_form.id
@@ -180,7 +192,7 @@ class GradeEntryFormsController < ApplicationController
            @grade_entry_item_id)
     @grade.grade = updated_grade
     @grade_saved = @grade.save
-    @updated_student_total = grade_entry_form.calculate_total_mark(@student_id)
+    @updated_student_total = grade_entry_student.update_total_grade
   end
 
   # For students
@@ -246,7 +258,7 @@ class GradeEntryFormsController < ApplicationController
       m_logger = MarkusLogger.instance
       m_logger.log(log_message)
     end
-    flash[:errors] = errors
+    flash[:error] = errors
 
     redirect_to :action => 'grades', :id => params[:id]
   end
@@ -274,13 +286,11 @@ class GradeEntryFormsController < ApplicationController
                                                  invalid_lines,
                                                  encoding)
           unless invalid_lines.empty?
-            flash[:invalid_lines] = invalid_lines
-            flash[:error] = I18n.t('csv_invalid_lines')
+            flash[:error] = I18n.t('csv_invalid_lines') + invalid_lines.join(', ')
           end
           if num_updates > 0
-            flash[:upload_notice] = I18n.t(
-                                 'grade_entry_forms.csv.upload_success',
-                                 :num_updates => num_updates)
+            flash[:notice] = I18n.t('grade_entry_forms.csv.upload_success',
+              :num_updates => num_updates)
           end
         end
       end

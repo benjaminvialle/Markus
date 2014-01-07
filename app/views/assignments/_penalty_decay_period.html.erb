@@ -16,7 +16,7 @@
         <%= f.text_field :deduction, :size => 1 %>%
       </p>
 			<p>
-        <%= f.label :interval, t("submission_rules.penalty_decay_period_submission_rule.each") %>
+        <%= f.label :interval, t("submission_rules.penalty_decay_period_submission_rule.every") %>
         <%= f.text_field :interval, :size => 1 %>
         <%= t("submission_rules.penalty_decay_period_submission_rule.hours") %>
       </p>
@@ -37,7 +37,7 @@
         <%= f.label :_destroy, t(:remove) %>
         <%= f.check_box :_destroy %>
       <% else %>
-        <%= link_to_function t(:remove), "$(this).up(\".period\").remove(); if(penalty_decay_periods) { penalty_decay_periods.refresh(); }" %>
+        <%= link_to_function t(:remove), "jQuery(this).parents(\".period\").remove(); if(penalty_decay_periods) { penalty_decay_periods.refresh(); }" %>
       <% end %>
     <% end %>
   </p>

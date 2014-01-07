@@ -10,7 +10,8 @@
 </td>
 
 <td>
-<%= render :partial => "graders/manage/member",
+<%= render :partial => 'graders/manage/member',
+  :formats => [:html], :handlers => [:erb],
   :locals => {:grouping => grouping } %>
 </td>
 
