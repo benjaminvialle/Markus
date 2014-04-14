@@ -24,6 +24,7 @@ Changes for MarkUs 1.0.0:
 * Issue #1398: Pressing the Enter/Return key while a grade box is selected attempts to release marks.
 * Issue #1340: Viewing a file interprets <> as tag characters
 * Issue #1402: UI Alignment error when sorting
+* Issue #1388: when marks are not used in assignments, releasing marks produces an error.
 * Several improvements on sections
 * Syntax Highlighter is now working with non utf-8 files
 * Tests are not using fixtures anymore
