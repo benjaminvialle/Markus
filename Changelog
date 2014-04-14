@@ -22,6 +22,7 @@ Changes for MarkUs 1.0.0:
 * Issue #1343: Showstopper bug in the marks spreadsheet:
 * Issue #1375: Clicking 'Download' on a grades spreadsheet with no one selected throws a 'NoMethodError'
 * Issue #1398: Pressing the Enter/Return key while a grade box is selected attempts to release marks.
+* Issue #1340: Viewing a file interprets <> as tag characters
 * Several improvements on sections
 * Syntax Highlighter is now working with non utf-8 files
 * Tests are not using fixtures anymore
