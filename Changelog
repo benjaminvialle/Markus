@@ -12,15 +12,16 @@ Changes for MarkUs 1.0.0:
 * Issue #100: refactor the code for calculating a student's average mark
 * Issue #1312: 'Edit' from Grader view's ->Annotation Summary view, gives 404 page:
 * Issue #1350: fixed UI of add group button:
-* Issue #1360 - Groups doesn't show up in Assignment > Graders Tab:
-* Issue #1342 - groups not being rendered under assignment tab:
-* Issue #1380 - Students table updating dynamically:
+* Issue #1360: Groups doesn't show up in Assignment > Graders Tab:
+* Issue #1342: groups not being rendered under assignment tab:
+* Issue #1380: Students table updating dynamically:
 * Issue #1338: grader gets error when trying to access a spreadsheet:
-* Issue #1376 - It is possible to upload nothing on a spreadsheet, throwing a 'NoMethodError':
-* Issue #1310 - Created by, Last edited by aren't set when annotation is created in grading view:
-* Issue #1378 - Sorting of Marks Spreadsheet:
-* Issue #1343 - Showstopper bug in the marks spreadsheet:
-* Issue #1375 - Clicking 'Download' on a grades spreadsheet with no one selected throws a 'NoMethodError'
+* Issue #1376: It is possible to upload nothing on a spreadsheet, throwing a 'NoMethodError':
+* Issue #1310: Created by, Last edited by aren't set when annotation is created in grading view:
+* Issue #1378: Sorting of Marks Spreadsheet:
+* Issue #1343: Showstopper bug in the marks spreadsheet:
+* Issue #1375: Clicking 'Download' on a grades spreadsheet with no one selected throws a 'NoMethodError'
+* Issue #1398: Pressing the Enter/Return key while a grade box is selected attempts to release marks.
 * Several improvements on sections
 * Syntax Highlighter is now working with non utf-8 files
 * Tests are not using fixtures anymore
