@@ -23,8 +23,8 @@ module EnsureConfigHelper
     check_writable(MarkusConfigurator.get_config_value('repository_storage'), 'REPOSITORY_STORAGE')
     check_readable(MarkusConfigurator.get_config_value('repository_storage'), 'REPOSITORY_STORAGE')
     check_executable(MarkusConfigurator.get_config_value('repository_storage'), 'REPOSITORY_STORAGE')
-    check_writable(MarkusConfigurator.markus_config_pdf_storage, 'PDF_STORAGE')
-    check_readable(MarkusConfigurator.markus_config_pdf_storage, 'PDF_STORAGE')
+    check_writable(MarkusConfigurator.get_config_value('pdf_storage'), 'PDF_STORAGE')
+    check_readable(MarkusConfigurator.get_config_value('pdf_storage'), 'PDF_STORAGE')
     check_in_writable_dir(MarkusConfigurator.markus_config_automated_tests_repository, 'automated_tests_REPOSITORY')
     check_configured_default_language(MarkusConfigurator.markus_config_default_language)
     ensure_logout_redirect_link_valid

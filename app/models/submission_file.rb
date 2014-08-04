@@ -103,9 +103,9 @@ class SubmissionFile < ActiveRecord::Base
   end
 
   def convert_pdf_to_jpg
-    return unless MarkusConfigurator.markus_config_pdf_support && self.is_pdf?
+    return unless MarkusConfigurator.get_config_value('pdf_support') && self.is_pdf?
     m_logger = MarkusLogger.instance
-    storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
+    storage_path = File.join(MarkusConfigurator.get_config_value('pdf_storage'),
       self.submission.grouping.group.repository_name,
       self.path)
     file_path = File.join(storage_path, self.filename.split('.')[0] + '.jpg')

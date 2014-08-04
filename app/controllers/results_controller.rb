@@ -199,7 +199,7 @@ class ResultsController < ApplicationController
       send_data file_contents, type: 'image', disposition: 'inline',
         filename: filename
     elsif file.is_pdf? && !params[:show_in_browser].nil?
-      send_file File.join(MarkusConfigurator.markus_config_pdf_storage,
+      send_file File.join(MarkusConfigurator.get_config_value('pdf_storage'),
         file.submission.grouping.group.repository_name, file.path,
         filename.split('.')[0] + '_' + sprintf('%04d' % params[:file_index].to_s()) + '.jpg'),
         type: 'image', disposition: 'inline', filename: filename
@@ -305,7 +305,7 @@ class ResultsController < ApplicationController
     # if dealing with a pdf file, get the number of images to display
     if @file.is_pdf?
       i = 1
-      storage_path = File.join(MarkusConfigurator.markus_config_pdf_storage,
+      storage_path = File.join(MarkusConfigurator.get_config_value('pdf_storage'),
         @file.submission.grouping.group.repository_name,
         @file.path)
       filePathToCheck = File.join(storage_path, @file.filename.split('.')[0] + '_' + sprintf('%04d' % i.to_s()) + '.jpg')

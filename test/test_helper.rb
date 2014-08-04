@@ -26,7 +26,7 @@ class ActiveSupport::TestCase
   end
 
   def destroy_converted_pdfs
-    FileUtils.rm_rf("#{MarkusConfigurator.markus_config_pdf_storage}/*")
+    FileUtils.rm_rf("#{MarkusConfigurator.get_config_value('pdf_storage')}/*")
   end
 
   def equal_dates(date_1, date_2)

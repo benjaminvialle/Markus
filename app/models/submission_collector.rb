@@ -228,7 +228,7 @@ class SubmissionCollector < ActiveRecord::Base
     #Let the child process handle conversion, as things go wrong when both
     #parent and child do this.
     start_collection_process do
-      if MarkusConfigurator.markus_config_pdf_support
+      if MarkusConfigurator.get_config_value('pdf_support')
         new_submission.submission_files.each do |subm_file|
           subm_file.convert_pdf_to_jpg if subm_file.is_pdf?
         end
@@ -238,7 +238,7 @@ class SubmissionCollector < ActiveRecord::Base
     end
     #setting is_collected here will prevent an sqlite lockout error when pdfs
     #aren't supported
-    unless MarkusConfigurator.markus_config_pdf_support
+    unless MarkusConfigurator.get_config_value('pdf_support')
       grouping.is_collected = true
       grouping.save
     end
