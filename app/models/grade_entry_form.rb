@@ -1,5 +1,4 @@
-include CsvHelper
-require 'iconv'
+require 'encoding'
 
 # GradeEntryForm can represent a test, lab, exam, etc.
 # A grade entry form has many columns which represent the questions and their total
@@ -7,21 +6,21 @@ require 'iconv'
 # marks on each question (i.e. GradeEntryStudents).
 class GradeEntryForm < ActiveRecord::Base
   has_many                  :grade_entry_items,
-                            :dependent => :destroy,
-                            :order => :position
+                            dependent: :destroy,
+                            order: :position
   has_many                  :grade_entry_students,
-                            :dependent => :destroy
-  has_many                  :grades, :through => :grade_entry_items
+                            dependent: :destroy
+  has_many                  :grades, through: :grade_entry_items
 
   # Call custom validator in order to validate the date attribute
-  # :date => true maps to DateValidator (:custom_name => true maps to CustomNameValidator)
+  # date: true maps to DateValidator (custom_name: true maps to CustomNameValidator)
   # Look in lib/validators/* for more info
-  validates                 :date, :date => true
+  validates                 :date, date: true
 
   validates_presence_of     :short_identifier
-  validates_uniqueness_of   :short_identifier, :case_sensitive => true
+  validates_uniqueness_of   :short_identifier, case_sensitive: true
 
-  accepts_nested_attributes_for :grade_entry_items, :allow_destroy => true
+  accepts_nested_attributes_for :grade_entry_items, allow_destroy: true
 
   BLANK_MARK = ''
 
@@ -56,7 +55,7 @@ class GradeEntryForm < ActiveRecord::Base
     totalMarks = 0
     numReleased = 0
 
-    grade_entry_students = self.grade_entry_students.all(:conditions => { :released_to_student => true })
+    grade_entry_students = self.grade_entry_students.all(conditions: { released_to_student: true })
     grade_entry_students.each do |grade_entry_student|
       # If there is no saved total grade, update it
       totalMark = grade_entry_student.total_grade || grade_entry_student.update_total_grade
@@ -111,14 +110,15 @@ class GradeEntryForm < ActiveRecord::Base
     alpha_categories = Array.new(2 * total_pages){[]}
     alpha_pagination = []
 
-    if total_pages == 0
+    # Is total_pages == 0 a necessary check when you can check if there are no students? Clean this up?
+    if (total_pages == 0) || (all_grade_entry_students == [])
       return alpha_pagination
     end
 
     i = 0
     (1..(total_pages - 1)).each do |page|
-      grade_entry_students1 = all_grade_entry_students.paginate(:per_page => per_page, :page => page)
-      grade_entry_students2 = all_grade_entry_students.paginate(:per_page => per_page, :page => page+1)
+      grade_entry_students1 = all_grade_entry_students.paginate(per_page: per_page, page: page)
+      grade_entry_students2 = all_grade_entry_students.paginate(per_page: per_page, page: page+1)
 
       # To figure out the category names, we need to keep track of the first and last students
       # on a particular page and the first student on the next page. For example, if these
@@ -139,7 +139,7 @@ class GradeEntryForm < ActiveRecord::Base
 
     # Handle the last page
     page = total_pages
-    grade_entry_students = all_grade_entry_students.paginate(:per_page => per_page, :page => page)
+    grade_entry_students = all_grade_entry_students.paginate(per_page: per_page, page: page)
     first_student = grade_entry_students.first.last_name
     last_student = grade_entry_students.last.last_name
 
@@ -157,8 +157,8 @@ class GradeEntryForm < ActiveRecord::Base
 
   # Get a CSV report of the grades for this grade entry form
   def get_csv_grades_report
-    students = Student.all(:conditions => {:hidden => false}, :order => 'user_name')
-    CsvHelper::Csv.generate do |csv|
+    students = Student.all(conditions: {hidden: false}, order: 'user_name')
+    CSV.generate do |csv|
 
       # The first row in the CSV file will contain the question names
       final_result = []
@@ -199,7 +199,7 @@ class GradeEntryForm < ActiveRecord::Base
               final_result.push(grade.grade || BLANK_MARK)
             end
           end
-          total_percent = self.calculate_total_percent(student.id)
+          total_percent = self.calculate_total_percent(grade_entry_student)
           final_result.push(total_percent)
         end
         csv << final_result
@@ -216,22 +216,19 @@ class GradeEntryForm < ActiveRecord::Base
     num_lines_read = 0
     names = []
     totals = []
-    grades_file = StringIO.new(grades_file.read)
-    if encoding != nil
-      grades_file = StringIO.new(Iconv.iconv('UTF-8', encoding, grades_file.read).join)
-    end
+    grades_file = StringIO.new(grades_file.read.utf8_encode(encoding))
 
     # Parse the question names
-    CsvHelper::Csv.parse(grades_file.readline) do |row|
-      unless CsvHelper::Csv.generate_line(row).strip.empty?
+    CSV.parse(grades_file.readline) do |row|
+      unless CSV.generate_line(row).strip.empty?
         names = row
         num_lines_read += 1
       end
     end
 
     # Parse the question totals
-    CsvHelper::Csv.parse(grades_file.readline) do |row|
-      unless CsvHelper::Csv.generate_line(row).strip.empty?
+    CSV.parse(grades_file.readline) do |row|
+      unless CSV.generate_line(row).strip.empty?
         totals = row
         num_lines_read += 1
       end
@@ -248,8 +245,8 @@ class GradeEntryForm < ActiveRecord::Base
     end
 
     # Parse the grades
-    CsvHelper::Csv.parse(grades_file.read) do |row|
-      next if CsvHelper::Csv.generate_line(row).strip.empty?
+    CSV.parse(grades_file.read) do |row|
+      next if CSV.generate_line(row).strip.empty?
       begin
         if num_lines_read > 1
           GradeEntryStudent.create_or_update_from_csv_row(row,

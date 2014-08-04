@@ -9,15 +9,16 @@ Markus::Application.config.secret_token = MarkusConfigurator.markus_config_sessi
 # Please make sure, :session_key is named uniquely if you are hosting
 # several MarkUs instances on one machine. Also, make sure you are changing
 # the :secret string to something else than you find below.
-Markus::Application.config.session_store :cookie_store,
-  :key => MarkusConfigurator.markus_config_session_cookie_name,
-  :secret => MarkusConfigurator.markus_config_session_cookie_secret,
-  :path => '/',
-  :expire_after => MarkusConfigurator.markus_config_session_cookie_expire_after,
-  :http_only => MarkusConfigurator.markus_config_session_cookie_http_only,
+
+Rails.application.config.session_store :cookie_store,
+  key: MarkusConfigurator.markus_config_session_cookie_name,
+  secret:      MarkusConfigurator.markus_config_session_cookie_secret,
+  path: '/',
+  expire_after: MarkusConfigurator.markus_config_session_cookie_expire_after,
+  http_only: MarkusConfigurator.markus_config_session_cookie_http_only,
   # if you use secure in Base.session, you will have to do an https connection,
   # but https is not implemented yet in MarkUs
-  :secure => MarkusConfigurator.markus_config_session_cookie_secure
+  secure: MarkusConfigurator.markus_config_session_cookie_secure
 
 # Use the database for sessions instead of the cookie-based default,
 # which shouldn't be used to store highly confidential information

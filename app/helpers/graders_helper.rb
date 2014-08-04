@@ -42,15 +42,18 @@ module GradersHelper
 
       table_row[:id] = grouping.id
       table_row[:filter_table_row_contents] =
-        render_to_string :partial => 'graders/table_row/filter_table_row',
-        :formats => [:html], :handlers => [:erb],
-        :locals => { :grouping => grouping,
-                     :assignment => assignment,
-                     :total_criteria_count => total_criteria_count }
+        render_to_string partial: 'graders/table_row/filter_table_row',
+        formats: [:html], handlers: [:erb],
+        locals: { grouping: grouping,
+                     assignment: assignment,
+                     total_criteria_count: total_criteria_count }
 
       #These are used for sorting
       table_row[:name] = grouping.group.group_name
-      table_row[:members] = grouping.tas.collect{ |grader| grader.user_name}.join(',')
+      # ta_memberships and their users are eagerly loaded and can be reused.
+      table_row[:members] = grouping.ta_memberships
+        .map { |ta_membership| ta_membership.user.user_name }
+        .join(',')
       table_row[:coverage] = grouping.criteria_coverage_count
 
       #These 2 are used for searching
@@ -71,8 +74,8 @@ module GradersHelper
 
     table_row[:id] = grader.id
     table_row[:filter_table_row_contents] =
-      render_to_string :partial => 'graders/table_row/filter_table_grader_row',
-      :locals => {:grader => grader}
+      render_to_string partial: 'graders/table_row/filter_table_grader_row',
+      locals: {grader: grader}
 
     #These used only for searching
     table_row[:first_name] = grader.first_name
@@ -95,9 +98,9 @@ module GradersHelper
 
     table_row[:id] = criterion.id
     table_row[:filter_table_row_contents] =
-      render_to_string :partial => 'graders/table_row/filter_table_criterion_row',
-      :formats => [:html], :handlers => [:erb],
-      :locals => {:criterion => criterion, :assignment => assignment}
+      render_to_string partial: 'graders/table_row/filter_table_criterion_row',
+      formats: [:html], handlers: [:erb],
+      locals: {criterion: criterion, assignment: assignment}
 
     table_row[:criterion_name] = criterion.get_name
     table_row[:members] = criterion.get_ta_names.to_s

@@ -1,24 +1,24 @@
-  // add new row of input
+// Add new row of input
 function injectFileInput() {
-  var new_file_field = jQuery('<input>', {  
-		type: 'file',
+  var new_file_field = jQuery('<input>', {
+    type: 'file',
     name: 'new_files[]',
     multiple: true
-  });  
+  });
 
-	new_file_field.change(function() {
-		sanitized_filename_check(this);
-		return false;
-	});
+  new_file_field.change(function() {
+    sanitized_filename_check(this);
+    return false;
+  });
 
 
-	var new_file_field_row = jQuery('<tr>');
+  var new_file_field_row = jQuery('<tr>');
 
   var new_file_field_input_column = jQuery('<td>', {colspan: 4});
 
   var remove_new_file_input = jQuery('<input>', {type: 'checkbox'});
 
-	remove_new_file_input.change(function(node) {
+  remove_new_file_input.change(function(node) {
     jQuery(new_file_field_row).remove();
     enableDisableSubmit();
   });
@@ -33,6 +33,7 @@ function injectFileInput() {
   new_file_field_row.append(remove_new_file_field_column);
 
   jQuery('#add_file_tbody').prepend(new_file_field_row);
+
   new_file_field.focus();
   enableDisableSubmit();
 }
@@ -40,22 +41,27 @@ function injectFileInput() {
 function enableDisableSubmit() {
   var hasRows = false;
   jQuery('tbody').each(function(i) {
-      var oRows = this.getElementsByTagName('tr');
-      var iRowCount = oRows.length;
-      if (iRowCount >0) {
-          hasRows = true;
-        }
-    });
+    var oRows = this.getElementsByTagName('tr');
+    var iRowCount = oRows.length;
+    if (iRowCount > 0) {
+      hasRows = true;
+    }
+  });
   if (hasRows) {
     jQuery('#submit_form input[type=submit]').each(function(i) {
-  		jQuery(this).find('input, textarea').each(function(i) { jQuery(this).removeAttr("readonly"); });
-		});
+      jQuery(this).find('input, textarea').each(function(i) {
+        jQuery(this).removeAttr("readonly");
+      });
+    });
   } else {
     jQuery('#submit_form input[type=submit]').each(function(i) {
- 		  jQuery(this).find('input, textarea').each(function(i) { jQuery(this).attr("readonly","readonly"); });
-		});
+      jQuery(this).find('input, textarea').each(function(i) {
+        jQuery(this).attr("readonly","readonly");
+      });
+    });
   }
 }
+
 /*
  * Strip off some local file-path garbage potentially passed by the browser.
  * Called from app/views/submissions/_file_manager_boot.js.erb
@@ -80,8 +86,7 @@ function normalize_filename(new_file_name) {
   return new_file_name;
 }
 
-function populate(files_json){
-  // var files = files_json.evalJSON();
+function populate(files_json) {
   files_table.populate(files_json).render();
   enableDisableSubmit();
 }

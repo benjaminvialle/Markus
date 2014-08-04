@@ -67,13 +67,6 @@ require 'mocha/setup'
         should respond_with :redirect
       end
 
-      context 'on :move_criterion' do
-        setup do
-          get :move_criterion, :assignment_id => 1, :id => 1
-        end
-        should respond_with :redirect
-      end
-
     end # An unauthenticated and unauthorized user doing a GET
 
     context 'An unauthenticated and unauthorized user doing a POST' do
@@ -134,13 +127,6 @@ require 'mocha/setup'
       should respond_with :redirect
     end
 
-    context 'on :move_criterion' do
-      setup do
-        post :move_criterion, :assignment_id => 1, :id => 1
-      end
-      should respond_with :redirect
-    end
-
   end # An unauthenticated and unauthorized user doing a POST
 
   context 'An authenticated and authorized admin doing a GET' do
@@ -179,7 +165,10 @@ require 'mocha/setup'
 
     context 'on :edit' do
       setup do
-        get_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
+        get_as @admin, :edit,
+               format: :js,
+               assignment_id: 1,
+               id: @criterion.id
       end
       should 'respond with appropriate content' do
         assert_not_nil assigns :criterion
@@ -194,11 +183,11 @@ require 'mocha/setup'
         setup do
           FlexibleCriterion.any_instance.expects(:save).once.returns(false)
           FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
-          get_as @admin,
-                 :update,
-                 :assignment_id => 1,
-                 :id => @criterion.id,
-                 :flexible_criterion => {:flexible_criterion_name => 'one', :max => 10}
+          get_as @admin, :update,
+                 format: :js,
+                 assignment_id: 1,
+                 id: @criterion.id,
+                 flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -210,10 +199,10 @@ require 'mocha/setup'
       should 'be able to save' do
         get_as @admin,
                :update,
-               :assignment_id => 1,
-               :id => @criterion.id,
-               :flexible_criterion => {:flexible_criterion_name => 'one',
-                                       :max => 10}
+               format: :js,
+               assignment_id: 1,
+               id: @criterion.id,
+               flexible_criterion: { flexible_criterion_name: 'one', max: 10 }
         assert flash[:success], I18n.t('criterion_saved_success')
         assert_not_nil assigns :criterion
         assert render_template :update
@@ -222,7 +211,9 @@ require 'mocha/setup'
 
     context 'on :new' do
       setup do
-        get_as @admin, :new, :assignment_id => @assignment.id
+        get_as @admin, :new,
+               format: :js,
+               assignment_id: @assignment.id
       end
       should 'respond with appropriate content' do
         assert_not_nil assigns :assignment
@@ -260,9 +251,10 @@ require 'mocha/setup'
     should 'be able to update_positions' do
       get_as @admin,
              :update_positions,
-             :flexible_criteria_pane_list => [@criterion2.id,
-                                              @criterion.id],
-             :assignment_id => @assignment.id
+             format: :js,
+             criterion: [@criterion2.id,
+                         @criterion.id],
+             assignment_id: @assignment.id
       assert render_template ''
       assert_response :success
 
@@ -272,52 +264,29 @@ require 'mocha/setup'
       assert_equal 2, c2.position
     end
 
-    should 'be able to move_criterion up' do
-      get_as @admin,
-             :move_criterion,
-             :assignment_id => @assignment.id,
-             :id => @criterion2.id,
-             :direction => :up
-      assert render_template ''
-      assert_response :success
-      @criterion.reload
-      @criterion2.reload
-      assert_equal 2, @criterion.position
-      assert_equal 1, @criterion2.position
-    end
-
-    should 'be able to move_criterion down' do
-      get_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => :down
-      assert render_template ''
-      assert_response :success
-      @criterion.reload
-      @criterion2.reload
-      assert_equal 2, @criterion.position
-      assert_equal 1, @criterion2.position
-    end
-
   end # An authenticated and authorized admin doing a GET
 
   context 'An authenticated and authorized admin doing a POST' do
 
     setup do
-      @admin = Admin.make(:user_name => 'olm_admin')
+      @admin = Admin.make(user_name: 'olm_admin')
       @assignment = Assignment.make
       @criterion = FlexibleCriterion.make(
-          :assignment => @assignment,
-          :flexible_criterion_name => 'criterion1',
-          :description => 'description1, for criterion 1')
+          assignment: @assignment,
+          position: 1,
+          flexible_criterion_name: 'criterion1',
+          description: 'description1, for criterion 1')
       @criterion2 = FlexibleCriterion.make(
-          :assignment => @assignment,
-          :position => 2,
-          :flexible_criterion_name => 'criterion2',
-          :description => 'description2, "with quotes"')
+          assignment: @assignment,
+          position: 2,
+          flexible_criterion_name: 'criterion2',
+          description: 'description2, "with quotes"')
       @criterion3 = FlexibleCriterion.make(
-          :assignment => @assignment,
-          :position => 3,
-          :flexible_criterion_name => 'criterion3',
-          :description => 'description3!',
-          :max => 1.6)
+          assignment: @assignment,
+          position: 3,
+          flexible_criterion_name: 'criterion3',
+          description: 'description3!',
+          max: 1.6)
     end
 
     context 'on :index' do
@@ -334,7 +303,10 @@ require 'mocha/setup'
 
     context 'on :edit' do
       setup do
-        post_as @admin, :edit, :assignment_id => 1, :id => @criterion.id
+        post_as @admin, :edit,
+                format: :js,
+                assignment_id: 1,
+                id: @criterion.id
       end
       should 'respond with appropriate content' do
         assert_not_nil assigns :criterion
@@ -348,7 +320,11 @@ require 'mocha/setup'
         setup do
           FlexibleCriterion.any_instance.expects(:save).once.returns(false)
           FlexibleCriterion.any_instance.expects(:errors).once.returns('error msg')
-          post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create,
+                  format: :js,
+                  assignment_id: @assignment.id,
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -362,7 +338,11 @@ require 'mocha/setup'
       context 'without error on an assignment as the first criterion' do
         setup do
           assignment = Assignment.make
-          post_as @admin, :create, :assignment_id => assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create,
+                  format: :js,
+                  assignment_id: @assignment.id,
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -374,7 +354,11 @@ require 'mocha/setup'
 
       context 'without error on an assignment that already has criteria' do
         setup do
-          post_as @admin, :create, :assignment_id => @assignment.id, :flexible_criterion => {:flexible_criterion_name => 'first', :max => 10}
+          post_as @admin, :create,
+                  format: :js,
+                  assignment_id: @assignment.id,
+                  flexible_criterion: { flexible_criterion_name: 'first',
+                                        max: 10 }
         end
         should 'respond with appropriate content' do
           assert_not_nil assigns :criterion
@@ -452,9 +436,10 @@ require 'mocha/setup'
     should 'be able to update_positions' do
       post_as @admin,
               :update_positions,
-              :flexible_criteria_pane_list => [@criterion2.id,
-                                               @criterion.id],
-              :assignment_id => @assignment.id
+              format: :js,
+              criterion: [@criterion2.id,
+                          @criterion.id],
+              assignment_id: @assignment.id
       assert render_template ''
       assert_response :success
 
@@ -462,104 +447,6 @@ require 'mocha/setup'
       assert_equal 2, c1.position
       c2 = FlexibleCriterion.find(@criterion2.id)
       assert_equal 1, c2.position
-    end
-
-    context 'on :move_criterion up with 2 criteria' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
-    end
-
-    context 'on :move_criterion up with 3 criteria from bottom' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion3.id, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 3, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 2, c3.position
-      end
-    end
-
-    context 'on :move_criterion up with 3 criteria from middle' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'up'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 3, c3.position
-      end
-    end
-
-    context 'on :move_criterion down with 2 criteria' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-      end
-    end
-
-    context 'on :move_criterion down with 3 criteria from top' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion.id, :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 2, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 1, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 3, c3.position
-      end
-    end
-
-    context 'on :move_criterion down with 3 criteria from middle' do
-      setup do
-        post_as @admin, :move_criterion, :assignment_id => @assignment.id, :id => @criterion2.id, :direction => 'down'
-      end
-      should render_template ''
-      should respond_with :success
-
-      should 'have appropriately adjusted positions' do
-        c1 = FlexibleCriterion.find(@criterion.id)
-        assert_equal 1, c1.position
-        c2 = FlexibleCriterion.find(@criterion2.id)
-        assert_equal 3, c2.position
-        c3 = FlexibleCriterion.find(@criterion3.id)
-        assert_equal 2, c3.position
-      end
     end
 
   end # An authenticated and authorized admin doing a POST
@@ -574,7 +461,10 @@ require 'mocha/setup'
 
 
     should 'be able to delete the criterion' do
-      delete_as @admin, :destroy, :assignment_id => 1, :id => @criterion.id
+      delete_as @admin, :destroy,
+                format: :js,
+                assignment_id: 1,
+                id: @criterion.id
       assert_not_nil assigns :criterion
       assert I18n.t('criterion_deleted_success'), flash[:success]
       assert_response :success
