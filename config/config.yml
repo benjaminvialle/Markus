@@ -139,8 +139,8 @@ defaults: &defaults
   # Session Timeouts
   ###################################################################
   user_student_session_timeout:  1800 # Timeout for student users
-  user_ta_session_timeout:       1800 # Timeout for student users
-  user_admin_session_timeout:    1800 # Timeout for student users
+  user_ta_session_timeout:       1800 # Timeout for grader users
+  user_admin_session_timeout:    1800 # Timeout for admin users
 
   ###################################################################
   # CSV upload order of fields (usually you don't want to change this)
